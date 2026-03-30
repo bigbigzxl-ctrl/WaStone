@@ -3,8 +3,8 @@
   "description": "STM32G431CBU6 Golden Test Suite — 16 tests across 4 stages. Stage0: blinky + mailbox health. Stage1: timer + internal temp (no wiring). Stage2: 8 peripheral tests incl DMA UART. Stage3: 4 LA-verified banner tests + DAC+ADC2 internal readback. Wiring: PA8↔PA6, PA9↔PA10, PB4↔PB5, PB1↔PB0, LA: PA2→P0.3, PA3→P0.0, PA4→P0.2, PB3→P0.1.",
   "board": "stm32g431cbu6",
   "bench_profile": "stm32g431cbu6__default",
-  "status": "pending",
-  "verified_date": "",
+  "status": "golden",
+  "verified_date": "2026-03-29",
   "stages": {
     "0": [
       "tests/plans/stm32g431_blinky_visual.json",

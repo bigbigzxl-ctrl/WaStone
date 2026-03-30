@@ -81,7 +81,7 @@ int main(void)
     /* Clocks: GPIOA on AHB2, USART1 on APB2, DMA1 on AHB1 */
     RCC_AHB2ENR |= (1u << 0);    /* GPIOAEN */
     RCC_APB2ENR |= (1u << 14);   /* USART1EN */
-    RCC_AHB1ENR |= (1u << 0);    /* DMA1EN (DMAMUX1 clock follows DMA1) */
+    RCC_AHB1ENR |= (1u << 0) | (1u << 2);  /* DMA1EN | DMAMUX1EN (G431: separate RCC bit) */
     (void)RCC_AHB1ENR;           /* pipeline flush */
 
     /* PA9 = USART1_TX AF7, PA10 = USART1_RX AF7 */

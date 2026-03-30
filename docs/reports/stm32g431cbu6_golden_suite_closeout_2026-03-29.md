@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-29
 **Pack:** `packs/stm32g431cbu6_golden.json`
-**Result:** PASS — 14/14 tests
+**Result:** PASS — 16/16 tests
 
 ---
 
@@ -12,9 +12,9 @@
 |-------|-------|-------|--------|
 | Stage 0 | blinky_visual, minimal_runtime_mailbox | 2 | ✓ PASS |
 | Stage 1 | timer_mailbox, internal_temp_mailbox | 2 | ✓ PASS |
-| Stage 2 | wiring_verify, iwdg, exti, capture, uart_loopback, spi | 6 | ✓ PASS |
-| Stage 3 | gpio_signature, gpio_loopback, pwm, adc | 4 | ✓ PASS |
-| **Total** | | **14** | **14/14 PASS** |
+| Stage 2 | wiring_verify, iwdg, exti, capture, uart_loopback, spi, uart_dma | 7 | ✓ PASS |
+| Stage 3 | gpio_signature, gpio_loopback, pwm, adc, dac_mailbox | 5 | ✓ PASS |
+| **Total** | | **16** | **16/16 PASS** |
 
 ---
 
@@ -48,6 +48,8 @@
 | `stm32g431_internal_temp_mailbox` | ADC1 internal temperature sensor (Stage 1, no-wire) |
 | `stm32g431_wiring_verify` | GPIO/UART/ADC loopback wiring check (Stage 2) |
 | `stm32g431_iwdg` | IWDG + LSI oscillator test (Stage 2) |
+| `stm32g431_uart_dma` | DMA1_CH4/CH5 + DMAMUX1 USART1 loopback (Stage 2) |
+| `stm32g431_dac_mailbox` | DAC1_OUT1→ADC2_IN17 internal readback (Stage 3) |
 
 ---
 
@@ -77,8 +79,8 @@ BRR=139 for 115200 @ 16 MHz HSI.
 
 ## 5. Civilization Engine Audit
 
-**Queries performed:** `stm32g431cbu6`, `HIGH_PRIORITY`, `timer`, `adc`, `iwdg`
-**Hits applied:** none — first G431 suite, no prior patterns blocked
+**Queries performed:** `stm32g431cbu6`, `HIGH_PRIORITY`, `timer`, `adc`, `iwdg`, `dmamux`, `dac`
+**Hits applied:** none — first G431 DMA/DAC tests, no prior patterns blocked
 
 **New records:**
 | ID | Scope | Lesson |
@@ -87,3 +89,7 @@ BRR=139 for 115200 @ 16 MHz HSI.
 | `2122b0dc` | board_family | G431 ADC1 at 0x50000000, CH16 internal temp, ADVREGEN sequence |
 | `2b5c77a7` | board_family | G431 IWDG RCC_CSR at +0x94, APB1ENR1 at +0x58 |
 | `8bc5a7c0` | task | G431 golden suite 14/14 PASS — full wiring and firmware record |
+| `d760bde6` | board_family | [HIGH_PRIORITY] G431 DMAMUX1EN: RCC_AHB1ENR bit2 must be set explicitly |
+| `e2185093` | board_family | G431 DMAMUX1 request IDs: USART1_RX=24, USART1_TX=25 (I2C4 slots reserved) |
+| `db0f927b` | board_family | G431 DAC1_OUT1 (PA4) → ADC2_IN17 internal readback, no external wire |
+| `18a1ebff` | task | G431 extended golden suite 16/16 PASS — uart_dma + dac_mailbox added |
