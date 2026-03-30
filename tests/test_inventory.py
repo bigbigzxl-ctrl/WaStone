@@ -565,6 +565,16 @@ def test_list_suites_canonical_only_excludes_legacy_and_branch_paths():
     assert all(item["source"] == "golden" for item in payload["suites"])
 
 
+def test_list_suites_surfaces_and_filters_suite_tier():
+    payload = inventory.list_suites(repo_root=REPO_ROOT, vendor="st", family="stm32")
+    tiers = {item["dut_id"]: item["suite_tier"] for item in payload["suites"]}
+    assert tiers["stm32f401rct6"] == "canonical_golden"
+    legacy_payload = inventory.list_suites(repo_root=REPO_ROOT, vendor="espressif", family="esp32", tier="legacy_golden")
+    legacy_ids = {item["dut_id"] for item in legacy_payload["suites"]}
+    assert "esp32s3_devkit" in legacy_ids
+    assert "esp32s3_devkit_dual_usb" not in legacy_ids
+
+
 def test_inventory_suites_cli_text_output():
     env = os.environ.copy()
     env["PYTHONPATH"] = "."
@@ -674,6 +684,35 @@ def test_inventory_suites_cli_canonical_only_output():
     assert "canonical_only=True" in res.stdout
     assert "esp32c6_devkit_dual_usb" in res.stdout
     assert "esp32c6_devkit  " not in res.stdout
+
+
+def test_inventory_suites_cli_tier_output():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "."
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ael",
+            "inventory",
+            "suites",
+            "--vendor",
+            "st",
+            "--family",
+            "stm32",
+            "--tier",
+            "canonical_golden",
+            "--format",
+            "text",
+        ],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+    )
+    assert "tier=canonical_golden" in res.stdout
+    assert "stm32f401rct6" in res.stdout
 
 
 def test_describe_test_for_stm32f401_led_blink():

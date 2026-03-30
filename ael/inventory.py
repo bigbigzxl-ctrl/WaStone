@@ -600,6 +600,27 @@ def _suite_label_for_dut(manifest: Dict[str, Any], canonical_pack: Dict[str, Any
     return {"label": "candidate", "source": "default_inference"}
 
 
+def _suite_tier_for_dut(
+    manifest: Dict[str, Any],
+    *,
+    source: str,
+    suite_label: str | None,
+    canonical_pack: Dict[str, Any] | None,
+) -> str:
+    if suite_label == "legacy":
+        return "legacy_golden" if bool((manifest.get("verified") or {}).get("status")) else "legacy"
+    if suite_label == "golden":
+        pack_path = str((canonical_pack or {}).get("path") or "")
+        if source == "golden" and pack_path and ("smoke" not in pack_path and "ezlink" not in pack_path):
+            return "canonical_golden"
+        return "golden"
+    if suite_label == "pre_release":
+        return "pre_release"
+    if suite_label == "testing":
+        return "testing"
+    return "candidate"
+
+
 def _load_bench_profile(repo_root: Path, board_id: str, bench_profile_id: str | None) -> Dict[str, Any]:
     profile_id = str(bench_profile_id or "").strip()
     if not profile_id:
@@ -716,6 +737,12 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
             packs_for_dut = [item for item in packs if item.get("board") == dut_id]
             canonical_pack = _select_canonical_pack(manifest, packs_for_dut)
             suite_label = _suite_label_for_dut(manifest, canonical_pack)
+            suite_tier = _suite_tier_for_dut(
+                manifest,
+                source=source_name,
+                suite_label=suite_label.get("label"),
+                canonical_pack=canonical_pack,
+            )
             classification = _classification_for_manifest(manifest)
             tests: List[Dict[str, Any]] = []
             for plan in plans_by_path.values():
@@ -784,6 +811,7 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
                     "classification": classification,
                     "suite_label": suite_label.get("label"),
                     "suite_label_source": suite_label.get("source"),
+                    "suite_tier": suite_tier,
                     "canonical_pack": {
                         "name": canonical_pack.get("name"),
                         "path": canonical_pack.get("path"),
@@ -952,6 +980,12 @@ def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]
             "lifecycle_stage": str(manifest.get("lifecycle_stage") or "").strip() or None,
             "verified_status": bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else None,
             "classification": _classification_for_manifest(manifest),
+            "suite_tier": _suite_tier_for_dut(
+                manifest,
+                source="user" if "/assets_user/" in str(dut.get("path") or "") else "golden",
+                suite_label=suite_label.get("label"),
+                canonical_pack=canonical_pack,
+            ),
         },
         "suite": {
             "label": suite_label.get("label"),
@@ -1004,6 +1038,7 @@ def list_suites(
     line: str | None = None,
     part_number: str | None = None,
     label: str | None = None,
+    tier: str | None = None,
     group_by: str | None = None,
     canonical_only: bool = False,
 ) -> Dict[str, Any]:
@@ -1016,6 +1051,7 @@ def list_suites(
         "line": str(line or "").strip().lower() or None,
         "part_number": str(part_number or "").strip().lower() or None,
         "label": _normalize_suite_label(label),
+        "tier": str(tier or "").strip().lower() or None,
         "group_by": str(group_by or "").strip().lower() or "none",
         "canonical_only": bool(canonical_only),
     }
@@ -1042,6 +1078,8 @@ def list_suites(
             continue
         if filters["label"] and dut.get("suite_label") != filters["label"]:
             continue
+        if filters["tier"] and dut.get("suite_tier") != filters["tier"]:
+            continue
         suites.append(
             {
                 "dut_id": dut.get("dut_id"),
@@ -1051,6 +1089,7 @@ def list_suites(
                 "classification": classification,
                 "suite_label": dut.get("suite_label"),
                 "suite_label_source": dut.get("suite_label_source"),
+                "suite_tier": dut.get("suite_tier"),
                 "canonical_pack": dut.get("canonical_pack"),
                 "lifecycle_stage": dut.get("lifecycle_stage"),
                 "verified_status": dut.get("verified_status"),
@@ -1259,6 +1298,8 @@ def render_describe_dut_text(payload: Dict[str, Any]) -> str:
         lines.append(f"suite_label: {suite.get('label')}")
     if suite.get("label_source"):
         lines.append(f"suite_label_source: {suite.get('label_source')}")
+    if dut.get("suite_tier"):
+        lines.append(f"suite_tier: {dut.get('suite_tier')}")
     if canonical_pack:
         lines.append(f"canonical_pack: {canonical_pack.get('path')}")
         if canonical_pack.get("name"):
@@ -1317,6 +1358,8 @@ def render_suite_list_text(payload: Dict[str, Any]) -> str:
                     f"  - {item.get('dut_id')}",
                     f"label={item.get('suite_label')}",
                 ]
+                if item.get("suite_tier"):
+                    parts.append(f"tier={item.get('suite_tier')}")
                 if classification.get("line"):
                     parts.append(f"line={classification.get('line')}")
                 if pack.get("name"):
@@ -1331,6 +1374,8 @@ def render_suite_list_text(payload: Dict[str, Any]) -> str:
             str(item.get("dut_id") or ""),
             f"label={item.get('suite_label')}",
         ]
+        if item.get("suite_tier"):
+            parts.append(f"tier={item.get('suite_tier')}")
         if classification.get("family"):
             parts.append(f"family={classification.get('family')}")
         if classification.get("series"):
@@ -1408,12 +1453,14 @@ def render_text(inventory: Dict[str, Any]) -> str:
         source = dut.get("source") or "golden"
         lifecycle = dut.get("lifecycle_stage")
         suite_label = dut.get("suite_label")
+        suite_tier = dut.get("suite_tier")
         canonical_pack = (dut.get("canonical_pack") or {}).get("name") if isinstance(dut.get("canonical_pack"), dict) else None
         source_tag = f" [{source}]" if source != "golden" else ""
         lifecycle_tag = f" stage={lifecycle}" if lifecycle else ""
         suite_tag = f" suite={suite_label}" if suite_label else ""
+        tier_tag = f" tier={suite_tier}" if suite_tier else ""
         pack_tag = f" pack={canonical_pack}" if canonical_pack else ""
-        lines.append(f"{dut['dut_id']} ({dut.get('mcu')}){source_tag}{lifecycle_tag}{suite_tag}{pack_tag}")
+        lines.append(f"{dut['dut_id']} ({dut.get('mcu')}){source_tag}{lifecycle_tag}{suite_tag}{tier_tag}{pack_tag}")
         tests = dut.get("tests") or []
         if not tests:
             lines.append("  programs: none")
