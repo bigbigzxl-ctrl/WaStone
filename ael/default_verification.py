@@ -1277,6 +1277,12 @@ def _failure_summary(payload: Dict[str, Any], code: int) -> Dict[str, Any]:
     summary["step_name"] = failed.get("name")
     summary["step_code"] = failed.get("code")
     result = failed.get("result", {}) if isinstance(failed.get("result"), dict) else {}
+    failure_scope = _infer_failure_scope(result)
+    if failure_scope:
+        summary["failure_scope"] = failure_scope
+    instrument_condition = _infer_instrument_condition(result)
+    if instrument_condition:
+        summary["instrument_condition"] = instrument_condition
     error = str(result.get("error") or "").strip()
     if error:
         summary["reason"] = error

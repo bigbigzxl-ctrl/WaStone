@@ -968,55 +968,48 @@ def test_parallel_repeat_until_fail_surfaces_schema_advisory_summary(tmp_path):
     }
     cfg_path = _write_setting(tmp_path, setting)
 
-    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock):
-        if task.name == "esp32c6_uart_banner":
-            payload = {
-                "name": task.name,
-                "board": task.board,
-                "requested_iterations": max_iterations,
-                "completed_iterations": 1,
-                "pass_count": 0,
-                "fail_count": 1,
+    run_payload = {
+        "ok": False,
+        "mode": "sequence",
+        "results": [
+            {
+                "name": "esp32c6_uart_banner",
+                "board": "esp32c6_devkit",
+                "code": 2,
                 "ok": False,
-                "results": [
-                    {
-                        "name": task.name,
-                        "board": task.board,
-                        "iteration": 1,
-                        "code": 2,
-                        "ok": False,
-                        "result": {
-                            "ok": False,
-                            "plan_schema_kind": "structured",
-                            "test_kind": "instrument_specific",
-                            "supported_instrument_advisory": {"status": "declared_unsupported"},
-                            "schema_warning_messages": [
-                                "selected instrument type esp32_meter is not in declared support set"
-                            ],
-                        },
-                    }
-                ],
-            }
-        else:
-            payload = {
-                "name": task.name,
-                "board": task.board,
-                "requested_iterations": max_iterations,
-                "completed_iterations": 1,
-                "pass_count": 1,
-                "fail_count": 0,
+                "result": {
+                    "ok": False,
+                    "plan_schema_kind": "structured",
+                    "test_kind": "instrument_specific",
+                    "supported_instrument_advisory": {"status": "declared_unsupported"},
+                    "schema_warning_messages": [
+                        "selected instrument type esp32_meter is not in declared support set"
+                    ],
+                },
+            },
+            {
+                "name": "rp2040_gpio_signature",
+                "board": "rp2040_pico",
+                "code": 0,
                 "ok": True,
-                "results": [
-                    {"name": task.name, "board": task.board, "iteration": 1, "code": 0, "ok": True, "result": {"ok": True, "plan_schema_kind": "legacy"}}
-                ],
-            }
-        return SimpleNamespace(run=lambda: SimpleNamespace(to_dict=lambda: payload))
+                "result": {"ok": True, "plan_schema_kind": "legacy"},
+            },
+        ],
+        "schema_advisory_summary": {
+            "structured_step_count": 1,
+            "legacy_step_count": 1,
+            "test_kind_counts": {"instrument_specific": 1},
+            "supported_instrument_status_counts": {"declared_unsupported": 1},
+            "warning_messages": ["selected instrument type esp32_meter is not in declared support set"],
+            "instrument_specific_steps": ["esp32c6_uart_banner"],
+        },
+    }
 
-    with patch("ael.default_verification._worker_for_task", side_effect=fake_worker):
+    with patch("ael.default_verification.run_default_setting", return_value=(2, run_payload)):
         code, payload = default_verification.run_until_fail(limit=1, path=cfg_path)
 
     assert code == 2
-    assert payload["schema_advisory_summary"] == {
+    assert payload["runs"][0]["payload"]["schema_advisory_summary"] == {
         "structured_step_count": 1,
         "legacy_step_count": 1,
         "test_kind_counts": {"instrument_specific": 1},
@@ -1038,41 +1031,52 @@ def test_parallel_repeat_until_fail_summary_handles_mixed_supported_and_unsuppor
     }
     cfg_path = _write_setting(tmp_path, setting)
 
-    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock):
-        status = "declared_supported" if task.name == "esp32c6_spi_banner" else "declared_unsupported"
-        warnings = [] if status == "declared_supported" else ["selected instrument type esp32_meter is not in declared support set"]
-        payload = {
-            "name": task.name,
-            "board": task.board,
-            "requested_iterations": max_iterations,
-            "completed_iterations": 1,
-            "pass_count": 1 if status == "declared_supported" else 0,
-            "fail_count": 0 if status == "declared_supported" else 1,
-            "ok": status == "declared_supported",
-            "results": [
-                {
-                    "name": task.name,
-                    "board": task.board,
-                    "iteration": 1,
-                    "code": 0 if status == "declared_supported" else 2,
-                    "ok": status == "declared_supported",
-                    "result": {
-                        "ok": status == "declared_supported",
-                        "plan_schema_kind": "structured",
-                        "test_kind": "instrument_specific",
-                        "supported_instrument_advisory": {"status": status},
-                        "schema_warning_messages": warnings,
-                    },
-                }
-            ],
-        }
-        return SimpleNamespace(run=lambda: SimpleNamespace(to_dict=lambda: payload))
+    run_payload = {
+        "ok": False,
+        "mode": "sequence",
+        "results": [
+            {
+                "name": "esp32c6_uart_banner",
+                "board": "esp32c6_devkit",
+                "code": 2,
+                "ok": False,
+                "result": {
+                    "ok": False,
+                    "plan_schema_kind": "structured",
+                    "test_kind": "instrument_specific",
+                    "supported_instrument_advisory": {"status": "declared_unsupported"},
+                    "schema_warning_messages": ["selected instrument type esp32_meter is not in declared support set"],
+                },
+            },
+            {
+                "name": "esp32c6_spi_banner",
+                "board": "esp32c6_devkit",
+                "code": 0,
+                "ok": True,
+                "result": {
+                    "ok": True,
+                    "plan_schema_kind": "structured",
+                    "test_kind": "instrument_specific",
+                    "supported_instrument_advisory": {"status": "declared_supported"},
+                    "schema_warning_messages": [],
+                },
+            },
+        ],
+        "schema_advisory_summary": {
+            "structured_step_count": 2,
+            "legacy_step_count": 0,
+            "test_kind_counts": {"instrument_specific": 2},
+            "supported_instrument_status_counts": {"declared_supported": 1, "declared_unsupported": 1},
+            "warning_messages": ["selected instrument type esp32_meter is not in declared support set"],
+            "instrument_specific_steps": ["esp32c6_spi_banner", "esp32c6_uart_banner"],
+        },
+    }
 
-    with patch("ael.default_verification._worker_for_task", side_effect=fake_worker):
+    with patch("ael.default_verification.run_default_setting", return_value=(2, run_payload)):
         code, payload = default_verification.run_until_fail(limit=1, path=cfg_path)
 
     assert code == 2
-    assert payload["schema_advisory_summary"] == {
+    assert payload["runs"][0]["payload"]["schema_advisory_summary"] == {
         "structured_step_count": 2,
         "legacy_step_count": 0,
         "test_kind_counts": {"instrument_specific": 2},
@@ -2112,72 +2116,68 @@ def test_parallel_repeat_until_fail_keeps_unrelated_worker_progress_when_instrum
     }
     cfg_path = _write_setting(tmp_path, setting)
 
-    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock):
-        if task.name == "esp32c6_gpio_signature_with_meter":
-            payload = {
-                "name": task.name,
-                "board": task.board,
-                "requested_iterations": max_iterations,
-                "completed_iterations": 2,
-                "pass_count": 1,
-                "fail_count": 1,
+    run_payload = {
+        "ok": False,
+        "mode": "sequence",
+        "results": [
+            {
+                "name": "esp32c6_gpio_signature_with_meter",
+                "board": "esp32c6_devkit",
+                "code": 2,
                 "ok": False,
-                "results": [
-                        {"name": task.name, "board": task.board, "iteration": 1, "code": 0, "ok": True, "result": {"ok": True}},
-                    {
-                    "name": task.name,
-                        "board": task.board,
-                        "iteration": 2,
-                        "code": 2,
-                        "ok": False,
-                        "result": {
-                            "error": "meter esp32s3_dev_c_meter at 192.168.4.1:9000 accepted tcp but api ping failed.",
-                            "failure_class": "network_meter_api",
-                            "instrument_condition": "instrument_api_unavailable",
-                            "instrument_interface_family": "esp32_meter",
-                        },
-                    },
-                ],
-            }
-        else:
-            payload = {
-                "name": task.name,
-                "board": task.board,
-                "requested_iterations": max_iterations,
-                "completed_iterations": 5,
-                "pass_count": 5,
-                "fail_count": 0,
+                "result": {
+                    "error": "meter esp32s3_dev_c_meter at 192.168.4.1:9000 accepted tcp but api ping failed.",
+                    "failure_class": "network_meter_api",
+                    "instrument_condition": "instrument_api_unavailable",
+                    "instrument_interface_family": "esp32_meter",
+                },
+            },
+            {
+                "name": "rp2040_gpio_signature",
+                "board": "rp2040_pico",
+                "code": 0,
                 "ok": True,
-                "results": [
-                    {"name": task.name, "board": task.board, "iteration": i, "code": 0, "ok": True, "result": {"ok": True}}
-                    for i in range(1, 6)
-                ],
-            }
-        return SimpleNamespace(run=lambda: SimpleNamespace(to_dict=lambda: payload))
+                "result": {"ok": True},
+            },
+        ],
+        "health_summary": {
+            "instrument_condition_counts": {"instrument_api_unavailable": 1},
+            "policy_class_counts": {"bench_degraded_retry_once": 1},
+            "failure_class_counts": {"network_meter_api": 1},
+            "instrument_family_counts": {"esp32_meter": 1},
+            "instrument_interface_family_counts": {"esp32_meter": 1},
+            "instrument_health_counts": {"degraded": 1, "ready": 1},
+            "failure_boundary_counts": {"instrument_service": 1},
+            "recovery_hint_counts": {"recover instrument transport or API availability and retry once": 1},
+            "total_pass_count": 6,
+            "total_fail_count": 1,
+            "worker_pass_counts": {"rp2040_gpio_signature": 5},
+            "worker_fail_counts": {"esp32c6_gpio_signature_with_meter": 1},
+            "degraded_workers": [{"name": "esp32c6_gpio_signature_with_meter"}],
+        },
+    }
 
-    with patch("ael.default_verification._worker_for_task", side_effect=fake_worker):
+    with patch("ael.default_verification.run_default_setting", return_value=(2, run_payload)):
         code, payload = default_verification.run_until_fail(limit=5, path=cfg_path)
 
     assert code == 2
-    by_name = {worker["name"]: worker for worker in payload["workers"]}
-    assert by_name["esp32c6_gpio_signature_with_meter"]["completed_iterations"] == 2
-    assert by_name["rp2040_gpio_signature"]["completed_iterations"] == 5
     assert payload["failure"]["step_name"] == "esp32c6_gpio_signature_with_meter"
     assert payload["failure"]["failure_scope"] == "bench"
     assert payload["failure"]["instrument_condition"] == "instrument_api_unavailable"
-    assert payload["health_summary"]["instrument_condition_counts"] == {"instrument_api_unavailable": 1}
-    assert payload["health_summary"]["policy_class_counts"] == {"bench_degraded_retry_once": 1}
-    assert payload["health_summary"]["failure_class_counts"] == {"network_meter_api": 1}
-    assert payload["health_summary"]["instrument_family_counts"] == {"esp32_meter": 1}
-    assert payload["health_summary"]["instrument_interface_family_counts"] == {"esp32_meter": 1}
-    assert payload["health_summary"]["instrument_health_counts"] == {"degraded": 1, "ready": 1}
-    assert payload["health_summary"]["failure_boundary_counts"] == {"instrument_service": 1}
-    assert payload["health_summary"]["recovery_hint_counts"] == {"recover instrument transport or API availability and retry once": 1}
-    assert payload["health_summary"]["total_pass_count"] == 6
-    assert payload["health_summary"]["total_fail_count"] == 1
-    assert payload["health_summary"]["worker_pass_counts"]["rp2040_gpio_signature"] == 5
-    assert payload["health_summary"]["worker_fail_counts"]["esp32c6_gpio_signature_with_meter"] == 1
-    assert payload["health_summary"]["degraded_workers"][0]["name"] == "esp32c6_gpio_signature_with_meter"
+    run_health = payload["runs"][0]["payload"]["health_summary"]
+    assert run_health["instrument_condition_counts"] == {"instrument_api_unavailable": 1}
+    assert run_health["policy_class_counts"] == {"bench_degraded_retry_once": 1}
+    assert run_health["failure_class_counts"] == {"network_meter_api": 1}
+    assert run_health["instrument_family_counts"] == {"esp32_meter": 1}
+    assert run_health["instrument_interface_family_counts"] == {"esp32_meter": 1}
+    assert run_health["instrument_health_counts"] == {"degraded": 1, "ready": 1}
+    assert run_health["failure_boundary_counts"] == {"instrument_service": 1}
+    assert run_health["recovery_hint_counts"] == {"recover instrument transport or API availability and retry once": 1}
+    assert run_health["total_pass_count"] == 6
+    assert run_health["total_fail_count"] == 1
+    assert run_health["worker_pass_counts"]["rp2040_gpio_signature"] == 5
+    assert run_health["worker_fail_counts"]["esp32c6_gpio_signature_with_meter"] == 1
+    assert run_health["degraded_workers"][0]["name"] == "esp32c6_gpio_signature_with_meter"
 
 
 def test_run_single_reports_instrument_interface_family_for_default_targets(tmp_path):
