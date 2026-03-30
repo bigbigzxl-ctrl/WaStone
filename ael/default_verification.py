@@ -1351,23 +1351,6 @@ def run_until_fail(
     skip_if_docs_only: bool = False,
     docs_check_mode: str = "changed",
 ) -> Tuple[int, Dict[str, Any]]:
-    setting = load_setting(path)
-    mode = str(setting.get("mode", "none")).strip().lower()
-    if mode == "sequence":
-        ok, error = _validate_sequence_groups(ael_paths.repo_root(), setting)
-        if not ok:
-            return 2, {"ok": False, "mode": mode, "error": error}
-        if "groups" not in setting:
-            suite = _suite_from_setting(setting, ael_paths.repo_root())
-            if suite.execution_policy.get("kind") != "serial":
-                repo_root = ael_paths.repo_root()
-                return _run_parallel_repeat_until_fail(
-                    repo_root=repo_root,
-                    suite=suite,
-                    output_mode=output_mode,
-                    limit=max(1, int(limit)),
-                )
-
     max_runs = max(1, int(limit))
     runs: List[Dict[str, Any]] = []
     for idx in range(1, max_runs + 1):

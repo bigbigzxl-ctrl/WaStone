@@ -1720,7 +1720,7 @@ def test_sequence_setting_materializes_suite_and_tasks_from_pack_step():
     ]
 
 
-def test_parallel_repeat_until_fail_is_per_worker(tmp_path):
+def test_run_until_fail_parallel_mode_repeats_full_suite_runs(tmp_path):
     setting = {
         "version": 1,
         "mode": "sequence",
@@ -1732,48 +1732,43 @@ def test_parallel_repeat_until_fail_is_per_worker(tmp_path):
     }
     cfg_path = _write_setting(tmp_path, setting)
 
-    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock):
-        if task.name == "rp2040_gpio_signature":
-            payload = {
-                "name": "rp2040_gpio_signature",
-                "board": "rp2040_pico",
-                "requested_iterations": max_iterations,
-                "completed_iterations": 3,
-                "pass_count": 2,
-                "fail_count": 1,
-                "ok": False,
-                "results": [
-                    {"name": "rp2040_gpio_signature", "board": "rp2040_pico", "iteration": 1, "code": 0, "ok": True, "result": {"ok": True}},
-                    {"name": "rp2040_gpio_signature", "board": "rp2040_pico", "iteration": 2, "code": 0, "ok": True, "result": {"ok": True}},
-                    {"name": "rp2040_gpio_signature", "board": "rp2040_pico", "iteration": 3, "code": 9, "ok": False, "result": {"error": "rp2040 fail"}},
-                ],
-            }
-        else:
-            payload = {
-                "name": "esp32c6_gpio_signature_with_meter",
-                "board": "esp32c6_devkit",
-                "requested_iterations": max_iterations,
-                "completed_iterations": 5,
-                "pass_count": 5,
-                "fail_count": 0,
+    runs = [
+        (
+            0,
+            {
                 "ok": True,
+                "mode": "sequence",
                 "results": [
-                    {"name": "esp32c6_gpio_signature_with_meter", "board": "esp32c6_devkit", "iteration": i, "code": 0, "ok": True, "result": {"ok": True}}
-                    for i in range(1, 6)
+                    {"name": "rp2040_gpio_signature", "board": "rp2040_pico", "code": 0, "ok": True, "result": {"ok": True}},
+                    {"name": "esp32c6_gpio_signature_with_meter", "board": "esp32c6_devkit", "code": 0, "ok": True, "result": {"ok": True}},
                 ],
-            }
-        return SimpleNamespace(run=lambda: SimpleNamespace(to_dict=lambda: payload))
+            },
+        ),
+        (
+            9,
+            {
+                "ok": False,
+                "mode": "sequence",
+                "results": [
+                    {"name": "rp2040_gpio_signature", "board": "rp2040_pico", "code": 9, "ok": False, "result": {"error": "rp2040 fail"}},
+                    {"name": "esp32c6_gpio_signature_with_meter", "board": "esp32c6_devkit", "code": 0, "ok": True, "result": {"ok": True}},
+                ],
+            },
+        ),
+    ]
 
-    with patch("ael.default_verification._worker_for_task", side_effect=fake_worker):
+    with patch("ael.default_verification.run_default_setting", side_effect=runs) as run_mock, patch(
+        "ael.default_verification._worker_for_task"
+    ) as worker_mock:
         code, payload = default_verification.run_until_fail(limit=5, path=cfg_path)
 
     assert code == 9
-    assert payload["requested_iterations_per_worker"] == 5
-    by_name = {worker["name"]: worker for worker in payload["workers"]}
-    assert by_name["rp2040_gpio_signature"]["completed_iterations"] == 3
-    assert by_name["esp32c6_gpio_signature_with_meter"]["completed_iterations"] == 5
+    assert payload["requested_runs"] == 5
+    assert payload["completed_runs"] == 2
+    assert len(payload["runs"]) == 2
     assert payload["failure"]["step_name"] == "rp2040_gpio_signature"
-    assert payload["failure"]["iteration"] == 3
+    assert run_mock.call_count == 2
+    worker_mock.assert_not_called()
 
 
 def test_task_resource_keys_include_explicit_probe_and_instrument(tmp_path):
