@@ -74,51 +74,32 @@ Current execution model:
 
 Current default sequence:
 
-1. `esp32c6_gpio_signature_with_meter`
-   - board: `esp32c6_devkit`
-   - test: `tests/plans/esp32c6_gpio_signature_with_meter.json`
-   - evidence: `uart.verify`, `instrument.signature`
-2. `rp2040_gpio_signature`
-   - board: `rp2040_pico`
-   - test: `tests/plans/rp2040_gpio_signature.json`
+1. `stm32f401_gpio_signature`
+   - board: `stm32f401rct6`
+   - test: `tests/plans/stm32f401_gpio_signature.json`
    - evidence: logic-analyzer `gpio.signal`
-3. `stm32f103_gpio_signature`
-   - board: `stm32f103_gpio`
-   - test: `tests/plans/stm32f103_gpio_signature.json`
-   - evidence: logic-analyzer `gpio.signal`
-4. `stm32f103_uart_banner`
-   - board: `stm32f103_uart`
-   - test: `tests/plans/stm32f103_uart_banner.json`
-   - evidence: `uart.verify`, `gpio.signal`
-5. `stm32f411_gpio_signature`
+2. `stm32f411_gpio_signature`
    - board: `stm32f411ceu6`
    - test: `tests/plans/stm32f411_gpio_signature.json`
+   - evidence: logic-analyzer `gpio.signal`
+3. `stm32g431_gpio_signature`
+   - board: `stm32g431cbu6`
+   - test: `tests/plans/stm32g431_gpio_signature.json`
    - evidence: logic-analyzer `gpio.signal`
 
 Current validated baseline:
 
-- the configured baseline now has five DUT tests, including `stm32f411_gpio_signature`
-- latest live default-verification run with the five-step configuration:
-  - `2026-03-14_09-27-35_rp2040_pico_rp2040_gpio_signature` -> `PASS`
-  - `2026-03-14_09-27-58_stm32f103_gpio_stm32f103_gpio_signature` -> `PASS`
-  - `2026-03-14_09-28-28_stm32f103_uart_stm32f103_uart_banner` -> `PASS`
-  - `2026-03-14_09-29-06_stm32f411ceu6_stm32f411_gpio_signature` -> `PASS`
-- suite nuance:
-  - the same run reported `esp32c6_gpio_signature_with_meter` as `FAIL` at `flash` because no serial port was found
-  - that is an existing ESP32-C6 bench availability issue, not an F411 regression
+- the configured baseline now has three DUT tests
+- it is scoped to the STM32 golden GPIO signature path only: `stm32f401`, `stm32f411`, `stm32g431`
 
 Known-good comparison artifact:
 
-- ESP32-C6:
-  - `runs/2026-03-13_19-17-59_esp32c6_devkit_esp32c6_gpio_signature_with_meter/artifacts/evidence.json`
-- RP2040:
-  - `runs/2026-03-13_19-18-52_rp2040_pico_rp2040_gpio_signature/artifacts/evidence.json`
-- STM32F103 GPIO DUT:
-  - `runs/2026-03-13_19-19-14_stm32f103_gpio_stm32f103_gpio_signature/artifacts/evidence.json`
-- STM32F103 UART DUT:
-  - `runs/2026-03-13_19-19-40_stm32f103_uart_stm32f103_uart_banner/artifacts/evidence.json`
+- STM32F401:
+  - `tests/plans/stm32f401_gpio_signature.json`
 - STM32F411:
-  - `runs/2026-03-14_09-29-06_stm32f411ceu6_stm32f411_gpio_signature/artifacts/evidence.json`
+  - `tests/plans/stm32f411_gpio_signature.json`
+- STM32G431:
+  - `tests/plans/stm32g431_gpio_signature.json`
 
 Legacy note:
 
