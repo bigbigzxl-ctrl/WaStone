@@ -41,6 +41,107 @@ from tools.audit_test_plan_schema import build_report as build_test_plan_schema_
 from tools.audit_test_plan_schema import build_report as build_test_plan_schema_report, render_text as render_test_plan_schema_report_text
 
 
+def _default_verification_manifest_path(runs_root: str) -> Path:
+    return Path(runs_root) / "default_verification_last_run.json"
+
+
+def _default_verification_result_run_id(result: dict) -> str | None:
+    if not isinstance(result, dict):
+        return None
+    run_id = str(result.get("run_id") or "").strip()
+    if run_id:
+        return run_id
+    summary = result.get("validation_summary") if isinstance(result.get("validation_summary"), dict) else {}
+    run_id = str(summary.get("run_id") or "").strip()
+    return run_id or None
+
+
+def _default_verification_suite_results(payload: dict) -> list[dict]:
+    if not isinstance(payload, dict):
+        return []
+    results = payload.get("results")
+    if not isinstance(results, list):
+        return []
+    suite_results = []
+    for item in results:
+        if not isinstance(item, dict):
+            continue
+        result = item.get("result") if isinstance(item.get("result"), dict) else {}
+        entry = {
+            "name": str(item.get("name") or "").strip(),
+            "board": str(item.get("board") or "").strip(),
+            "code": int(item.get("code", 0)),
+            "ok": bool(item.get("ok", False)),
+            "optional": bool(item.get("optional", False)),
+            "run_id": _default_verification_result_run_id(result),
+            "result": result,
+        }
+        suite_results.append(entry)
+    return suite_results
+
+
+def _save_default_verification_manifest(
+    *,
+    runs_root: str,
+    setting_file: str | None,
+    command_name: str,
+    code: int,
+    payload: dict,
+) -> None:
+    manifest_path = _default_verification_manifest_path(runs_root)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "schema_version": 1,
+        "kind": "default_verification_run",
+        "saved_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        "setting_file": str(Path(setting_file or DEFAULT_VERIFY_CONFIG_PATH).resolve()),
+        "command": command_name,
+        "exit_code": int(code),
+        "ok": int(code) == 0,
+        "mode": str(payload.get("mode") or "").strip(),
+        "selected_dut_tests": list(payload.get("selected_dut_tests") or []),
+        "failure": payload.get("failure") if isinstance(payload.get("failure"), dict) else None,
+        "suite_results": _default_verification_suite_results(payload),
+        "repeat_runs": [],
+    }
+    runs = payload.get("runs")
+    if isinstance(runs, list):
+        repeat_runs = []
+        for item in runs:
+            if not isinstance(item, dict):
+                continue
+            run_payload = item.get("payload") if isinstance(item.get("payload"), dict) else {}
+            repeat_runs.append(
+                {
+                    "iteration": int(item.get("iteration", 0)),
+                    "code": int(item.get("code", 0)),
+                    "ok": bool(item.get("ok", False)),
+                    "selected_dut_tests": list(run_payload.get("selected_dut_tests") or []),
+                    "failure": run_payload.get("failure") if isinstance(run_payload.get("failure"), dict) else None,
+                    "suite_results": _default_verification_suite_results(run_payload),
+                }
+            )
+        manifest["repeat_runs"] = repeat_runs
+        if repeat_runs:
+            manifest["suite_results"] = repeat_runs[-1]["suite_results"]
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def _load_default_verification_manifest(setting_file: str, runs_root: str) -> dict:
+    manifest_path = _default_verification_manifest_path(runs_root)
+    if not manifest_path.exists():
+        return {}
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    expected = str(Path(setting_file).resolve())
+    actual = str(payload.get("setting_file") or "").strip()
+    if actual and actual != expected:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
 def main():
     parser = argparse.ArgumentParser(prog="ael")
     # Follow docs/AI_USAGE_RULES.md: CLI is a deterministic control interface for AI agents.
@@ -844,6 +945,13 @@ def main():
                 skip_if_docs_only=bool(args.skip_if_docs_only),
                 docs_check_mode=str(args.docs_check_mode),
             )
+            _save_default_verification_manifest(
+                runs_root="runs",
+                setting_file=args.file,
+                command_name="run",
+                code=code,
+                payload=payload,
+            )
             print(json.dumps(payload, indent=2, sort_keys=True))
             _autosave_regression_snapshot(args.file, runs_root="runs", report_root=args.report_root)
             _print_actionable_hints(args.file, runs_root="runs")
@@ -855,6 +963,13 @@ def main():
                 output_mode="normal",
                 skip_if_docs_only=bool(args.skip_if_docs_only),
                 docs_check_mode=str(args.docs_check_mode),
+            )
+            _save_default_verification_manifest(
+                runs_root="runs",
+                setting_file=args.file,
+                command_name="repeat",
+                code=code,
+                payload=payload,
             )
             print(json.dumps(payload, indent=2, sort_keys=True))
             sys.exit(int(code))
@@ -2100,6 +2215,15 @@ def _verify_default_state(setting_file: str, runs_root: str) -> dict:
             if isinstance(_group, dict) and isinstance(_group.get("steps"), list):
                 steps.extend(_group["steps"])
     runs_dir = Path(runs_root)
+    manifest = _load_default_verification_manifest(setting_file, runs_root)
+    manifest_results = manifest.get("suite_results") if isinstance(manifest.get("suite_results"), list) else []
+    manifest_result_by_name: dict[str, dict] = {}
+    for item in manifest_results:
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "").strip()
+        if name:
+            manifest_result_by_name[name] = item
 
     # For each step, find the most recent run result
     validated: list[dict] = []
@@ -2159,35 +2283,39 @@ def _verify_default_state(setting_file: str, runs_root: str) -> dict:
         if isinstance(schema_result, dict):
             schema_results.append({"name": test_name, "board": board, "result": schema_result})
 
-        # Find matching run dirs sorted newest first
-        if runs_dir.exists():
-            pattern = f"*_{board}_{test_name}"
-            candidates = sorted(
-                [d for d in runs_dir.glob(pattern) if d.is_dir()],
-                reverse=True,
-            )
+        manifest_entry = manifest_result_by_name.get(test_name)
+        if manifest_entry:
+            result = manifest_entry.get("result") if isinstance(manifest_entry.get("result"), dict) else {}
+            ok = bool(manifest_entry.get("ok", False))
+            run_id = str(manifest_entry.get("run_id") or "").strip() or None
         else:
-            candidates = []
-
-        if not candidates:
-            entry = {"step": step_label, "run_id": None, "optional": optional}
-            if optional:
-                optional_failing.append(entry)
+            if runs_dir.exists():
+                pattern = f"*_{board}_{test_name}"
+                candidates = sorted(
+                    [d for d in runs_dir.glob(pattern) if d.is_dir()],
+                    reverse=True,
+                )
             else:
-                failing.append(entry)
-                if not current_blocker:
-                    current_blocker = f"no run found for {step_label}"
-            continue
+                candidates = []
 
-        # Load the most recent result
-        result_path = candidates[0] / "result.json"
-        try:
-            result = json.loads(result_path.read_text(encoding="utf-8"))
-        except Exception:
-            result = {}
+            if not candidates:
+                entry = {"step": step_label, "run_id": None, "optional": optional}
+                if optional:
+                    optional_failing.append(entry)
+                else:
+                    failing.append(entry)
+                    if not current_blocker:
+                        current_blocker = f"no run found for {step_label}"
+                continue
 
-        ok = bool(result.get("ok", False))
-        run_id = candidates[0].name
+            result_path = candidates[0] / "result.json"
+            try:
+                result = json.loads(result_path.read_text(encoding="utf-8"))
+            except Exception:
+                result = {}
+
+            ok = bool(result.get("ok", False))
+            run_id = candidates[0].name
         latest_fields = _state_latest_instrument_fields(result)
         family = str(latest_fields.get("instrument_family") or latest_fields.get("instrument_interface_family") or "").strip()
         if family:
@@ -2288,7 +2416,7 @@ def _verify_default_state(setting_file: str, runs_root: str) -> dict:
     return {
         "name": "Default Verification",
         "type": "system_baseline",
-        "state_basis": "last_known_run_results",
+        "state_basis": "last_default_verification_manifest" if manifest_result_by_name else "last_known_run_results",
         "health_status": health,
         "baseline_readiness_status": baseline_readiness_status,
         "configured_steps": len(steps),

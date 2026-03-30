@@ -3010,6 +3010,62 @@ def test_verify_default_state_reads_steps_from_groups_format(tmp_path):
     assert state["configured_steps"] == 2
 
 
+def test_verify_default_state_prefers_last_run_manifest_over_runs_glob(tmp_path):
+    setting_path = tmp_path / "default_verification_setting.json"
+    setting_path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "mode": "sequence",
+                "groups": [
+                    {
+                        "name": "parallel_batch",
+                        "execution_policy": {"kind": "parallel"},
+                        "steps": [
+                            {"board": "esp32c6_devkit", "test": "tests/plans/esp32c6_gpio_signature_with_meter.json"},
+                        ],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    runs_root = tmp_path / "runs"
+    runs_root.mkdir(parents=True)
+
+    stale = runs_root / "2026-03-21_10-00-00_esp32c6_devkit_esp32c6_gpio_signature_with_meter"
+    stale.mkdir()
+    (stale / "result.json").write_text(json.dumps({"ok": False, "error_summary": "stale failure"}), encoding="utf-8")
+
+    manifest = {
+        "schema_version": 1,
+        "kind": "default_verification_run",
+        "setting_file": str(setting_path.resolve()),
+        "command": "run",
+        "exit_code": 0,
+        "ok": True,
+        "suite_results": [
+            {
+                "name": "esp32c6_gpio_signature_with_meter",
+                "board": "esp32c6_devkit",
+                "code": 0,
+                "ok": True,
+                "run_id": "2026-03-21_11-00-00_esp32c6_devkit_esp32c6_gpio_signature_with_meter",
+                "result": {"ok": True, "instrument_family": "esp32_meter", "instrument_health": "ready"},
+            }
+        ],
+    }
+    (runs_root / "default_verification_last_run.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    state = _verify_default_state(str(setting_path), str(runs_root))
+
+    assert state["state_basis"] == "last_default_verification_manifest"
+    assert state["health_status"] == "pass"
+    assert len(state["validated_tests"]) == 1
+    assert state["validated_tests"][0]["run_id"] == "2026-03-21_11-00-00_esp32c6_devkit_esp32c6_gpio_signature_with_meter"
+    assert len(state["failing_tests"]) == 0
+
+
 def test_print_actionable_hints_shows_usb_transport_hint(tmp_path, capsys):
     """_print_actionable_hints extracts USB transport frozen hint from flash.log and prints ACTION REQUIRED block."""
     setting_path = tmp_path / "setting.json"
