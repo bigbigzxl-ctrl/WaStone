@@ -163,7 +163,8 @@ _VALID_MCU_ROLES = {"dut", "debugger", "coprocessor"}
 _VALID_BUILD_TYPES = {"arm_debug", "idf", "cmake", "pico"}
 _VALID_FLASH_METHODS = {"gdb_swd", "gdb_stutil", "idf_esptool"}
 _VALID_INSTRUMENT_FAMILIES = {"esp32jtag", "stlink", "esp32_meter", "none"}
-_VALID_LIFECYCLE_STAGES = {"golden", "draft", "runnable", "validated"}
+_VALID_LIFECYCLE_STAGES = {"golden", "draft", "runnable", "validated", "merge_candidate", "merged_to_main"}
+_VALID_PLATFORM_CLASSES = {"mcu", "fpga"}
 
 
 def validate_dut_manifest(manifest):
@@ -181,8 +182,8 @@ def validate_dut_manifest(manifest):
 
     errors = []
 
-    # name is required in the new spec
-    if not manifest.get("name"):
+    # name is required in the new spec; board_name is accepted for some migrated manifests
+    if not manifest.get("name") and not manifest.get("board_name"):
         errors.append("name: required")
 
     # lifecycle_stage
@@ -255,6 +256,27 @@ def validate_dut_manifest(manifest):
                     errors.append(f"{prefix}.instrument_family: required")
                 elif idf not in _VALID_INSTRUMENT_FAMILIES:
                     errors.append(f"{prefix}.instrument_family: '{idf}' not in {sorted(_VALID_INSTRUMENT_FAMILIES)}")
+
+    # classification{}
+    classification = manifest.get("classification")
+    if classification is not None:
+        if not isinstance(classification, dict):
+            errors.append("classification: must be a dict")
+        else:
+            required_keys = ("platform_class", "vendor", "family", "series", "line", "part_number")
+            for key in required_keys:
+                value = str(classification.get(key) or "").strip()
+                if not value:
+                    errors.append(f"classification.{key}: required")
+            platform_class = str(classification.get("platform_class") or "").strip()
+            if platform_class and platform_class not in _VALID_PLATFORM_CLASSES:
+                errors.append(f"classification.platform_class: '{platform_class}' not in {sorted(_VALID_PLATFORM_CLASSES)}")
+            for key in ("vendor", "family", "series", "line", "part_number"):
+                value = str(classification.get(key) or "").strip()
+                if value and value != value.lower():
+                    errors.append(f"classification.{key}: must be lowercase")
+                if value and " " in value:
+                    errors.append(f"classification.{key}: must not contain spaces")
 
     return errors
 

@@ -72,12 +72,18 @@ class TestMinimalValid:
         errors = validate_dut_manifest(m)
         assert "name: required" in errors
 
+    def test_board_name_can_satisfy_name_requirement(self):
+        m = _minimal_valid()
+        del m["name"]
+        m["board_name"] = "Migrated Board Name"
+        assert validate_dut_manifest(m) == []
+
 
 # ── lifecycle_stage ──────────────────────────────────────────────────────────
 
 class TestLifecycleStage:
     def test_valid_stages_pass(self):
-        for stage in ("golden", "draft", "runnable", "validated"):
+        for stage in ("golden", "draft", "runnable", "validated", "merge_candidate", "merged_to_main"):
             m = _minimal_valid()
             m["lifecycle_stage"] = stage
             assert validate_dut_manifest(m) == [], f"stage {stage!r} should be valid"
@@ -271,6 +277,70 @@ class TestBoardConfigs:
         m["board_configs"].append({"id": "stlink", "path": "x.yaml", "instrument_family": "bad"})
         errors = validate_dut_manifest(m)
         assert any("board_configs[1].instrument_family" in e for e in errors)
+
+
+# ── classification{} ─────────────────────────────────────────────────────────
+
+class TestClassification:
+    def test_classification_missing_is_ok(self):
+        m = _minimal_valid()
+        assert validate_dut_manifest(m) == []
+
+    def test_classification_must_be_dict(self):
+        m = _minimal_valid()
+        m["classification"] = "bad"
+        errors = validate_dut_manifest(m)
+        assert "classification: must be a dict" in errors
+
+    def test_valid_classification_passes(self):
+        m = _minimal_valid()
+        m["classification"] = {
+            "platform_class": "mcu",
+            "vendor": "st",
+            "family": "stm32",
+            "series": "stm32f4",
+            "line": "stm32f411",
+            "part_number": "stm32f411ceu6",
+        }
+        assert validate_dut_manifest(m) == []
+
+    def test_classification_requires_all_fields(self):
+        m = _minimal_valid()
+        m["classification"] = {"platform_class": "mcu"}
+        errors = validate_dut_manifest(m)
+        assert "classification.vendor: required" in errors
+        assert "classification.family: required" in errors
+        assert "classification.series: required" in errors
+        assert "classification.line: required" in errors
+        assert "classification.part_number: required" in errors
+
+    def test_invalid_platform_class_reported(self):
+        m = _minimal_valid()
+        m["classification"] = {
+            "platform_class": "soc",
+            "vendor": "st",
+            "family": "stm32",
+            "series": "stm32f4",
+            "line": "stm32f411",
+            "part_number": "stm32f411ceu6",
+        }
+        errors = validate_dut_manifest(m)
+        assert any("classification.platform_class" in e and "soc" in e for e in errors)
+
+    def test_classification_fields_must_be_lowercase_and_space_free(self):
+        m = _minimal_valid()
+        m["classification"] = {
+            "platform_class": "mcu",
+            "vendor": "ST",
+            "family": "stm32",
+            "series": "STM32F4",
+            "line": "stm32 f411",
+            "part_number": "stm32f411ceu6",
+        }
+        errors = validate_dut_manifest(m)
+        assert "classification.vendor: must be lowercase" in errors
+        assert "classification.series: must be lowercase" in errors
+        assert "classification.line: must not contain spaces" in errors
 
 
 # ── Integration: all 12 golden DUT manifests pass ────────────────────────────
