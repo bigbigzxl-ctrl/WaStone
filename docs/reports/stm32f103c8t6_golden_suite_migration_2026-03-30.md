@@ -77,6 +77,8 @@ The older `.99` UART-specific path remains in the tree for historical evidence:
 But it is no longer the canonical golden *test shape* for STM32F103.
 The DUT default pack now points at `packs/stm32f103c8t6_golden.json`, while the
 canonical staged suite remains bound to the actual F103 golden bench at `.99`.
+The old UART bridge path should be treated as a legacy capability anchor, not
+as the active STM32F103C8T6 golden-suite entrypoint.
 
 ## Current scope
 
@@ -109,3 +111,14 @@ The deliberate difference is:
 `i2c_loopback` is intentionally left out because the canonical F103 bench wiring
 for this migration does not include an I2C loopback pair. The suite was expanded
 only with tests that fit the already-installed wiring.
+
+## Final live result
+
+Final end-to-end confirmation was completed on the canonical `.99` bench:
+
+- pack run: `pack_runs/2026-03-30_09-35-39_stm32f103c8t6_golden_stm32f103_gpio`
+- result: `24/24 PASS`
+
+This confirms that the staged STM32F103C8T6 golden suite is fully live-valid on
+the canonical `stm32f103_gpio` path and supersedes the older UART-only golden
+shape.

@@ -4,7 +4,7 @@
 **Board:** `stm32f103_gpio`
 **Pack:** `packs/stm32f103c8t6_golden.json`
 **Instrument:** canonical live bench `esp32jtag_stm32f103_golden` @ `192.168.2.99:4242`
-**Status:** stale `.109` binding corrected to `.99`; Stage 0 to Stage 3 reached real DUT execution, and the remaining mailbox failures were closed by targeted live reruns
+**Status:** stale `.109` binding corrected to `.99`; final canonical full-pack rerun completed `24/24 PASS`
 
 ## Summary
 
@@ -27,9 +27,8 @@ isolated the only remaining failures to:
 - `stm32f103_pwm_capture`
 
 Both of those mailbox tests were then corrected and revalidated directly on the
-live `.99` bench. The suite migration, wiring contract, and Stage 3 banner path
-are therefore validated; the only missing artifact for a final golden-pass
-closeout is one fresh post-fix all-pass full-pack rerun.
+live `.99` bench. A final post-fix full-pack rerun was then completed and
+finished `24/24 PASS`.
 
 ## Setup Confirmed
 
@@ -56,6 +55,8 @@ Representative pack runs:
 - first corrected-binding full-pack run: `pack_runs/2026-03-30_09-10-33_stm32f103c8t6_golden_stm32f103_gpio`
 - follow-up full-pack rerun started before the final mailbox stabilization patch:
   `pack_runs/2026-03-30_09-23-33_stm32f103c8t6_golden_stm32f103_gpio`
+- final all-pass canonical rerun:
+  `pack_runs/2026-03-30_09-35-39_stm32f103c8t6_golden_stm32f103_gpio`
 
 Representative targeted runs:
 
@@ -129,6 +130,9 @@ Representative corrected-binding full-pack status:
   the live bench:
   - `stm32f103_capture_mailbox`
   - `stm32f103_pwm_capture`
+- final confirmation:
+  - `pack_runs/2026-03-30_09-35-39_stm32f103c8t6_golden_stm32f103_gpio`
+  - result: `24/24 PASS`
 
 ## Root Cause Classification
 
@@ -165,17 +169,14 @@ PA4→P0.0 PA5→P0.1 PC13→LED GND→probe GND
 PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board stm32f103_gpio
 ```
 
-4. If that rerun is green, mark the `STM32F103C8T6` staged suite as fully
-   validated on the canonical `.99` bench
+4. Mark the `STM32F103C8T6` staged suite as fully validated on the canonical
+   `.99` bench
 
 ## Closeout Decision
 
 This round is a valid live-validation closeout for the suite migration and
-bench-correction work. It is also a valid closeout for the Stage 3 enablement
-and the remaining mailbox fixes.
-
-It is still one step short of a final golden-pass closeout because the final
-post-fix full-pack rerun has not yet been captured.
+bench-correction work. It is also the final golden-pass closeout for the
+canonical STM32F103C8T6 staged suite on `.99`.
 
 The correct conclusion is:
 
@@ -183,4 +184,4 @@ The correct conclusion is:
 - stale `.109` C8T6 binding: removed from the active path
 - canonical `.99` wiring contract: confirmed on live hardware
 - Stage 0 to Stage 3 targeted validation: complete
-- remaining closure item: one fresh all-pass full-pack rerun on `.99`
+- final canonical full-pack rerun: `24/24 PASS`

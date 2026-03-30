@@ -114,6 +114,9 @@ Current status:
   - `stm32f103_uart_banner`
   - `stm32f411_gpio_signature`
 - the same run still hit an existing ESP32-C6 flash/serial availability problem on `esp32c6_gpio_signature_with_meter`
+- note:
+  - `stm32f103_uart_banner` remains in the default verification baseline as a legacy UART-bridge capability check
+  - the canonical STM32F103C8T6 golden path is now `packs/stm32f103c8t6_golden.json` on `stm32f103_gpio`, not `stm32f103_uart`
 
 ## Current STM32F411 Bring-Up Status
 

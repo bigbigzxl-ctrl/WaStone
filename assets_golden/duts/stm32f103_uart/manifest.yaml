@@ -2,7 +2,7 @@ id: stm32f103_uart
 name: STM32F103 Bluepill UART Bench
 mcu: stm32f103c8t6
 family: stm32f1
-description: STM32F103C8T6 Bluepill UART bridge bench DUT
+description: Legacy STM32F103C8T6 Bluepill UART bridge bench DUT; not the canonical staged golden suite path
 
 board:
   vendor: Generic
@@ -38,6 +38,11 @@ tags:
   - stm32f1
   - bluepill
   - uart_bench
+  - legacy_path
+notes:
+  canonical_replacement: assets_golden/duts/stm32f103_gpio/manifest.yaml
+  canonical_pack: packs/stm32f103c8t6_golden.json
+  status: Retained for historical USB-UART bridge coverage only. Do not use as the canonical STM32F103C8T6 golden suite entry.
 verified:
   status: true
   verified_on:
