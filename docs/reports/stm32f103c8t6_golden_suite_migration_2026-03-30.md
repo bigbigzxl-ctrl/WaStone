@@ -6,9 +6,10 @@
 
 ## Goal
 
-Retire the old `192.168.2.99` UART-bridge path as the implied STM32F103 golden
-entry, and replace it with one canonical staged suite aligned with the current
-STM32 golden-suite model used by `STM32G431` and `STM32F401`.
+Replace the old single-test `.99` UART-centered entry with one canonical staged
+suite, still anchored on the actual STM32F103 golden bench instrument at
+`192.168.2.99`, and align it with the current STM32 golden-suite model used by
+`STM32G431` and `STM32F401`.
 
 ## Canonical wiring
 
@@ -24,6 +25,8 @@ This migration standardizes STM32F103C8T6 onto one fixed stage2/3 bench wiring:
 - `GND → probe GND`
 
 Bench profile: `configs/bench_profiles/stm32f103_gpio__stage3.yaml`
+
+Canonical control instrument: `esp32jtag_stm32f103_golden` @ `192.168.2.99:4242`
 
 ## Stage layout
 
@@ -65,14 +68,15 @@ Bench profile: `configs/bench_profiles/stm32f103_gpio__stage3.yaml`
 
 ## Legacy cleanup decision
 
-The older `.99` path remains in the tree for historical evidence:
+The older `.99` UART-specific path remains in the tree for historical evidence:
 
 - board profile: `configs/boards/stm32f103_uart.yaml`
 - instrument: `configs/instrument_instances/esp32jtag_stm32_uart.yaml`
 - test: `tests/plans/stm32f103_uart_banner.json`
 
-But it is no longer the default or canonical golden entry path for STM32F103.
-The DUT default pack now points at `packs/stm32f103c8t6_golden.json`.
+But it is no longer the canonical golden *test shape* for STM32F103.
+The DUT default pack now points at `packs/stm32f103c8t6_golden.json`, while the
+canonical staged suite remains bound to the actual F103 golden bench at `.99`.
 
 ## Current scope
 

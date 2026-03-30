@@ -1,7 +1,7 @@
 board:
   name: STM32F103 Bluepill GPIO Bench
   target: stm32f103c8t6
-  instrument_instance: esp32jtag_stm32_golden
+  instrument_instance: esp32jtag_stm32f103_golden
   clock_hz: 8000000
   default_bench_profile: stm32f103_gpio__default
   build:
