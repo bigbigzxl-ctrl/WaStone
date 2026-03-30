@@ -317,6 +317,15 @@ def main():
     inventory_sub = inventory_p.add_subparsers(dest="inventory_cmd", required=True)
     inventory_list = inventory_sub.add_parser("list")
     inventory_list.add_argument("--format", choices=["json", "text"], default="json")
+    inventory_suites = inventory_sub.add_parser("suites")
+    inventory_suites.add_argument("--platform-class")
+    inventory_suites.add_argument("--vendor")
+    inventory_suites.add_argument("--family")
+    inventory_suites.add_argument("--series")
+    inventory_suites.add_argument("--line")
+    inventory_suites.add_argument("--part-number")
+    inventory_suites.add_argument("--label")
+    inventory_suites.add_argument("--format", choices=["json", "text"], default="json")
     inventory_instances = inventory_sub.add_parser("instances")
     inventory_instances.add_argument("--format", choices=["json", "text"], default="json")
     inventory_describe_dut = inventory_sub.add_parser("describe-dut")
@@ -749,6 +758,22 @@ def main():
             payload = inventory.build_inventory(Path(repo_root))
             if args.format == "text":
                 print(inventory.render_text(payload), end="")
+            else:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            sys.exit(0)
+        if args.inventory_cmd == "suites":
+            payload = inventory.list_suites(
+                repo_root=Path(repo_root),
+                platform_class=args.platform_class,
+                vendor=args.vendor,
+                family=args.family,
+                series=args.series,
+                line=args.line,
+                part_number=args.part_number,
+                label=args.label,
+            )
+            if args.format == "text":
+                print(inventory.render_suite_list_text(payload), end="")
             else:
                 print(json.dumps(payload, indent=2, sort_keys=True))
             sys.exit(0)

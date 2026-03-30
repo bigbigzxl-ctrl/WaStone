@@ -347,6 +347,24 @@ Rule:
 
 - make user-facing inventory answers rely on taxonomy-backed filtering instead of repo search heuristics
 
+Current implementation status:
+
+- `classification:` blocks exist on the canonical DUT manifests migrated so far
+- `ael inventory suites` supports filtering by:
+  - `--platform-class`
+  - `--vendor`
+  - `--family`
+  - `--series`
+  - `--line`
+  - `--part-number`
+  - `--label`
+
+Example:
+
+```bash
+python3 -m ael inventory suites --vendor st --family stm32 --series stm32f4 --label golden --format text
+```
+
 ---
 
 ## Non-Goals
@@ -363,4 +381,3 @@ Those remain separate concepts:
 - bench identity
 - suite maturity
 - connection contract
-

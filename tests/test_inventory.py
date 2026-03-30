@@ -510,6 +510,67 @@ def test_inventory_describe_dut_cli_text_output():
     assert "canonical_pack: packs/stm32f103c8t6_golden.json" in res.stdout
 
 
+def test_build_inventory_surfaces_classification():
+    payload = inventory.build_inventory(REPO_ROOT)
+    stm32f103 = next(item for item in payload["duts"] if item["dut_id"] == "stm32f103_gpio")
+    assert stm32f103["classification"]["platform_class"] == "mcu"
+    assert stm32f103["classification"]["vendor"] == "st"
+    assert stm32f103["classification"]["family"] == "stm32"
+    assert stm32f103["classification"]["series"] == "stm32f1"
+    assert stm32f103["classification"]["line"] == "stm32f103"
+    assert stm32f103["classification"]["part_number"] == "stm32f103c8t6"
+
+
+def test_list_suites_filters_stm32_family_and_f4_series():
+    stm32_payload = inventory.list_suites(repo_root=REPO_ROOT, vendor="st", family="stm32", label="golden")
+    stm32_ids = {item["dut_id"] for item in stm32_payload["suites"]}
+    assert "stm32f103_gpio" in stm32_ids
+    assert "stm32f401rct6" in stm32_ids
+    assert "stm32f411ceu6" in stm32_ids
+    assert "stm32g431cbu6" in stm32_ids
+    assert "stm32h750vbt6" in stm32_ids
+    assert all(item["classification"]["family"] == "stm32" for item in stm32_payload["suites"])
+
+    f4_payload = inventory.list_suites(repo_root=REPO_ROOT, vendor="st", family="stm32", series="stm32f4", label="golden")
+    f4_ids = {item["dut_id"] for item in f4_payload["suites"]}
+    assert "stm32f401rct6" in f4_ids
+    assert "stm32f411ceu6" in f4_ids
+    assert "stm32f103_gpio" not in f4_ids
+    assert all(item["classification"]["series"] == "stm32f4" for item in f4_payload["suites"])
+
+
+def test_inventory_suites_cli_text_output():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "."
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ael",
+            "inventory",
+            "suites",
+            "--vendor",
+            "st",
+            "--family",
+            "stm32",
+            "--series",
+            "stm32f4",
+            "--label",
+            "golden",
+            "--format",
+            "text",
+        ],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+    )
+    assert "filters: vendor=st, family=stm32, series=stm32f4, label=golden" in res.stdout
+    assert "stm32f401rct6" in res.stdout
+    assert "stm32f411ceu6" in res.stdout
+
+
 def test_describe_test_for_stm32f401_led_blink():
     payload = inventory.describe_test("stm32f401rct6", "tests/plans/stm32f401_led_blink.json", REPO_ROOT)
     assert payload["ok"] is True

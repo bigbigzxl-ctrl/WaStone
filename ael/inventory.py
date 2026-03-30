@@ -52,6 +52,43 @@ def _normalize_suite_label(value: Any) -> str | None:
     return aliases.get(raw)
 
 
+def _normalize_vendor(value: Any) -> str | None:
+    raw = str(value or "").strip().lower()
+    if not raw:
+        return None
+    aliases = {
+        "stmicroelectronics": "st",
+        "st": "st",
+        "generic": "generic",
+        "weact studio": "weact_studio",
+        "weact": "weact_studio",
+        "espressif": "espressif",
+        "raspberry pi foundation": "raspberry_pi",
+        "raspberry pi": "raspberry_pi",
+        "yd": "yd",
+    }
+    return aliases.get(raw, raw.replace(" ", "_"))
+
+
+def _line_from_part_number(value: Any) -> str | None:
+    raw = str(value or "").strip().lower()
+    if not raw:
+        return None
+    if raw.startswith("stm32"):
+        suffix = raw[5:]
+        if not suffix:
+            return None
+        line = "stm32"
+        for char in suffix:
+            if char.isdigit():
+                line += char
+            else:
+                break
+        if len(line) > len("stm32"):
+            return line
+    return raw
+
+
 def _metadata_explanation(metadata: Dict[str, Any]) -> Dict[str, str | None]:
     test_kind = str(metadata.get("test_kind") or "").strip()
     requires = metadata.get("requires") if isinstance(metadata.get("requires"), dict) else {}
@@ -610,6 +647,49 @@ def _tests_by_stage(pack: Dict[str, Any], plans_by_path: Dict[str, Dict[str, Any
     return items
 
 
+def _classification_for_manifest(manifest: Dict[str, Any]) -> Dict[str, Any]:
+    classification = manifest.get("classification") if isinstance(manifest.get("classification"), dict) else {}
+    if classification:
+        return {
+            "platform_class": str(classification.get("platform_class") or "").strip() or None,
+            "vendor": _normalize_vendor(classification.get("vendor")),
+            "family": str(classification.get("family") or "").strip().lower() or None,
+            "series": str(classification.get("series") or "").strip().lower() or None,
+            "line": str(classification.get("line") or "").strip().lower() or None,
+            "part_number": str(classification.get("part_number") or "").strip().lower() or None,
+            "source": "manifest.classification",
+        }
+
+    board = manifest.get("board") if isinstance(manifest.get("board"), dict) else {}
+    family_raw = str(manifest.get("family") or "").strip().lower()
+    mcu = str(manifest.get("mcu") or "").strip().lower()
+    family = family_raw or None
+    series = family_raw or None
+    line = _line_from_part_number(mcu)
+    part_number = mcu or None
+    if family_raw.startswith("stm32"):
+        family = "stm32"
+        series = family_raw
+        line = _line_from_part_number(mcu) or line
+    elif family_raw.startswith("esp32"):
+        family = "esp32"
+        series = mcu or family_raw
+        line = mcu or family_raw
+    elif family_raw.startswith("rp"):
+        family = family_raw
+        series = family_raw
+        line = family_raw
+    return {
+        "platform_class": "mcu" if family or mcu else None,
+        "vendor": _normalize_vendor(board.get("vendor")),
+        "family": family,
+        "series": series,
+        "line": line,
+        "part_number": part_number,
+        "source": "inferred_from_manifest",
+    }
+
+
 def build_instrument_instance_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
     return build_resolved_instrument_inventory(repo_root or REPO_ROOT)
 
@@ -634,6 +714,7 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
             packs_for_dut = [item for item in packs if item.get("board") == dut_id]
             canonical_pack = _select_canonical_pack(manifest, packs_for_dut)
             suite_label = _suite_label_for_dut(manifest, canonical_pack)
+            classification = _classification_for_manifest(manifest)
             tests: List[Dict[str, Any]] = []
             for plan in plans_by_path.values():
                 if plan.get("board") == dut_id or plan.get("dut") == dut_id:
@@ -698,6 +779,7 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
                     "lifecycle_stage": str(manifest.get("lifecycle_stage") or "").strip() or None,
                     "board_config": board_config.relative_to(root).as_posix() if board_config.exists() else None,
                     "verified_status": bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else None,
+                    "classification": classification,
                     "suite_label": suite_label.get("label"),
                     "suite_label_source": suite_label.get("source"),
                     "canonical_pack": {
@@ -867,6 +949,7 @@ def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]
             "source": "user" if "/assets_user/" in str(dut.get("path") or "") else "golden",
             "lifecycle_stage": str(manifest.get("lifecycle_stage") or "").strip() or None,
             "verified_status": bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else None,
+            "classification": _classification_for_manifest(manifest),
         },
         "suite": {
             "label": suite_label.get("label"),
@@ -906,6 +989,68 @@ def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]
             ],
             key=lambda item: item["path"],
         ),
+    }
+
+
+def list_suites(
+    *,
+    repo_root: Path | None = None,
+    platform_class: str | None = None,
+    vendor: str | None = None,
+    family: str | None = None,
+    series: str | None = None,
+    line: str | None = None,
+    part_number: str | None = None,
+    label: str | None = None,
+) -> Dict[str, Any]:
+    payload = build_inventory(repo_root)
+    filters = {
+        "platform_class": str(platform_class or "").strip().lower() or None,
+        "vendor": _normalize_vendor(vendor),
+        "family": str(family or "").strip().lower() or None,
+        "series": str(series or "").strip().lower() or None,
+        "line": str(line or "").strip().lower() or None,
+        "part_number": str(part_number or "").strip().lower() or None,
+        "label": _normalize_suite_label(label),
+    }
+
+    suites: List[Dict[str, Any]] = []
+    for dut in payload.get("duts") or []:
+        classification = dut.get("classification") if isinstance(dut.get("classification"), dict) else {}
+        if filters["platform_class"] and classification.get("platform_class") != filters["platform_class"]:
+            continue
+        if filters["vendor"] and classification.get("vendor") != filters["vendor"]:
+            continue
+        if filters["family"] and classification.get("family") != filters["family"]:
+            continue
+        if filters["series"] and classification.get("series") != filters["series"]:
+            continue
+        if filters["line"] and classification.get("line") != filters["line"]:
+            continue
+        if filters["part_number"] and classification.get("part_number") != filters["part_number"]:
+            continue
+        if filters["label"] and dut.get("suite_label") != filters["label"]:
+            continue
+        suites.append(
+            {
+                "dut_id": dut.get("dut_id"),
+                "mcu": dut.get("mcu"),
+                "family": dut.get("family"),
+                "classification": classification,
+                "suite_label": dut.get("suite_label"),
+                "suite_label_source": dut.get("suite_label_source"),
+                "canonical_pack": dut.get("canonical_pack"),
+                "lifecycle_stage": dut.get("lifecycle_stage"),
+                "verified_status": dut.get("verified_status"),
+                "test_count": len(dut.get("tests") or []),
+            }
+        )
+    return {
+        "ok": True,
+        "generated_at": payload.get("generated_at"),
+        "filters": filters,
+        "summary": {"suite_count": len(suites)},
+        "suites": sorted(suites, key=lambda item: str(item.get("dut_id") or "")),
     }
 
 
@@ -1106,6 +1251,36 @@ def render_describe_dut_text(payload: Dict[str, Any]) -> str:
             lines.append(f"  - stage {stage.get('stage')}:")
             for test in stage.get("tests") or []:
                 lines.append(f"    {test.get('name')} ({test.get('path')})")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def render_suite_list_text(payload: Dict[str, Any]) -> str:
+    if not payload.get("ok"):
+        return f"error: {payload.get('error')}\n"
+    lines: List[str] = []
+    filters = payload.get("filters", {}) if isinstance(payload.get("filters"), dict) else {}
+    active_filters = [f"{key}={value}" for key, value in filters.items() if value]
+    lines.append("Suite inventory")
+    if active_filters:
+        lines.append("filters: " + ", ".join(active_filters))
+    lines.append(f"suite_count: {((payload.get('summary') or {}).get('suite_count', 0))}")
+    lines.append("")
+    for item in payload.get("suites") or []:
+        classification = item.get("classification") if isinstance(item.get("classification"), dict) else {}
+        pack = item.get("canonical_pack") if isinstance(item.get("canonical_pack"), dict) else {}
+        parts = [
+            str(item.get("dut_id") or ""),
+            f"label={item.get('suite_label')}",
+        ]
+        if classification.get("family"):
+            parts.append(f"family={classification.get('family')}")
+        if classification.get("series"):
+            parts.append(f"series={classification.get('series')}")
+        if classification.get("line"):
+            parts.append(f"line={classification.get('line')}")
+        if pack.get("name"):
+            parts.append(f"pack={pack.get('name')}")
+        lines.append("  ".join(parts))
     return "\n".join(lines).rstrip() + "\n"
 
 
