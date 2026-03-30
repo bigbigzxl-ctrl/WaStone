@@ -1662,6 +1662,64 @@ def test_sequence_setting_accepts_board_bound_non_inventory_step():
     assert error == ""
 
 
+def test_sequence_setting_accepts_pack_step():
+    setting = {
+        "version": 1,
+        "mode": "sequence",
+        "steps": [
+            {
+                "pack": "packs/smoke_stm32f411.json",
+            }
+        ],
+    }
+
+    ok, error = default_verification._validate_sequence_steps(REPO_ROOT, setting)
+
+    assert ok is True
+    assert error == ""
+
+
+def test_sequence_setting_materializes_suite_and_tasks_from_pack_step():
+    setting = {
+        "version": 1,
+        "mode": "sequence",
+        "execution_policy": {"kind": "parallel"},
+        "steps": [
+            {"pack": "packs/smoke_stm32f411.json"},
+            {"pack": "packs/smoke_stm32g431.json"},
+        ],
+    }
+
+    suite = default_verification._suite_from_setting(setting, REPO_ROOT)
+
+    assert suite.name == "default_verification"
+    assert suite.execution_policy["kind"] == "parallel"
+    assert [task.name for task in suite.tasks] == [
+        "stm32f411_gpio_signature",
+        "stm32g431_minimal_runtime_mailbox",
+        "stm32g431_gpio_signature",
+        "stm32g431_uart_loopback",
+        "stm32g431_spi",
+        "stm32g431_adc",
+        "stm32g431_capture",
+        "stm32g431_exti",
+        "stm32g431_gpio_loopback",
+        "stm32g431_pwm",
+    ]
+    assert [task.board for task in suite.tasks] == [
+        "stm32f411ceu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+        "stm32g431cbu6",
+    ]
+
+
 def test_parallel_repeat_until_fail_is_per_worker(tmp_path):
     setting = {
         "version": 1,

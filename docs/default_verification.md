@@ -74,32 +74,30 @@ Current execution model:
 
 Current default sequence:
 
-1. `stm32f401_gpio_signature`
+1. `packs/stm32f401rct6_golden.json`
    - board: `stm32f401rct6`
-   - test: `tests/plans/stm32f401_gpio_signature.json`
-   - evidence: logic-analyzer `gpio.signal`
-2. `stm32f411_gpio_signature`
+   - scope: full golden suite, `20` tests
+2. `packs/stm32f411ceu6_golden.json`
    - board: `stm32f411ceu6`
-   - test: `tests/plans/stm32f411_gpio_signature.json`
-   - evidence: logic-analyzer `gpio.signal`
-3. `stm32g431_gpio_signature`
+   - scope: full golden suite, `20` tests
+3. `packs/stm32g431cbu6_golden.json`
    - board: `stm32g431cbu6`
-   - test: `tests/plans/stm32g431_gpio_signature.json`
-   - evidence: logic-analyzer `gpio.signal`
+   - scope: full golden suite, `17` tests
 
 Current validated baseline:
 
-- the configured baseline now has three DUT tests
-- it is scoped to the STM32 golden GPIO signature path only: `stm32f401`, `stm32f411`, `stm32g431`
+- the configured baseline now has three DUT packs
+- the grouped default-verification expansion is `57` tests total
+- it is scoped to the STM32 golden suite path only: `stm32f401`, `stm32f411`, `stm32g431`
 
 Known-good comparison artifact:
 
 - STM32F401:
-  - `tests/plans/stm32f401_gpio_signature.json`
+  - `packs/stm32f401rct6_golden.json`
 - STM32F411:
-  - `tests/plans/stm32f411_gpio_signature.json`
+  - `packs/stm32f411ceu6_golden.json`
 - STM32G431:
-  - `tests/plans/stm32g431_gpio_signature.json`
+  - `packs/stm32g431cbu6_golden.json`
 
 Legacy note:
 

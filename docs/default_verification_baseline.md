@@ -13,27 +13,29 @@ for:
 
 ## Current configured steps
 
-The current baseline is one three-worker parallel batch defined in
+The current baseline is one three-pack parallel batch defined in
 [configs/default_verification_setting.yaml](/nvme1t/work/codex/ai-embedded-lab/configs/default_verification_setting.yaml).
 
 ### Required (3)
 
 - DUT: `stm32f401rct6`
-- DUT test: `stm32f401_gpio_signature`
-- Plan: `tests/plans/stm32f401_gpio_signature.json`
+- Pack: `packs/stm32f401rct6_golden.json`
+- Scope: full golden suite (`20` tests)
 
 - DUT: `stm32f411ceu6`
-- DUT test: `stm32f411_gpio_signature`
-- Plan: `tests/plans/stm32f411_gpio_signature.json`
+- Pack: `packs/stm32f411ceu6_golden.json`
+- Scope: full golden suite (`20` tests)
 
 - DUT: `stm32g431cbu6`
-- DUT test: `stm32g431_gpio_signature`
-- Plan: `tests/plans/stm32g431_gpio_signature.json`
+- Pack: `packs/stm32g431cbu6_golden.json`
+- Scope: full golden suite (`17` tests)
 
 ## Current validated result
 
-This baseline is now intentionally narrowed to the three STM32 golden GPIO
-signature suites: `STM32F401`, `STM32F411`, and `STM32G431`.
+This baseline is now intentionally narrowed to the three STM32 golden suites:
+`STM32F401`, `STM32F411`, and `STM32G431`.
+
+Current expanded task count: `57` tests total.
 
 ## Current baseline meaning
 

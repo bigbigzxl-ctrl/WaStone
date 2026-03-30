@@ -15,6 +15,7 @@ from ael import strategy_resolver
 from ael.compatibility.resolver import resolve_dut_test
 from ael.dut.model import DUTConfig
 from ael.dut.registry import load_dut_from_file
+from ael.pack_loader import load_pack
 from ael.config_resolver import resolve_controller_config, resolve_controller_instance
 from ael.adapters import preflight
 from ael.instruments import provision as instrument_provision
@@ -509,9 +510,9 @@ def _canonical_test_name(test_path: str | None) -> str:
 
 
 def _validate_sequence_steps(repo_root: Path, setting: Dict[str, Any], *, label: str = "step") -> Tuple[bool, str]:
-    steps = setting.get("steps", [])
-    if not isinstance(steps, list) or not steps:
-        return False, "sequence mode requires non-empty steps"
+    ok, steps, error = _expanded_sequence_steps(repo_root, setting.get("steps", []), label=label)
+    if not ok:
+        return False, error
     inventory_payload = inventory_view.build_inventory(repo_root)
     valid_pairs = {
         (
@@ -541,6 +542,68 @@ def _validate_sequence_steps(repo_root: Path, setting: Dict[str, Any], *, label:
         if bad:
             return False, f"{label} {idx} must not redefine DUT test identity/setup fields: {', '.join(bad)}"
     return True, ""
+
+
+def _expanded_sequence_steps(
+    repo_root: Path,
+    raw_steps: Any,
+    *,
+    label: str = "step",
+) -> Tuple[bool, List[Dict[str, Any]], str]:
+    if not isinstance(raw_steps, list) or not raw_steps:
+        return False, [], "sequence mode requires non-empty steps"
+
+    expanded: List[Dict[str, Any]] = []
+    forbidden_fields = ("name", "probe", "instrument_instance")
+
+    for idx, raw_step in enumerate(raw_steps, start=1):
+        if not isinstance(raw_step, dict):
+            return False, [], f"{label} {idx} must be an object"
+
+        bad = [field for field in forbidden_fields if raw_step.get(field) not in (None, "")]
+        if bad:
+            return False, [], f"{label} {idx} must not redefine DUT test identity/setup fields: {', '.join(bad)}"
+
+        pack = _resolve_path(repo_root, raw_step.get("pack"))
+        test = _resolve_path(repo_root, raw_step.get("test"))
+        if pack and test:
+            return False, [], f"{label} {idx} must specify either pack or test, not both"
+
+        if pack:
+            try:
+                pack_payload = load_pack(pack)
+            except Exception as exc:
+                return False, [], f"{label} {idx} failed to load pack={pack}: {exc}"
+            board = str(raw_step.get("board") or pack_payload.get("board") or "").strip()
+            tests = pack_payload.get("programs") or pack_payload.get("tests") or []
+            if not board:
+                return False, [], f"{label} {idx} pack requires board"
+            if not isinstance(tests, list) or not tests:
+                return False, [], f"{label} {idx} pack requires non-empty tests"
+            for test_idx, pack_test in enumerate(tests, start=1):
+                test_path = _resolve_path(repo_root, str(pack_test or "").strip())
+                if not test_path:
+                    return False, [], f"{label} {idx} pack test {test_idx} is empty"
+                expanded.append(
+                    {
+                        "board": board,
+                        "test": test_path,
+                        "optional": bool(raw_step.get("optional", False)),
+                        "pack": pack,
+                        "pack_name": str(pack_payload.get("name") or Path(pack).stem),
+                    }
+                )
+            continue
+
+        board = str(raw_step.get("board") or "").strip()
+        if not board or not test:
+            return False, [], f"{label} {idx} requires board and test"
+        step = dict(raw_step)
+        step["board"] = board
+        step["test"] = test
+        expanded.append(step)
+
+    return True, expanded, ""
 
 
 def _sequence_groups(setting: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -827,8 +890,11 @@ def _execution_policy(setting: Dict[str, Any]) -> Dict[str, Any]:
     return {"kind": kind}
 
 
-def _suite_from_setting(setting: Dict[str, Any]) -> VerificationSuite:
-    steps = setting.get("steps", [])
+def _suite_from_setting(setting: Dict[str, Any], repo_root: Path | None = None) -> VerificationSuite:
+    config_root = repo_root or ael_paths.repo_root()
+    ok, steps, _error = _expanded_sequence_steps(config_root, setting.get("steps", []), label="step")
+    if not ok:
+        steps = []
     tasks: List[VerificationTask] = []
     if isinstance(steps, list):
         for idx, raw_step in enumerate(steps, start=1):
@@ -1069,7 +1135,7 @@ def _run_sequence_groups_once(
 ) -> Tuple[int, Dict[str, Any]]:
     groups = _sequence_groups(setting)
     if len(groups) == 1 and "groups" not in setting:
-        suite = _suite_from_setting(groups[0])
+        suite = _suite_from_setting(groups[0], repo_root)
         if suite.execution_policy.get("kind") == "serial":
             return _run_serial_suite_once(repo_root, groups[0], suite, output_mode)
         return _run_parallel_suite_once(repo_root, suite, output_mode)
@@ -1082,7 +1148,7 @@ def _run_sequence_groups_once(
     worker_payloads: List[Dict[str, Any]] = []
 
     for idx, group in enumerate(groups, start=1):
-        suite = _suite_from_setting(group)
+        suite = _suite_from_setting(group, repo_root)
         policy_kind = suite.execution_policy.get("kind")
         if policy_kind == "serial":
             code, payload = _run_serial_suite_once(repo_root, group, suite, output_mode)
@@ -1292,7 +1358,7 @@ def run_until_fail(
         if not ok:
             return 2, {"ok": False, "mode": mode, "error": error}
         if "groups" not in setting:
-            suite = _suite_from_setting(setting)
+            suite = _suite_from_setting(setting, ael_paths.repo_root())
             if suite.execution_policy.get("kind") != "serial":
                 repo_root = ael_paths.repo_root()
                 return _run_parallel_repeat_until_fail(
