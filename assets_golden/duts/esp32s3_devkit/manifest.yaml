@@ -2,7 +2,7 @@ id: esp32s3_devkit
 name: ESP32-S3 DevKit
 mcu: esp32s3
 family: esp32
-description: ESP32-S3 DevKit GPIO waveform + UART banner
+description: Legacy ESP32-S3 DevKit phase-1 path; superseded by the canonical dual-USB full-suite DUT
 
 classification:
   platform_class: mcu
@@ -47,6 +47,11 @@ tags:
   - esp32
   - esp32s3
   - devkit
+  - legacy_path
+notes:
+  canonical_replacement: assets_golden/duts/esp32s3_devkit_dual_usb/manifest.yaml
+  canonical_pack: packs/esp32s3_full_suite.json
+  status: Retained only as an earlier minimal path. Do not use as the canonical ESP32-S3 golden suite entry.
 verified:
   status: true
   verified_on:

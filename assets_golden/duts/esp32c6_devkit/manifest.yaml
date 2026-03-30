@@ -2,7 +2,7 @@ id: esp32c6_devkit
 name: ESP32-C6 DevKit
 mcu: esp32c6
 family: esp32
-description: ESP32-C6 DevKit GPIO waveform + UART banner (minimal phase-1 path)
+description: Legacy ESP32-C6 DevKit phase-1 path; superseded by the canonical dual-USB Rule-B full-suite DUT
 
 classification:
   platform_class: mcu
@@ -47,6 +47,11 @@ tags:
   - esp32
   - esp32c6
   - devkit
+  - legacy_path
+notes:
+  canonical_replacement: assets_golden/duts/esp32c6_devkit_dual_usb/manifest.yaml
+  canonical_pack: packs/esp32c6_devkit_full.json
+  status: Retained only as an early phase-1 path. Do not use as the canonical ESP32-C6 golden suite entry.
 verified:
   status: false
   verified_on:
