@@ -2876,5 +2876,19 @@
         "last_raw": "[stm32u585ciu6] stm32u585_adc1_drive_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
+  },
+  "stm32u585ciu6|stm32u585_adc4_internal_mailbox": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1774910765.6532137,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "57360347-66ae-4d67-b19b-433253f142b4",
+        "count": 1,
+        "last_raw": "[stm32u585ciu6] stm32u585_adc4_internal_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
   }
 }

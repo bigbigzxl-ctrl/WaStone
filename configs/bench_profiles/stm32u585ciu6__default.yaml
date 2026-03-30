@@ -1,0 +1,33 @@
+bench_profile:
+  id: stm32u585ciu6__default
+  board_id: stm32u585ciu6
+  description: "STM32U585 WeAct CoreBoard: PC13=LED active-low"
+
+  bench_connections:
+    - from: GND
+      to: probe GND
+
+  observe_map:
+    pa5: "P0.0"
+
+  default_wiring:
+    swd: "P3"
+    reset: "NC"
+
+  safe_pins:
+    - PC13
+    - PA0
+    - PA1
+    - PA2
+    - PA3
+    - PB0
+    - PB1
+    - PB3
+    - PB4
+    - PB5
+    - PB6
+    - PB7
+    - PB10
+    - PB11
+    - PB12
+    - PB13

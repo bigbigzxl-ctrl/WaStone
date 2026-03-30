@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32u585_button_idle_mailbox",
+  "board": "stm32u585ciu6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox", "stage1", "no_wire", "gpio"],
+  "covers": ["gpio_input", "pa0"],
+  "build": {
+    "project_dir": "firmware/targets/stm32u585_button_idle_mailbox",
+    "artifact_stem": "stm32u585_button_idle_mailbox_app",
+    "build_dir": "artifacts/build_stm32u585_button_idle_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 3.0, "addr": "0x20007F00"}
+}

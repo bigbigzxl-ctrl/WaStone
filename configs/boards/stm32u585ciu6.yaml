@@ -1,0 +1,35 @@
+board:
+  name: STM32U585CIU6
+  target: stm32u585ciu6
+  instrument_instance: esp32jtag_u585_bench
+  clock_hz: 4000000        # MSI default after reset (no PLL)
+  kind: board
+  features:
+    - programmable_via_swd
+    - has_gpio
+  default_bench_profile: stm32u585ciu6__default
+  build:
+    type: arm_debug
+    project_dir: firmware/targets/stm32u585ciu6
+    artifact_stem: stm32u585_app
+  firmware:
+    description: PC13 LED active-low, 1Hz blink
+  flash:
+    speed_khz: 1000
+    reset_strategy: connect_under_reset
+    post_load_settle_s: 5.0
+    target_id: 1
+    reset_available: false
+    gdb_launch_cmds:
+      - "monitor a"
+      - "file {firmware}"
+      - "attach {target_id}"
+      - "load"
+      - "set *(unsigned int*)0xE000EDF0 = 0xA05F0001"
+      - "detach"
+  power_and_boot:
+    reset_strategy: connect_under_reset
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3
