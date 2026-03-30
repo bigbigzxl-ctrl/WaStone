@@ -16,6 +16,15 @@ default_packs:
 - packs/esp32c5_full_suite.json
 description: ESP32-C5 dual-USB devkit — full 12-test hardware suite (TEMP/NVS/WiFi/BLE/Sleep/PWM/INTR/PCNT/UART/ADC/SPI/I2C).
   I2C uses V2 slave driver + bit-bang master to work around SOC_HP_I2C_NUM=1.
+
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32c5
+  line: esp32c5
+  part_number: esp32c5
+
 family: esp32
 flash:
   method: idf_esptool

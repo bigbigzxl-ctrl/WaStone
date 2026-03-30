@@ -3,6 +3,14 @@ board_id: esp32c3_devkit_native_usb
 board_name: ESP32-C3 DevKit Native USB
 lifecycle_stage: merged_to_main
 
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32c3
+  line: esp32c3
+  part_number: esp32c3
+
 verified:
   status: true
   date: 2026-03-25

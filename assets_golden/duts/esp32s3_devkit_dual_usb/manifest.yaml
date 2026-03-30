@@ -6,6 +6,15 @@ description: >
   WiFi 2.4GHz only. I2C uses HW I2C0 master + HW I2C1 slave (V2 API);
   no bit-bang needed since S3 has two I2C controllers.
 lifecycle_stage: merged_to_main
+
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32s3
+  line: esp32s3
+  part_number: esp32s3
+
 family: esp32
 mcu: esp32s3
 board:

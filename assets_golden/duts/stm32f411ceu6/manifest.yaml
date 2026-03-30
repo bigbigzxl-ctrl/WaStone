@@ -4,6 +4,14 @@ mcu: stm32f411ceu6
 family: stm32f4
 description: STM32F411CEU6 WeAct Black Pill V2.0 GPIO/signature and self-check bench DUT
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f4
+  line: stm32f411
+  part_number: stm32f411ceu6
+
 board:
   vendor: WeAct Studio
   form_factor: bluepill

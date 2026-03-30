@@ -4,6 +4,14 @@ mcu: stm32g431cbu6
 family: stm32g4
 description: STM32G431CBU6 GPIO waveform + LED (WeAct Black Pill style)
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32g4
+  line: stm32g431
+  part_number: stm32g431cbu6
+
 board:
   vendor: WeAct Studio
   form_factor: bluepill

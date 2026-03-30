@@ -4,6 +4,14 @@ mcu: stm32h750vbt6
 family: stm32h7
 description: STM32H750VBT6 YD board
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32h7
+  line: stm32h750
+  part_number: stm32h750vbt6
+
 board:
   vendor: YD
   form_factor: devkit

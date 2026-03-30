@@ -4,6 +4,14 @@ mcu: stm32f401rct6
 family: stm32f4
 description: STM32F401RCT6 GPIO waveform + LED
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f4
+  line: stm32f401
+  part_number: stm32f401rct6
+
 board:
   vendor: Generic
   form_factor: devkit
