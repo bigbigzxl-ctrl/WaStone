@@ -27,7 +27,7 @@
  * All register addresses from RM0433 + stm32h750xx.h (cmsis_device_h7).
  */
 
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ── RCC ───────────────────────────────────────────────────────── */
@@ -112,10 +112,15 @@ static void delay_ticks(uint32_t ticks)
 }
 
 #define TX_LEN 8u
-static const uint8_t tx_buf[TX_LEN] = {
-    0x55u, 0xAAu, 0x12u, 0x34u, 0x56u, 0x78u, 0xABu, 0xCDu
-};
-static uint8_t rx_buf[TX_LEN];
+
+/*
+ * DMA buffers MUST be in AHB-accessible memory.
+ * DTCM (0x20000000) is NOT accessible by DMA1 (D2 AHB1 bus).
+ * Use SRAM1 (D2 AHB1, 0x30000000) which DMA1 can access directly.
+ */
+#define DMA_BUF_BASE  0x30000000u
+static uint8_t * const tx_buf = (uint8_t *)DMA_BUF_BASE;
+static uint8_t * const rx_buf = (uint8_t *)(DMA_BUF_BASE + TX_LEN);
 
 int main(void)
 {
@@ -135,6 +140,13 @@ int main(void)
     (void)RCC_AHB1ENR;
 
     ael_mailbox_init();
+
+    /* ── Init DMA buffers in SRAM1 (not cleared by CPU reset) ───── */
+    tx_buf[0] = 0x55u; tx_buf[1] = 0xAAu; tx_buf[2] = 0x12u; tx_buf[3] = 0x34u;
+    tx_buf[4] = 0x56u; tx_buf[5] = 0x78u; tx_buf[6] = 0xABu; tx_buf[7] = 0xCDu;
+    for (i = 0u; i < TX_LEN; i++) { rx_buf[i] = 0u; }
+    /* DSB: ensure Cortex-M7 write buffer is flushed to SRAM1 before DMA reads */
+    __asm volatile("dsb" ::: "memory");
 
     /* ── GPIO: PA9=USART1_TX (AF7), PA10=USART1_RX (AF7) ──────── */
     /* AFRH: PA9 at bits[7:4]=AF7, PA10 at bits[11:8]=AF7 */
@@ -193,6 +205,9 @@ int main(void)
         ael_mailbox_fail(0xE001u, DMA1_LISR);
         while (1) {}
     }
+
+    /* DSB: ensure DMA writes to SRAM1 are visible to CPU before reading rx_buf */
+    __asm volatile("dsb" ::: "memory");
 
     /* ── Verify received data ───────────────────────────────────── */
     uint32_t err = 0u;
