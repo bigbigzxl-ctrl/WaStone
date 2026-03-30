@@ -173,3 +173,11 @@ def test_render_regression_comparison_text_contains_key_fields():
     assert "trend: regressed" in text
     assert "signal_capture" in text
     assert "open_investigation" in text
+
+
+def test_render_regression_comparison_text_zero_count_snapshot_is_not_fake_ratio():
+    current = _snap(ok=True, pass_count=0, fail_count=0)
+    comparison = compare_regression_run(current, [])
+    text = render_regression_comparison_text(current, comparison)
+    assert "PASS (0/0)" not in text
+    assert "no counted cases in regression snapshot" in text

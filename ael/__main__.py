@@ -2185,7 +2185,7 @@ from ael.verify_default_snapshot import (
 def _autosave_regression_snapshot(setting_file: str, runs_root: str = "runs", report_root: str = "reports") -> None:
     """Build, save, and print a regression snapshot after a verify-default run."""
     state = _verify_default_state(setting_file, runs_root)
-    _autosave_regression_snapshot_impl(state, setting_file, report_root=report_root)
+    _autosave_regression_snapshot_impl(state, setting_file, runs_root=runs_root, report_root=report_root)
 
 
 def _print_actionable_hints(setting_file: str, runs_root: str = "runs") -> None:

@@ -279,11 +279,19 @@ def render_regression_comparison_text(
     comparison: Dict[str, Any],
 ) -> str:
     """Render a human-readable summary of the regression comparison."""
+    total_count = int(current.get("total_count", 0) or 0)
+    pass_count = int(current.get("pass_count", 0) or 0)
+    if total_count > 0:
+        result_line = f"result: {'PASS' if current.get('ok') else 'FAIL'} ({pass_count}/{total_count})"
+    else:
+        result_line = (
+            f"result: {'PASS' if current.get('ok') else 'FAIL'} "
+            "(no counted cases in regression snapshot)"
+        )
     lines = [
         f"bench_regression_run: {current.get('timestamp', '')}",
         f"run_id: {current.get('run_id', '')}",
-        f"result: {'PASS' if current.get('ok') else 'FAIL'} "
-        f"({current.get('pass_count', 0)}/{current.get('total_count', 0)})",
+        result_line,
         f"trend: {comparison.get('trend', 'unknown')}",
     ]
 

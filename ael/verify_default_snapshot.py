@@ -3,12 +3,55 @@
 Separated from ael/__main__.py (a CORE file) because these functions import from
 ael_controlplane, which is forbidden in CORE files per ael_guard_rules.json.
 """
+import json
 from pathlib import Path
+
+
+def _load_last_run_suite_counts(setting_file: str, runs_root: str = "runs") -> dict:
+    """Return suite counts from the persisted verify-default manifest when available."""
+    manifest_path = Path(runs_root) / "default_verification_last_run.json"
+    if not manifest_path.exists():
+        return {}
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+    actual = str(payload.get("setting_file") or "").strip()
+    expected = str(Path(setting_file).resolve())
+    if actual and actual != expected:
+        return {}
+
+    suite = payload.get("suite_results")
+    if not isinstance(suite, list):
+        return {}
+
+    pass_count = 0
+    fail_count = 0
+    unknown_count = 0
+    for item in suite:
+        if not isinstance(item, dict):
+            continue
+        ok = item.get("ok")
+        if ok is True:
+            pass_count += 1
+        elif ok is False:
+            fail_count += 1
+        else:
+            unknown_count += 1
+
+    return {
+        "pass_count": pass_count,
+        "fail_count": fail_count,
+        "total_count": pass_count + fail_count + unknown_count,
+        "ok": fail_count == 0 and unknown_count == 0,
+    }
 
 
 def autosave_regression_snapshot(
     state: dict,
     setting_file: str,
+    runs_root: str = "runs",
     report_root: str = "reports",
 ) -> None:
     """Build, save, and print a regression snapshot after a verify-default run.
@@ -23,14 +66,20 @@ def autosave_regression_snapshot(
             compare_regression_run,
             render_regression_comparison_text,
         )
-        pass_count = len(state.get("validated_tests") or [])
-        fail_count = len(state.get("failing_tests") or [])
-        total_count = pass_count + fail_count + len(state.get("optional_failing_tests") or [])
+        manifest_counts = _load_last_run_suite_counts(setting_file, runs_root=runs_root)
+        pass_count = int(manifest_counts.get("pass_count", len(state.get("validated_tests") or [])))
+        fail_count = int(manifest_counts.get("fail_count", len(state.get("failing_tests") or [])))
+        total_count = int(
+            manifest_counts.get(
+                "total_count",
+                pass_count + fail_count + len(state.get("optional_failing_tests") or []),
+            )
+        )
         augmented = dict(state)
         augmented["pass_count"] = pass_count
         augmented["fail_count"] = fail_count
         augmented["total_count"] = total_count
-        augmented["ok"] = fail_count == 0
+        augmented["ok"] = bool(manifest_counts.get("ok", fail_count == 0))
         snapshot = build_regression_snapshot(augmented)
         history = load_regression_history(report_root)
         log_path = save_regression_snapshot(snapshot, report_root)

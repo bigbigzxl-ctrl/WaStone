@@ -2925,6 +2925,55 @@ def test_autosave_regression_snapshot_prints_trend_on_second_run(tmp_path, capsy
     assert len(history) == 2
 
 
+def test_autosave_regression_snapshot_prefers_manifest_suite_counts(tmp_path, capsys):
+    setting_path = tmp_path / "default_verification_setting.json"
+    setting_path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "mode": "sequence",
+                "groups": [
+                    {
+                        "name": "golden",
+                        "steps": [
+                            {"pack": "packs/stm32f401rct6_golden.json"},
+                        ],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    runs_root = tmp_path / "runs"
+    runs_root.mkdir(parents=True)
+    manifest = {
+        "schema_version": 1,
+        "kind": "default_verification_run",
+        "setting_file": str(setting_path.resolve()),
+        "command": "run",
+        "exit_code": 0,
+        "ok": True,
+        "suite_results": [
+            {"name": "t1", "board": "stm32f401rct6", "code": 0, "ok": True, "run_id": "r1", "result": {}},
+            {"name": "t2", "board": "stm32f401rct6", "code": 0, "ok": True, "run_id": "r2", "result": {}},
+            {"name": "t3", "board": "stm32f401rct6", "code": 0, "ok": True, "run_id": "r3", "result": {}},
+        ],
+    }
+    (runs_root / "default_verification_last_run.json").write_text(json.dumps(manifest), encoding="utf-8")
+    report_root = tmp_path / "reports"
+
+    _autosave_regression_snapshot(str(setting_path), runs_root=str(runs_root), report_root=str(report_root))
+
+    history = json.loads((report_root / "bench_regression_log.json").read_text(encoding="utf-8"))
+    snap = history[0]
+    assert snap["pass_count"] == 3
+    assert snap["fail_count"] == 0
+    assert snap["total_count"] == 3
+
+    out = capsys.readouterr().out
+    assert "result: PASS (3/3)" in out
+
+
 def test_print_regression_history_section_shows_history(tmp_path, capsys):
     from ael_controlplane.bench_regression import save_regression_snapshot as _save
 
