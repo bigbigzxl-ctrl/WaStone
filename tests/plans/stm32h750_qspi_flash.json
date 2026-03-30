@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h750_qspi_flash",
+  "board": "stm32h750vbt6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "no_wire", "stage2"],
+  "covers": ["quadspi", "ahb3", "w25q64"],
+  "build": {
+    "project_dir": "firmware/targets/stm32h750_qspi_flash",
+    "artifact_stem": "stm32h750_qspi_flash_app",
+    "build_dir": "artifacts/build_stm32h750_qspi_flash"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2000FF00"
+  },
+  "bench_setup": {
+    "notes": "QUADSPI NOR flash JEDEC ID read. YD board has W25Q64 on QUADSPI bank 1. Pins: PB2(CLK,AF9), PB6(NCS,AF10), PD11(IO0,AF9), PD12(IO1,AF9), PD13(IO3,AF9), PE2(IO2,AF9). Config: PRESCALER=1 (32 MHz), CKMODE=3, SSHIFT=1, FSIZE=22. Sends 0x9F (READ_ID) in 1-line SPI, expects 0xEF4017 (Winbond W25Q64). On PASS: detail0=0x00EF4017. No loopback wiring required (board-level connection).",
+    "peripheral_signals": []
+  }
+}
