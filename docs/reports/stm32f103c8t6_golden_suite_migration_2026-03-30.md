@@ -35,14 +35,19 @@ Bench profile: `configs/bench_profiles/stm32f103_gpio__stage3.yaml`
 ### Stage 1
 
 - `stm32f103_timer_mailbox`
+- `stm32f103_systick_mailbox`
 - `stm32f103_internal_temp_mailbox`
 
 ### Stage 2
 
 - `stm32f103_wiring_verify`
+- `stm32f103_gpio_loopback_mailbox`
 - `stm32f103_exti_mailbox`
+- `stm32f103_capture_mailbox`
 - `stm32f103_pwm_capture`
+- `stm32f103_uart_multibyte`
 - `stm32f103_uart_loopback_mailbox`
+- `stm32f103_uart_dma`
 - `stm32f103_spi_mailbox`
 - `stm32f103_adc_mailbox`
 - `stm32f103_iwdg`
@@ -78,19 +83,25 @@ This migration intentionally maximizes reuse of existing F103 assets:
 - added new stage0/stage1 tests and new mailbox targets for:
   - `minimal_runtime_mailbox`
   - `timer_mailbox`
+  - `systick_mailbox`
   - `internal_temp_mailbox`
   - `wiring_verify`
+  - `gpio_loopback_mailbox`
+  - `capture_mailbox`
   - `pwm_capture`
+  - `uart_multibyte`
+  - `uart_dma`
   - `iwdg`
 
 ## Intentional deviation from the F401/F411 20-test shape
 
-This first F103 canonical suite is **19 tests**, not 20.
+This current-wiring F103 canonical suite is **24 tests**, not a line-for-line
+copy of the F401/F411 suite.
 
-The missing F401/F411-style pieces are:
+The deliberate difference is:
 
-- dedicated `uart_dma`
 - dedicated `i2c_loopback`
 
-Those are left as follow-on work rather than being faked through aliases or by
-keeping the old UART-bridge test in the golden path.
+`i2c_loopback` is intentionally left out because the canonical F103 bench wiring
+for this migration does not include an I2C loopback pair. The suite was expanded
+only with tests that fit the already-installed wiring.

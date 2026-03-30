@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_systick_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage1", "no_wire", "systick"],
+  "covers": ["systick", "timer", "interrupt", "nvic"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_systick_mailbox",
+    "artifact_stem": "stm32f103_systick_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_systick_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "Stage 1 no-wire self-test. SysTick runs at 1 kHz from 8 MHz HSI. PASS after 100 ticks and detail0 reports the interrupt count.",
+    "peripheral_signals": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_capture_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["capture", "timer"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_capture_mailbox",
+    "artifact_stem": "stm32f103_capture_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_capture_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "addr": "0x20004C00",
+    "settle_s": 5.0
+  },
+  "bench_setup": {
+    "notes": "Input capture mailbox test. TIM1 CH1 generates a 50 Hz source on PA8, TIM4 CH3 captures on PB8. Requires PA8 -> PB8. PASS when the measured period stays inside the expected capture window.",
+    "peripheral_signals": [
+      {
+        "role": "TIM1_CH1_SOURCE",
+        "dut_signal": "PA8",
+        "direction": "output"
+      },
+      {
+        "role": "TIM4_CH3_CAPTURE_INPUT",
+        "dut_signal": "PB8",
+        "direction": "input"
+      }
+    ]
+  }
+}
