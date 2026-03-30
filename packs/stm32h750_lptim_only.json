@@ -1,0 +1,8 @@
+{
+  "name": "stm32h750_lptim_only",
+  "description": "LPTIM single test",
+  "board": "stm32h750vbt6",
+  "bench_profile": "stm32h750vbt6__default",
+  "status": "experimental",
+  "tests": ["tests/plans/stm32h750_lptim.json"]
+}
