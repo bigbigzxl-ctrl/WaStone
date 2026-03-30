@@ -11,6 +11,7 @@
     "tests/plans/stm32h750_wwdg.json",
     "tests/plans/stm32h750_i2c_loopback.json",
     "tests/plans/stm32h750_tim1_pwm.json",
-    "tests/plans/stm32h750_qspi_flash.json"
+    "tests/plans/stm32h750_qspi_flash.json",
+    "tests/plans/stm32h750_bdma.json"
   ]
 }
