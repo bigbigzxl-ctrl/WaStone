@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h750_i2c_loopback",
+  "board": "stm32h750vbt6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "loopback", "stage2"],
+  "covers": ["i2c1", "i2c2", "apb1l"],
+  "build": {
+    "project_dir": "firmware/targets/stm32h750_i2c_loopback",
+    "artifact_stem": "stm32h750_i2c_loopback_app",
+    "build_dir": "artifacts/build_stm32h750_i2c_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 10.0,
+    "addr": "0x2000FF00"
+  },
+  "bench_setup": {
+    "notes": "I2C1 master (PB6/PB7 AF4) <-> I2C2 slave (PB10/PB11 AF4) loopback. H750 I2Cv2: TIMINGR=0xF0420F13 (100 kHz @ 64 MHz HSI). RCC APB1LRSTR reset before config. Master WRITE 4 bytes {0xA1,0xB2,0xC3,0xD4} to addr 0x42, then READ back. On PASS: detail0=0xA1B2C3D4. Wiring: PB6<->PB10, PB7<->PB11.",
+    "peripheral_signals": [
+      {
+        "role": "I2C1_SCL",
+        "dut_signal": "PB6",
+        "direction": "output",
+        "notes": "I2C1 SCL AF4. Wire: PB6<->PB10."
+      },
+      {
+        "role": "I2C1_SDA",
+        "dut_signal": "PB7",
+        "direction": "output",
+        "notes": "I2C1 SDA AF4. Wire: PB7<->PB11."
+      },
+      {
+        "role": "I2C2_SCL",
+        "dut_signal": "PB10",
+        "direction": "input",
+        "notes": "I2C2 SCL AF4. Wire: PB6<->PB10."
+      },
+      {
+        "role": "I2C2_SDA",
+        "dut_signal": "PB11",
+        "direction": "input",
+        "notes": "I2C2 SDA AF4. Wire: PB7<->PB11."
+      }
+    ]
+  }
+}
