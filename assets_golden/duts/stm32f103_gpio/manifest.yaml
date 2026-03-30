@@ -37,7 +37,7 @@ build:
 flash:
   method: gdb_swd
 default_packs:
-  - packs/smoke_stm32.json
+  - packs/stm32f103c8t6_golden.json
 tags:
   - stm32
   - stm32f1

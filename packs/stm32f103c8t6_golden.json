@@ -1,0 +1,57 @@
+{
+  "name": "stm32f103c8t6_golden",
+  "description": "STM32F103C8T6 Golden Test Suite — staged F103 canonical suite. Stage0: blinky + mailbox runtime gate. Stage1: timer + internal temp. Stage2: wiring verify, EXTI, PWM capture, UART loopback mailbox, SPI mailbox, ADC loopback mailbox, IWDG. Stage3: legacy-but-preserved LA/banner proofs. Wiring: PA8↔PB8, PA9↔PA10, PA7↔PA6, PA1↔PA0, LA: PA4→P0.0, PA5→P0.1.",
+  "board": "stm32f103_gpio",
+  "bench_profile": "stm32f103_gpio__stage3",
+  "status": "golden",
+  "stages": {
+    "0": [
+      "tests/plans/stm32f103_pc13_blinky_visual.json",
+      "tests/plans/stm32f103_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32f103_timer_mailbox.json",
+      "tests/plans/stm32f103_internal_temp_mailbox.json"
+    ],
+    "2": [
+      "tests/plans/stm32f103_wiring_verify.json",
+      "tests/plans/stm32f103_exti_mailbox.json",
+      "tests/plans/stm32f103_pwm_capture.json",
+      "tests/plans/stm32f103_uart_loopback_mailbox.json",
+      "tests/plans/stm32f103_spi_mailbox.json",
+      "tests/plans/stm32f103_adc_mailbox.json",
+      "tests/plans/stm32f103_iwdg.json"
+    ],
+    "3": [
+      "tests/plans/stm32f103_gpio_signature.json",
+      "tests/plans/stm32f103_gpio_loopback_banner.json",
+      "tests/plans/stm32f103_exti_banner.json",
+      "tests/plans/stm32f103_capture_banner.json",
+      "tests/plans/stm32f103_pwm_banner.json",
+      "tests/plans/stm32f103_uart_loopback_banner.json",
+      "tests/plans/stm32f103_spi_banner.json",
+      "tests/plans/stm32f103_adc_banner.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f103_pc13_blinky_visual.json",
+    "tests/plans/stm32f103_minimal_runtime_mailbox.json",
+    "tests/plans/stm32f103_timer_mailbox.json",
+    "tests/plans/stm32f103_internal_temp_mailbox.json",
+    "tests/plans/stm32f103_wiring_verify.json",
+    "tests/plans/stm32f103_exti_mailbox.json",
+    "tests/plans/stm32f103_pwm_capture.json",
+    "tests/plans/stm32f103_uart_loopback_mailbox.json",
+    "tests/plans/stm32f103_spi_mailbox.json",
+    "tests/plans/stm32f103_adc_mailbox.json",
+    "tests/plans/stm32f103_iwdg.json",
+    "tests/plans/stm32f103_gpio_signature.json",
+    "tests/plans/stm32f103_gpio_loopback_banner.json",
+    "tests/plans/stm32f103_exti_banner.json",
+    "tests/plans/stm32f103_capture_banner.json",
+    "tests/plans/stm32f103_pwm_banner.json",
+    "tests/plans/stm32f103_uart_loopback_banner.json",
+    "tests/plans/stm32f103_spi_banner.json",
+    "tests/plans/stm32f103_adc_banner.json"
+  ]
+}

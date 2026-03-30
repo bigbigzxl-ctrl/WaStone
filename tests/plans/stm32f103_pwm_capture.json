@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_pwm_capture",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["pwm", "capture", "timer"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_pwm_capture",
+    "artifact_stem": "stm32f103_pwm_capture_app",
+    "build_dir": "artifacts/build_stm32f103_pwm_capture"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "TIM1 CH1 PWM output on PA8 and TIM4 CH3 capture on PB8. Requires PA8 → PB8. PASS when the measured period remains inside the expected capture window.",
+    "peripheral_signals": [
+      {
+        "role": "TIM1_CH1_PWM_OUT",
+        "dut_signal": "PA8",
+        "direction": "output"
+      },
+      {
+        "role": "TIM4_CH3_CAPTURE_IN",
+        "dut_signal": "PB8",
+        "direction": "input"
+      }
+    ]
+  }
+}

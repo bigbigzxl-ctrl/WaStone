@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_wiring_verify",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["gpio", "uart", "adc", "wiring"],
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_wiring_verify",
+    "artifact_stem": "stm32f103_wiring_verify_app",
+    "build_dir": "artifacts/build_stm32f103_wiring_verify"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "Stage 2 wiring verify. Firmware runs GPIO, UART, and ADC loopback tests internally. Pass/fail and per-wire error bitmask are reported through mailbox at 0x20004C00. Wiring: PA8→PB8, PA9→PA10, PA1→PA0.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_OUT",
+        "dut_signal": "PA8",
+        "direction": "output",
+        "notes": "GPIO loopback driver. Wire: PA8 → PB8."
+      },
+      {
+        "role": "GPIO_IN",
+        "dut_signal": "PB8",
+        "direction": "input",
+        "notes": "GPIO loopback receiver. Wire: PA8 → PB8."
+      },
+      {
+        "role": "USART1_TX",
+        "dut_signal": "PA9",
+        "direction": "output",
+        "notes": "USART1 TX, 115200 8N1. Wire: PA9 → PA10."
+      },
+      {
+        "role": "USART1_RX",
+        "dut_signal": "PA10",
+        "direction": "input",
+        "notes": "USART1 RX. Wire: PA9 → PA10."
+      },
+      {
+        "role": "ADC_DRIVE",
+        "dut_signal": "PA1",
+        "direction": "output",
+        "notes": "GPIO output drives ADC input via wire. Wire: PA1 → PA0."
+      },
+      {
+        "role": "ADC1_IN0",
+        "dut_signal": "PA0",
+        "direction": "input",
+        "notes": "ADC1 channel 0 analog input. Wire: PA1 → PA0."
+      }
+    ]
+  }
+}

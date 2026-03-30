@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_internal_temp_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage1", "no_wire", "internal_temp"],
+  "covers": ["adc", "temperature", "internal_sensor"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_internal_temp_mailbox",
+    "artifact_stem": "stm32f103_internal_temp_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_internal_temp_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "Stage 1 no-wire self-test. ADC1 samples the STM32F103 internal temperature sensor on channel 16 with TSVREFE enabled. PASS requires a non-zero, non-saturated average across repeated conversions.",
+    "peripheral_signals": []
+  }
+}

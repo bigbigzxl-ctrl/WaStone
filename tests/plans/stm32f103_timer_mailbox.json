@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_timer_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage1", "no_wire", "timer"],
+  "covers": ["timer", "interrupt", "nvic"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_timer_mailbox",
+    "artifact_stem": "stm32f103_timer_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_timer_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "Stage 1 no-wire self-test. TIM2 update interrupt fires every ~100 ms from 8 MHz HSI. PASS after 10 interrupts. detail0 = interrupt count. Requires only SWDIO, SWCLK, and GND.",
+    "peripheral_signals": []
+  }
+}

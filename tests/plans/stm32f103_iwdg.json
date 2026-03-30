@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_iwdg",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["iwdg", "lsi"],
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_iwdg",
+    "artifact_stem": "stm32f103_iwdg_app",
+    "build_dir": "artifacts/build_stm32f103_iwdg"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20004C00"
+  },
+  "bench_setup": {
+    "notes": "IWDG test. No external wiring required. Configures IWDG with LSI clock and long timeout, feeds watchdog every 1 ms, and reports PASS with heartbeat. A sustained heartbeat proves LSI startup and watchdog reload path work.",
+    "peripheral_signals": []
+  }
+}
