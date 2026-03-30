@@ -112,6 +112,15 @@ The deliberate difference is:
 for this migration does not include an I2C loopback pair. The suite was expanded
 only with tests that fit the already-installed wiring.
 
+Additional bench note:
+
+- the F103 I2C path would also require external pull-up resistors to be usable
+  as a stable golden test
+- current conclusion: use `4.7k` pull-ups on the I2C lines if this path is
+  added later
+- because those pull-ups are not part of the canonical bench contract today, I2C
+  is intentionally skipped in the current staged golden suite
+
 ## Final live result
 
 Final end-to-end confirmation was completed on the canonical `.99` bench:
