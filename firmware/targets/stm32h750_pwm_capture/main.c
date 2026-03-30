@@ -30,7 +30,7 @@
  * Clocks: 64 MHz HSI, no PLL.  TIM2 PSC=63 → 1 MHz (1 us resolution).
  */
 
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ---- RCC (RM0433 §8) ---------------------------------------------------- */

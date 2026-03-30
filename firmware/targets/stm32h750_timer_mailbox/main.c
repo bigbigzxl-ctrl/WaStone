@@ -16,7 +16,7 @@
  */
 
 #include <stdint.h>
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ── RCC ────────────────────────────────────────────────────────── */

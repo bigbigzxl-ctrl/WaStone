@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 1 no-wire functional test. TIM6 (APB1, IRQ54=TIM6_DAC) configured at 100 Hz (PSC=63999, ARR=99 @ 64 MHz). Waits for 5 ISR fires within 2 s timeout. On PASS: detail0=irq_count. On FAIL: error_code=0xE001 (timer never fired). No loopback wiring required.",

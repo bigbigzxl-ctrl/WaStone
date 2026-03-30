@@ -6,7 +6,7 @@
  * NOT DTCM (0x20000000) — DTCM is M7-only and NOT readable by GDB via AHB.
  * Provisional — confirmed safe via nm check (_ebss = 0x20000000, no overlap).
  */
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /*

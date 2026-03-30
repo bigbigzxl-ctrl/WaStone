@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 1 no-wire functional test. ADC3 (D3 domain, 0x58026000) reads internal temperature sensor (CH18, IN18). CKMODE=10 (HCLK/2=32MHz), TSEN=bit23, PCSEL bit18 required (H7-unique). Accept range: 0x0800..0xF000 (16-bit). On PASS: detail0=raw ADC reading. On FAIL: 0xE001=VREG, 0xE002=ADEN, 0xE003=EOC, 0xE004=out of range. No loopback wiring required.",

@@ -16,7 +16,7 @@
  * Step 0 clock/cache rules remain in force: no PLL, no cache, no MPU.
  */
 
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ---- RCC (RM0433 §8) ---------------------------------------------------- */

@@ -21,7 +21,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Step 1 wiring verify. Firmware runs GPIO and UART loopback tests internally. Pass/fail and per-wire error bitmask read from mailbox at SRAM4 (0x38000000) via SWD. On FAIL: error_code bitmask: bit0=GPIO_HIGH, bit1=GPIO_LOW, bit2=UART. ADC/DAC (PA4→PA0) tested separately in stm32h750_adc_read.",

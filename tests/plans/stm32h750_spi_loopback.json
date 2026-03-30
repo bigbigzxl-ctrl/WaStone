@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 2 SPI1 MISO↔MOSI loopback. SPI1 master sends 4 bytes {0x12,0x34,0xAB,0xCD} at 16 MHz (MBR=/4, 64MHz APB2), reads back via MISO↔MOSI bench wire PB4↔PB5. SCK=PB3 (AF5, no wire). SPIv2: TSIZE=4, CSTART, polling TXP/RXP. On PASS: detail0=packed 4-byte received data. On FAIL: error_code bits0-3=byte mismatch, 0x10=TX timeout, 0x20=RX timeout. Wiring: PB4↔PB5.",

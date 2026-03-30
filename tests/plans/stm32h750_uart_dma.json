@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 10.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 2 USART1 DMA loopback. DMA1 Stream0 (RX, P→M, DMAMUX1 CH0→req41) and Stream1 (TX, M→P, DMAMUX1 CH1→req42) transfer 8 bytes {0x55,0xAA,0x12,0x34,0x56,0x78,0xAB,0xCD} via USART1 PA9↔PA10 bench wire at 115200 8N1. H750: DMAMUX1 needs NO separate RCC enable. TCIF0=LISR bit5, TCIF1=LISR bit11. On PASS: detail0=TX_LEN=8. On FAIL: 0xE001=DMA RX timeout, 0xE002=data mismatch, 0xE003=DMA TEIF. Wiring: PA9↔PA10.",

@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Step 2 ADC/DAC loopback. DAC1_OUT1 (PA4) drives ≈1.65V mid-rail; ADC1_INP0 (PA0) reads back. Accepts 0x600..0xA00 (±25%). On FAIL: error_code bitmask: bit0=DAC_TIMEOUT, bit1=ADC_VREG, bit2=ADC_CAL, bit3=ADC_RDY, bit4=ADC_EOC, bit5=ADC_RANGE. On RANGE fail: detail0 holds raw ADC reading. ADC kernel clock = per_ck (HSI 64MHz) / 2 = 32MHz via RCC_D2CCIP1R.",

@@ -18,7 +18,7 @@
  * RCC_APB4ENR at RCC_BASE+0x0F4, bit 1 = SYSCFGEN
  */
 
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ---- RCC (RM0433 §8) ---------------------------------------------------- */

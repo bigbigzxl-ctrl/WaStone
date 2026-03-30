@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 2 FDCAN1 internal loopback (no bench wire). Must start HSE (25MHz crystal on YD board) — H750 FDCAN requires HSE/PLL1Q/PLL2Q, default=HSE. CCCR: INIT+CCE+MON+TEST; TEST.LBCK=1. Configurable Message RAM at SRAMCAN=0x4000AC00: 1 std filter + 1 RxFIFO0 element + 1 TxBuffer element. NBTP=0x00040502 for 500kbps @ 25MHz (10TQ). Sends frame ID=0x123, DLC=8, data=0x01..0x08; verifies via RxFIFO0. On PASS: detail0=frame ID. On FAIL: 0xE001=INIT/HSE, 0xE002=Rx timeout, 0xE003=ID, 0xE004=DLC, 0xE005=data[0-3], 0xE006=data[4-7]. No loopback wiring required.",

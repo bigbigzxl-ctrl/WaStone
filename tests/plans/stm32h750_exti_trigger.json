@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "EXTI rising-edge trigger test. PB8 generates 10 rising edges; EXTI9 (connected to PB9 via SYSCFG) detects each edge by polling EXTI_RPR1. On FAIL: error_code bit0=ERR_EXTI_INIT (fewer than 10 edges detected), detail0 = actual edge count. On PASS detail0 starts at 10 and increments each ms.",

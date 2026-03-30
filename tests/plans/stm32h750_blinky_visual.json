@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 0 visual gate. Blinks PA8 at 2 Hz (4 cycles: 250ms ON / 250ms OFF), then writes PASS to mailbox. Visual confirmation that GPIO output, SysTick, and RCC clocks work. No loopback wiring required.",

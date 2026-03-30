@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 5.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "UART loopback test. USART1 sends {0x55, 0xAA, 0x12, 0x34} and reads back each byte over PA9→PA10 loopback at 115200 8N1. On FAIL: error_code bits 0-3 indicate which byte mismatched or timed out. detail0 = matched byte count. On PASS detail0 starts at 4 and increments each ms.",

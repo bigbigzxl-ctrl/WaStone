@@ -9,7 +9,7 @@
  * All register addresses from RM0433.
  */
 
-#define AEL_MAILBOX_ADDR  0x38000000u
+#define AEL_MAILBOX_ADDR  0x2000FF00u
 #include "../ael_mailbox.h"
 
 /* ── RCC (RM0433 §8) ──────────────────────────────────────────────── */

@@ -18,7 +18,7 @@
   "signal_checks": [],
   "mailbox_verify": {
     "settle_s": 10.0,
-    "addr": "0x38000000"
+    "addr": "0x2000FF00"
   },
   "bench_setup": {
     "notes": "Stage 2 IWDG self-feed test. IWDG1 (D3, 0x58004800) configured with LSI clock (LSION via RCC_CSR, ~32kHz), PR=/256, RLR=0xFF (~2.04s timeout). Feeds watchdog 5× at 200ms intervals, then writes PASS. Verifies: LSI startup, IWDG prescaler, feed path. On FAIL: error_code=0xE001 (LSI never ready). No loopback wiring required.",
