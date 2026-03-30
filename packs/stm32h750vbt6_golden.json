@@ -1,6 +1,6 @@
 {
   "name": "stm32h750vbt6_golden",
-  "description": "STM32H750VBT6 Golden Test Suite — 14 tests across 4 stages. Stage0: blinky + mailbox health. Stage1: timer IRQ + internal temp (no wiring). Stage2: 7 peripheral tests incl DMA UART + SPI + FDCAN internal loopback. Stage3: GPIO loopback + PWM capture + ADC/DAC. Wiring: PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5.",
+  "description": "STM32H750VBT6 Golden Test Suite — 25 tests across 5 stages. Stage0: blinky + mailbox. Stage1: timer + temp. Stage2: 7 peripheral loopbacks (UART/SPI/FDCAN/DMA/EXTI/IWDG/wiring). Stage3: GPIO+PWM+ADC/DAC. Stage4: Tier2 no-wire (RNG/CRC/WWDG/I2C/TIM1-PWM/QSPI/PLL1/BDMA/LPTIM/RTC). Wiring: PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5, PB6↔PB10, PB7↔PB11.",
   "board": "stm32h750vbt6",
   "bench_profile": "stm32h750vbt6__default",
   "status": "golden",
@@ -27,6 +27,18 @@
       "tests/plans/stm32h750_gpio_loopback.json",
       "tests/plans/stm32h750_pwm_capture.json",
       "tests/plans/stm32h750_adc_dac_loopback.json"
+    ],
+    "4": [
+      "tests/plans/stm32h750_rng.json",
+      "tests/plans/stm32h750_crc.json",
+      "tests/plans/stm32h750_wwdg.json",
+      "tests/plans/stm32h750_i2c_loopback.json",
+      "tests/plans/stm32h750_tim1_pwm.json",
+      "tests/plans/stm32h750_qspi_flash.json",
+      "tests/plans/stm32h750_pll1_clock.json",
+      "tests/plans/stm32h750_bdma.json",
+      "tests/plans/stm32h750_lptim.json",
+      "tests/plans/stm32h750_rtc.json"
     ]
   },
   "tests": [
@@ -43,6 +55,16 @@
     "tests/plans/stm32h750_fdcan_loopback.json",
     "tests/plans/stm32h750_gpio_loopback.json",
     "tests/plans/stm32h750_pwm_capture.json",
-    "tests/plans/stm32h750_adc_dac_loopback.json"
+    "tests/plans/stm32h750_adc_dac_loopback.json",
+    "tests/plans/stm32h750_rng.json",
+    "tests/plans/stm32h750_crc.json",
+    "tests/plans/stm32h750_wwdg.json",
+    "tests/plans/stm32h750_i2c_loopback.json",
+    "tests/plans/stm32h750_tim1_pwm.json",
+    "tests/plans/stm32h750_qspi_flash.json",
+    "tests/plans/stm32h750_pll1_clock.json",
+    "tests/plans/stm32h750_bdma.json",
+    "tests/plans/stm32h750_lptim.json",
+    "tests/plans/stm32h750_rtc.json"
   ]
 }
