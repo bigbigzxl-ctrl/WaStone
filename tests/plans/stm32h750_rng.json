@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h750_rng",
+  "board": "stm32h750vbt6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "no_wire", "stage2"],
+  "covers": ["rng", "hsi48", "ahb2"],
+  "build": {
+    "project_dir": "firmware/targets/stm32h750_rng",
+    "artifact_stem": "stm32h750_rng_app",
+    "build_dir": "artifacts/build_stm32h750_rng"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2000FF00"
+  },
+  "bench_setup": {
+    "notes": "RNG self-test. Enables HSI48 (48 MHz, RNG default kernel clock via RNGSEL=000), enables RNG1 (AHB2, 0x48060800), reads 4×32-bit random words. Verifies DRDY, no SEIS/CEIS, not all four words identical. On PASS: detail0=first random word. On FAIL: 0xE001=HSI48 timeout, 0xE002=DRDY timeout, 0xE003=SEIS (seed error), 0xE004=CEIS (clock error), 0xE005=all words identical. No loopback wiring required.",
+    "peripheral_signals": []
+  }
+}
