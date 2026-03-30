@@ -1192,65 +1192,6 @@ def _run_sequence_groups_once(
     }
 
 
-def _run_parallel_repeat_until_fail(
-    repo_root: Path,
-    suite: VerificationSuite,
-    output_mode: str,
-    limit: int,
-) -> Tuple[int, Dict[str, Any]]:
-    log_lock = threading.Lock()
-    workers: List[Dict[str, Any]] = []
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(suite.tasks))) as executor:
-        futures = [
-            executor.submit(_worker_for_task(repo_root, task, output_mode, limit, True, log_lock).run)
-            for task in suite.tasks
-        ]
-        for future in concurrent.futures.as_completed(futures):
-            workers.append(future.result().to_dict())
-
-    _print_worker_totals(log_lock, workers)
-    optional_names = {task.name for task in suite.tasks if task.config.get("optional")}
-    results = [item for worker in workers for item in worker.get("results", [])]
-    failures = [item for item in results if not bool(item.get("ok", False)) and item.get("name") not in optional_names]
-    first_failure = failures[0] if failures else None
-    code = int(first_failure.get("code", 0)) if isinstance(first_failure, dict) else 0
-    ok = first_failure is None
-    payload: Dict[str, Any] = {
-        "ok": ok,
-        "mode": "repeat_until_fail",
-        "suite": {"name": suite.name, "tasks": [task.name for task in suite.tasks]},
-        "execution_policy": {"kind": suite.execution_policy.get("kind", "parallel"), "iterations_per_worker": limit, "stop_each_worker_on_failure": True},
-        "selected_dut_tests": [task.name for task in suite.tasks],
-        "optional_steps": sorted(optional_names),
-        "requested_iterations_per_worker": limit,
-        "workers": workers,
-        "results": results,
-        "health_summary": summarize_worker_health(workers),
-        "schema_advisory_summary": _summarize_schema_advisories(results),
-    }
-    if first_failure is not None:
-        first_result = first_failure.get("result") if isinstance(first_failure.get("result"), dict) else {}
-        failure_scope = first_result.get("failure_scope") or _infer_failure_scope(first_result)
-        instrument_condition = first_result.get("instrument_condition") or _infer_instrument_condition(first_result)
-        payload["failure"] = {
-            "step_name": first_failure.get("name"),
-            "board": first_failure.get("board"),
-            "iteration": first_failure.get("iteration"),
-            "step_code": first_failure.get("code"),
-            "failure_scope": failure_scope or None,
-            "instrument_condition": instrument_condition or None,
-            "reason": (
-                first_result.get("error")
-                or first_result.get("error_summary")
-                if isinstance(first_result, dict)
-                else "step failed"
-            )
-            or "step failed",
-        }
-    return code, payload
-
-
 def _detect_docs_only_changes(mode: str = "changed") -> bool:
     if mode not in ("changed", "staged"):
         return False
