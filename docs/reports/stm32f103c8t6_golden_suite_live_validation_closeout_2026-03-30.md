@@ -23,7 +23,8 @@ at `.99`.
 The first live validation attempt did not reach DUT execution because the
 configured control instrument in the board profile was stale. After rebinding
 the board to the actual F103 golden instrument at `.99`, rerun reached real DUT
-execution and confirmed the suite is valid at least through Stage 1.
+execution and then validated Stage 0, Stage 1, and the full Stage 2 mailbox
+self-check set on real hardware.
 
 ## Setup Confirmed
 
@@ -105,11 +106,20 @@ Validated on real hardware after correcting the binding:
 - `stm32f103_timer_mailbox` PASS
 - `stm32f103_systick_mailbox` PASS
 - `stm32f103_internal_temp_mailbox` PASS
-- `stm32f103_wiring_verify` preflight PASS
+- `stm32f103_wiring_verify` PASS
+- `stm32f103_gpio_loopback_mailbox` PASS
+- `stm32f103_exti_mailbox` PASS
+- `stm32f103_capture_mailbox` PASS
+- `stm32f103_pwm_capture` PASS
+- `stm32f103_uart_loopback_mailbox` PASS
+- `stm32f103_uart_multibyte` PASS
+- `stm32f103_uart_dma` PASS
+- `stm32f103_spi_mailbox` PASS
+- `stm32f103_adc_mailbox` PASS
+- `stm32f103_iwdg` PASS
 
 Not yet fully closed out on real hardware:
 
-- full Stage 2 pass/fail matrix
 - Stage 3 LA capture pass/fail matrix
 - full-pack completion under corrected `.99` binding
 
@@ -140,8 +150,8 @@ PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board 
 PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board stm32f103_gpio --stage 0,1
 ```
 
-4. After the bench is reachable, record the full pass/fail matrix and update the
-   DUT as validated if the suite passes cleanly
+4. Run Stage 3 LA/banner validation and then the full pack end-to-end
+5. Update the DUT as validated if the suite passes cleanly
 
 ## Closeout Decision
 
@@ -153,4 +163,4 @@ The correct conclusion is:
 - code and pack formalization: complete
 - live repo-native execution: performed
 - blocker in first run: stale `.109` binding
-- next action: rerun on corrected `.99` binding
+- next action: finish Stage 3 and full-pack closeout on corrected `.99` binding
