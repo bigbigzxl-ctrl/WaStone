@@ -1,6 +1,6 @@
 {
   "name": "stm32h750vbt6_golden",
-  "description": "STM32H750VBT6 Golden Test Suite — 25 tests across 5 stages. Stage0: blinky + mailbox. Stage1: timer + temp. Stage2: 7 peripheral loopbacks (UART/SPI/FDCAN/DMA/EXTI/IWDG/wiring). Stage3: GPIO+PWM+ADC/DAC. Stage4: Tier2 no-wire (RNG/CRC/WWDG/I2C/TIM1-PWM/QSPI/PLL1/BDMA/LPTIM/RTC). Wiring: PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5, PB6↔PB10, PB7↔PB11.",
+  "description": "STM32H750VBT6 Golden Test Suite — 25 tests across 4 stages. Stage0: blinky + mailbox. Stage1: no-wire self-tests (timer/temp/RNG/CRC/WWDG/TIM1-PWM/QSPI/PLL1/BDMA/LPTIM/RTC). Stage2: wiring loopbacks (UART/SPI/FDCAN/DMA/EXTI/IWDG/I2C + wiring verify). Stage3: GPIO+PWM+ADC/DAC. Wiring: PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5, PB6↔PB10, PB7↔PB11.",
   "board": "stm32h750vbt6",
   "bench_profile": "stm32h750vbt6__default",
   "status": "golden",
@@ -12,7 +12,16 @@
     ],
     "1": [
       "tests/plans/stm32h750_timer_mailbox.json",
-      "tests/plans/stm32h750_internal_temp_mailbox.json"
+      "tests/plans/stm32h750_internal_temp_mailbox.json",
+      "tests/plans/stm32h750_rng.json",
+      "tests/plans/stm32h750_crc.json",
+      "tests/plans/stm32h750_wwdg.json",
+      "tests/plans/stm32h750_tim1_pwm.json",
+      "tests/plans/stm32h750_qspi_flash.json",
+      "tests/plans/stm32h750_pll1_clock.json",
+      "tests/plans/stm32h750_bdma.json",
+      "tests/plans/stm32h750_lptim.json",
+      "tests/plans/stm32h750_rtc.json"
     ],
     "2": [
       "tests/plans/stm32h750_wiring_verify.json",
@@ -21,24 +30,13 @@
       "tests/plans/stm32h750_uart_loopback.json",
       "tests/plans/stm32h750_spi_loopback.json",
       "tests/plans/stm32h750_uart_dma.json",
-      "tests/plans/stm32h750_fdcan_loopback.json"
+      "tests/plans/stm32h750_fdcan_loopback.json",
+      "tests/plans/stm32h750_i2c_loopback.json"
     ],
     "3": [
       "tests/plans/stm32h750_gpio_loopback.json",
       "tests/plans/stm32h750_pwm_capture.json",
       "tests/plans/stm32h750_adc_dac_loopback.json"
-    ],
-    "4": [
-      "tests/plans/stm32h750_rng.json",
-      "tests/plans/stm32h750_crc.json",
-      "tests/plans/stm32h750_wwdg.json",
-      "tests/plans/stm32h750_i2c_loopback.json",
-      "tests/plans/stm32h750_tim1_pwm.json",
-      "tests/plans/stm32h750_qspi_flash.json",
-      "tests/plans/stm32h750_pll1_clock.json",
-      "tests/plans/stm32h750_bdma.json",
-      "tests/plans/stm32h750_lptim.json",
-      "tests/plans/stm32h750_rtc.json"
     ]
   },
   "tests": [
@@ -46,6 +44,15 @@
     "tests/plans/stm32h750_minimal_runtime_mailbox.json",
     "tests/plans/stm32h750_timer_mailbox.json",
     "tests/plans/stm32h750_internal_temp_mailbox.json",
+    "tests/plans/stm32h750_rng.json",
+    "tests/plans/stm32h750_crc.json",
+    "tests/plans/stm32h750_wwdg.json",
+    "tests/plans/stm32h750_tim1_pwm.json",
+    "tests/plans/stm32h750_qspi_flash.json",
+    "tests/plans/stm32h750_pll1_clock.json",
+    "tests/plans/stm32h750_bdma.json",
+    "tests/plans/stm32h750_lptim.json",
+    "tests/plans/stm32h750_rtc.json",
     "tests/plans/stm32h750_wiring_verify.json",
     "tests/plans/stm32h750_iwdg.json",
     "tests/plans/stm32h750_exti_trigger.json",
@@ -53,18 +60,9 @@
     "tests/plans/stm32h750_spi_loopback.json",
     "tests/plans/stm32h750_uart_dma.json",
     "tests/plans/stm32h750_fdcan_loopback.json",
+    "tests/plans/stm32h750_i2c_loopback.json",
     "tests/plans/stm32h750_gpio_loopback.json",
     "tests/plans/stm32h750_pwm_capture.json",
-    "tests/plans/stm32h750_adc_dac_loopback.json",
-    "tests/plans/stm32h750_rng.json",
-    "tests/plans/stm32h750_crc.json",
-    "tests/plans/stm32h750_wwdg.json",
-    "tests/plans/stm32h750_i2c_loopback.json",
-    "tests/plans/stm32h750_tim1_pwm.json",
-    "tests/plans/stm32h750_qspi_flash.json",
-    "tests/plans/stm32h750_pll1_clock.json",
-    "tests/plans/stm32h750_bdma.json",
-    "tests/plans/stm32h750_lptim.json",
-    "tests/plans/stm32h750_rtc.json"
+    "tests/plans/stm32h750_adc_dac_loopback.json"
   ]
 }
