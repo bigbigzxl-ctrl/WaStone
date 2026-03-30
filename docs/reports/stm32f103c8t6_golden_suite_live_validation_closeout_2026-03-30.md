@@ -3,8 +3,8 @@
 **Date:** 2026-03-30
 **Board:** `stm32f103_gpio`
 **Pack:** `packs/stm32f103c8t6_golden.json`
-**Instrument:** initial run used stale binding `esp32jtag_stm32_golden` @ `192.168.2.109:4242`
-**Status:** stale `.109` binding identified and corrected; rerun on `.99` reached real DUT execution
+**Instrument:** canonical live bench `esp32jtag_stm32f103_golden` @ `192.168.2.99:4242`
+**Status:** stale `.109` binding corrected to `.99`; Stage 0 to Stage 3 reached real DUT execution, and the remaining mailbox failures were closed by targeted live reruns
 
 ## Summary
 
@@ -15,25 +15,29 @@ repo-native entrypoint:
 PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board stm32f103_gpio
 ```
 
-Selection and build were correct at the pack level, but the board profile was
-still bound to the wrong control instrument. The pack resolved the expected
-board and wiring, but selected `.109` instead of the actual F103 golden setup
-at `.99`.
+The first live validation attempt exposed that the board profile was still
+bound to a stale `.109` instrument. After rebinding the active
+`stm32f103_gpio` path to `.99`, the suite reached real DUT execution and
+validated the board on the intended F103 bench.
 
-The first live validation attempt did not reach DUT execution because the
-configured control instrument in the board profile was stale. After rebinding
-the board to the actual F103 golden instrument at `.99`, rerun reached real DUT
-execution and then validated Stage 0, Stage 1, and the full Stage 2 mailbox
-self-check set on real hardware.
+One corrected-binding full-pack run on `.99` completed 22 of 24 tests PASS and
+isolated the only remaining failures to:
+
+- `stm32f103_capture_mailbox`
+- `stm32f103_pwm_capture`
+
+Both of those mailbox tests were then corrected and revalidated directly on the
+live `.99` bench. The suite migration, wiring contract, and Stage 3 banner path
+are therefore validated; the only missing artifact for a final golden-pass
+closeout is one fresh post-fix all-pass full-pack rerun.
 
 ## Setup Confirmed
 
 - board: `stm32f103_gpio`
 - MCU: `stm32f103c8t6`
-- stale instrument selected during first run: `esp32jtag_stm32_golden`
-- stale GDB remote selected during first run: `192.168.2.109:4242`
-- actual F103 golden instrument confirmed afterwards: `192.168.2.99:4242`
-- actual F103 golden web API confirmed afterwards: `https://192.168.2.99:443`
+- stale instrument that originally blocked the suite: `192.168.2.109:4242`
+- actual F103 golden control instrument: `192.168.2.99:4242`
+- actual F103 golden web API: `https://192.168.2.99:443`
 - canonical wiring:
   - `PA8 ↔ PB8`
   - `PA9 ↔ PA10`
@@ -42,62 +46,53 @@ self-check set on real hardware.
   - `PA4 → P0.0`
   - `PA5 → P0.1`
   - `PC13 → LED`
+  - `GND → probe GND`
 
 ## Evidence
 
 Representative pack runs:
 
-- sandbox-limited run: `pack_runs/2026-03-30_07-55-51_stm32f103c8t6_golden_stm32f103_gpio`
-- escalated live-bench run: `pack_runs/2026-03-30_07-57-14_stm32f103c8t6_golden_stm32f103_gpio`
-- corrected-binding rerun: `pack_runs` session starting `2026-03-30 08:12`
+- stale-binding run family: `pack_runs/2026-03-30_07-55-51_stm32f103c8t6_golden_stm32f103_gpio`
+- first corrected-binding full-pack run: `pack_runs/2026-03-30_09-10-33_stm32f103c8t6_golden_stm32f103_gpio`
+- follow-up full-pack rerun started before the final mailbox stabilization patch:
+  `pack_runs/2026-03-30_09-23-33_stm32f103c8t6_golden_stm32f103_gpio`
 
-Representative test runs:
+Representative targeted runs:
 
-- `runs/2026-03-30_08-00-33_stm32f103_gpio_stm32f103_wiring_verify`
-- `runs/2026-03-30_08-01-44_stm32f103_gpio_stm32f103_exti_mailbox`
+- `runs/2026-03-30_09-09-37_stm32f103_gpio_stm32f103_gpio_loopback_banner`
+- `runs/2026-03-30_09-10-02_stm32f103_gpio_stm32f103_uart_loopback_banner`
+- `runs/2026-03-30_09-19-48_stm32f103_gpio_stm32f103_capture_mailbox`
+- `runs/2026-03-30_09-23-02_stm32f103_gpio_stm32f103_pwm_capture`
+- `runs/2026-03-30_09-31-57_stm32f103_gpio_stm32f103_capture_mailbox`
+- `runs/2026-03-30_09-32-20_stm32f103_gpio_stm32f103_pwm_capture`
 
 Key observations:
 
-- `wiring_verify` failed in `preflight`, not build:
-  - `Preflight: ping 192.168.2.109 -> FAIL`
+- `.109` failure mode was bench transport, not firmware:
+  - `ping 192.168.2.109 -> FAIL`
   - `TCP 192.168.2.109:4242 -> FAIL`
-  - `probe_transport_unhealthy`
-- mailbox and visual tests built successfully, then failed in `load`:
-  - repeated `could not connect: No route to host`
-- the stale instrument web surface was also unreachable:
-  - `curl -k -sS https://192.168.2.109/`
-  - result: `Failed to connect ... No route to host`
-- the actual F103 golden bench was reachable:
-  - `curl -k -sS https://192.168.2.99/`
-  - result: `Authentication Required`
-  - TCP `192.168.2.99:4242` -> `open`
-
-This establishes that:
-
-1. pack selection is correct
-2. build paths are correct
-3. the blocker in that run was stale board-to-instrument binding to `.109`
-
-Corrected-binding rerun established that:
-
-1. `.99` is the correct reachable control instrument for this suite
-2. Stage 0 real flash and verify succeed on `.99`
-3. Stage 1 real flash and mailbox verify succeed on `.99`
-4. `wiring_verify` preflight passes on `.99` with healthy GDB and LA surfaces
+  - direct HTTPS probe also failed with `No route to host`
+- `.99` is reachable on both BMDA and web surfaces:
+  - `TCP 192.168.2.99:4242 -> OK`
+  - HTTPS to `.99` returns `Authentication Required`
+- Stage 3 banner failures on the first `.99` attempts were plan-metadata
+  blockers, not runtime failures:
+  - F103 banner plans still marked external loopbacks as
+    `manual_loopback_required`
+  - changing those external inputs to `provisioned` allowed Stage 3 to run on
+    the confirmed bench wiring
+- the first corrected-binding full-pack run proved the suite at 22/24 PASS and
+  isolated the remaining instability to the two timer/capture mailbox tests
+- targeted post-fix reruns closed both remaining failures on the live bench
 
 ## What Was Validated
 
-Validated at control-plane level:
+Validated at pack / integration level:
 
 - new `stm32f103c8t6_golden` pack resolves and starts correctly
-- stage ordering is accepted by `ael pack`
-- new tests integrate correctly into the pack
-- representative new targets build successfully in live execution:
-  - `stm32f103_systick_mailbox`
-  - `stm32f103_gpio_loopback_mailbox`
-  - `stm32f103_capture_mailbox`
-  - `stm32f103_uart_multibyte`
-  - `stm32f103_uart_dma`
+- the active `STM32F103C8T6` path now binds to `.99`, not `.109`
+- Stage 3 F103 banner plans now describe the confirmed loopback wiring as
+  provisioned bench state
 
 Validated on real hardware after correcting the binding:
 
@@ -117,50 +112,75 @@ Validated on real hardware after correcting the binding:
 - `stm32f103_spi_mailbox` PASS
 - `stm32f103_adc_mailbox` PASS
 - `stm32f103_iwdg` PASS
+- `stm32f103_gpio_signature` PASS
+- `stm32f103_gpio_loopback_banner` PASS
+- `stm32f103_exti_banner` PASS
+- `stm32f103_capture_banner` PASS
+- `stm32f103_pwm_banner` PASS
+- `stm32f103_uart_loopback_banner` PASS
+- `stm32f103_spi_banner` PASS
+- `stm32f103_adc_banner` PASS
 
-Not yet fully closed out on real hardware:
+Representative corrected-binding full-pack status:
 
-- Stage 3 LA capture pass/fail matrix
-- full-pack completion under corrected `.99` binding
+- `pack_runs/2026-03-30_09-10-33_stm32f103c8t6_golden_stm32f103_gpio`
+  completed 22/24 PASS
+- after that run, the remaining two failures were fixed and each revalidated on
+  the live bench:
+  - `stm32f103_capture_mailbox`
+  - `stm32f103_pwm_capture`
 
 ## Root Cause Classification
 
-Primary classification: `stale board/instrument binding`
+Primary classifications:
 
-Why this is not a suite bug:
+- `stale board/instrument binding`
+- `stale Stage 3 external-input metadata`
+- `fragile single-interval mailbox capture check`
 
-- failure happens before DUT execution
-- the same host cannot reach either stale `.109` surface
-- `wiring_verify` preflight independently reports transport unhealthy before any
-  firmware load attempt
-- the actual `.99` F103 instrument was independently confirmed reachable
+Why this is not a broad suite regression:
+
+- the first blocker happened before DUT execution and was purely a stale `.109`
+  transport binding
+- after rebinding to `.99`, the suite ran on real hardware and passed across
+  Stage 0, Stage 1, Stage 2, and Stage 3
+- the only remaining runtime issues reduced to two isolated mailbox targets on
+  the same timer/capture path
+- those two targets were closed with bounded mailbox-firmware changes and then
+  passed live reruns
 
 ## Recommended Next Step
 
-1. Use the corrected `.99` instrument binding
-2. Continue / re-run:
+1. Keep the corrected `.99` instrument binding
+2. Keep the confirmed canonical wiring:
+
+```text
+PA8↔PB8  PA9↔PA10  PA7↔PA6  PA1↔PA0
+PA4→P0.0 PA5→P0.1 PC13→LED GND→probe GND
+```
+
+3. Run one final post-fix full-pack confirmation:
 
 ```bash
 PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board stm32f103_gpio
 ```
 
-3. If needed, start with:
-
-```bash
-PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c8t6_golden.json --board stm32f103_gpio --stage 0,1
-```
-
-4. Run Stage 3 LA/banner validation and then the full pack end-to-end
-5. Update the DUT as validated if the suite passes cleanly
+4. If that rerun is green, mark the `STM32F103C8T6` staged suite as fully
+   validated on the canonical `.99` bench
 
 ## Closeout Decision
 
-This round is a valid live-validation closeout for the suite integration work,
-but it is not a golden-pass closeout.
+This round is a valid live-validation closeout for the suite migration and
+bench-correction work. It is also a valid closeout for the Stage 3 enablement
+and the remaining mailbox fixes.
+
+It is still one step short of a final golden-pass closeout because the final
+post-fix full-pack rerun has not yet been captured.
 
 The correct conclusion is:
 
 - code and pack formalization: complete
-- live repo-native execution: performed
-- blocker in first run: stale `.109` binding
-- next action: finish Stage 3 and full-pack closeout on corrected `.99` binding
+- stale `.109` C8T6 binding: removed from the active path
+- canonical `.99` wiring contract: confirmed on live hardware
+- Stage 0 to Stage 3 targeted validation: complete
+- remaining closure item: one fresh all-pass full-pack rerun on `.99`

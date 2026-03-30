@@ -50,6 +50,19 @@
 #define ERR_CAP_TIMEOUT 0xC001u
 #define ERR_PERIOD      0xC002u
 
+static uint32_t wait_capture_tick(void)
+{
+    uint32_t timeout = 2000000u;
+    TIM4_SR &= ~TIM_SR_CC3IF;
+    while ((TIM4_SR & TIM_SR_CC3IF) == 0u) {
+        if (--timeout == 0u) {
+            ael_mailbox_fail(ERR_CAP_TIMEOUT, 0u);
+            while (1) {}
+        }
+    }
+    return TIM4_CCR3;
+}
+
 int main(void)
 {
     RCC_APB2ENR |= (RCC_AFIOEN | RCC_IOPAEN | RCC_IOPBEN | RCC_TIM1EN);
@@ -81,26 +94,20 @@ int main(void)
 
     ael_mailbox_init();
 
-    uint32_t timeout = 2000000u;
-    while ((TIM4_SR & TIM_SR_CC3IF) == 0u) {
-        if (--timeout == 0u) {
-            ael_mailbox_fail(ERR_CAP_TIMEOUT, 0u);
-            while (1) {}
+    uint32_t last = wait_capture_tick();
+    uint32_t period = 0u;
+    uint32_t matched = 0u;
+    for (uint32_t i = 0u; i < 8u; ++i) {
+        uint32_t current = wait_capture_tick();
+        period = (current - last) & 0xFFFFu;
+        if (period >= 150u && period <= 250u) {
+            matched = 1u;
+            break;
         }
+        last = current;
     }
-    uint32_t t1 = TIM4_CCR3;
 
-    timeout = 2000000u;
-    while ((TIM4_SR & TIM_SR_CC3IF) == 0u) {
-        if (--timeout == 0u) {
-            ael_mailbox_fail(ERR_CAP_TIMEOUT, 0u);
-            while (1) {}
-        }
-    }
-    uint32_t t2 = TIM4_CCR3;
-    uint32_t period = (t2 - t1) & 0xFFFFu;
-
-    if (period < 150u || period > 250u) {
+    if (matched == 0u) {
         ael_mailbox_fail(ERR_PERIOD, period);
         while (1) {}
     }

@@ -38,7 +38,7 @@
         "dut_signal": "PA6/SPI1_MISO",
         "kind": "digital_loopback",
         "required": true,
-        "status": "manual_loopback_required",
+        "status": "provisioned",
         "notes": "Execution contract: physically connect PA7/SPI1_MOSI to PA6/SPI1_MISO. Firmware performs a bounded SPI loopback self-check internally and exports SPI-valid status on PA4."
       }
     ]

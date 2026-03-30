@@ -35,7 +35,7 @@
         "dut_signal": "PB8",
         "kind": "digital_loopback",
         "required": true,
-        "status": "manual_loopback_required",
+        "status": "provisioned",
         "notes": "Execution contract: physically connect PA8 to PB8 so the DUT can validate timing capture internally. AEL should observe PA4, not PA8/PB8, for the bounded proof."
       }
     ]
