@@ -68,6 +68,43 @@ A Pack groups a set of Tests that share a board and a bench configuration, and c
 
 **Rule:** A Pack owns the bench_profile selection. Different Packs for the same board can reference different bench profiles (e.g., stage1 uses `default`, stage2 uses `stage3` wiring). All Tests within a Pack share the same bench configuration.
 
+### Pack status label
+
+Until first-class `suites/` files are formalized, the operational status label for a board-level validation path is carried by the Pack and surfaced through `ael inventory`.
+
+Preferred Pack field:
+
+```json
+{
+  "name": "stm32f103c8t6_golden",
+  "status": "golden"
+}
+```
+
+Preferred normalized labels:
+
+| Label | Meaning |
+|-------|---------|
+| `golden` | Canonical, verified suite for this DUT/board |
+| `pre_release` | Verified path exists, but it is not yet declared the canonical golden suite |
+| `testing` | Runnable or experimental validation path still under active bench/test iteration |
+| `candidate` | Early or draft path; not yet validated as a stable suite |
+| `legacy` | Historical path retained for compatibility or reference; not canonical |
+
+Current inventory rule:
+
+- `ael inventory describe-dut --board <id>` reports one normalized `suite_label`
+- `pack.status` is authoritative when present
+- otherwise inventory falls back to DUT manifest signals such as `lifecycle_stage`, `verified.status`, and legacy tags/notes
+- `canonical_pack` is chosen from the DUT's verified golden pack when declared, otherwise from the best matching pack for that board
+
+This is the formal path that should be used when answering:
+
+- what suites exist
+- whether a suite is really Golden or only candidate/testing/pre-release
+- what tests are inside the canonical suite
+- what board/instrument/bench_profile/connection contract that suite expects
+
 ### Pack naming convention
 
 ```

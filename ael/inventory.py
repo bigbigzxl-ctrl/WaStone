@@ -28,6 +28,28 @@ from ael.verification_model import summarize_resource_keys
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+_PREFERRED_SUITE_LABELS = {"golden", "candidate", "testing", "pre_release", "legacy"}
+
+
+def _normalize_suite_label(value: Any) -> str | None:
+    raw = str(value or "").strip().lower()
+    if not raw:
+        return None
+    aliases = {
+        "golden": "golden",
+        "candidate": "candidate",
+        "draft": "candidate",
+        "testing": "testing",
+        "experimental": "testing",
+        "runnable": "testing",
+        "validated": "pre_release",
+        "pre_release": "pre_release",
+        "pre-release": "pre_release",
+        "prerelease": "pre_release",
+        "merged_to_main": "pre_release",
+        "legacy": "legacy",
+    }
+    return aliases.get(raw)
 
 
 def _metadata_explanation(metadata: Dict[str, Any]) -> Dict[str, str | None]:
@@ -175,6 +197,10 @@ def _load_pack_index(repo_root: Path) -> List[Dict[str, Any]]:
                     "name": payload.get("name") or path.stem,
                     "path": rel,
                     "board": payload.get("board"),
+                    "bench_profile": payload.get("bench_profile"),
+                    "status": payload.get("status"),
+                    "description": payload.get("description") or payload.get("notes"),
+                    "stages": payload.get("stages") if isinstance(payload.get("stages"), dict) else {},
                     # "programs" is the preferred key; "tests" is the legacy alias
                     "tests": [str(t) for t in (payload.get("programs") or payload.get("tests") or [])],
                 }
@@ -456,6 +482,134 @@ def _merge_tests(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return list(merged.values())
 
 
+def _is_legacy_manifest(manifest: Dict[str, Any]) -> bool:
+    tags = {str(item).strip().lower() for item in (manifest.get("tags") or []) if str(item).strip()}
+    description = str(manifest.get("description") or "").lower()
+    notes = str(((manifest.get("notes") or {}).get("status")) if isinstance(manifest.get("notes"), dict) else "").lower()
+    return "legacy_path" in tags or "legacy" in description or "legacy" in notes
+
+
+def _select_canonical_pack(manifest: Dict[str, Any], packs_for_dut: List[Dict[str, Any]]) -> Dict[str, Any] | None:
+    if not packs_for_dut:
+        return None
+
+    def _pack_sort_key(item: Dict[str, Any]) -> Tuple[int, str]:
+        path = str(item.get("path") or "")
+        preferred_root = 0 if path.startswith("packs/") else 1
+        return (preferred_root, path)
+
+    by_path = {str(item.get("path")): item for item in packs_for_dut if item.get("path")}
+    verified = manifest.get("verified") if isinstance(manifest.get("verified"), dict) else {}
+    preferred_paths: List[str] = []
+    for candidate in (
+        verified.get("golden_pack") if isinstance(verified, dict) else None,
+        manifest.get("golden_pack"),
+    ):
+        path = str(candidate or "").strip()
+        if path:
+            preferred_paths.append(path)
+    for path in preferred_paths:
+        if path in by_path:
+            return by_path[path]
+
+    golden_status_packs = [item for item in packs_for_dut if _normalize_suite_label(item.get("status")) == "golden"]
+    if golden_status_packs:
+        return sorted(golden_status_packs, key=_pack_sort_key)[0]
+
+    golden_name_packs = [
+        item for item in packs_for_dut if str(item.get("name") or "").endswith("_golden") or str(item.get("path") or "").endswith("_golden.json")
+    ]
+    if golden_name_packs:
+        return sorted(golden_name_packs, key=_pack_sort_key)[0]
+
+    default_packs = manifest.get("default_packs") if isinstance(manifest.get("default_packs"), list) else []
+    for candidate in default_packs:
+        path = str(candidate or "").strip()
+        if path in by_path:
+            return by_path[path]
+
+    full_packs = [
+        item
+        for item in packs_for_dut
+        if "full" in str(item.get("name") or "").lower() or "full" in str(item.get("path") or "").lower()
+    ]
+    if full_packs:
+        return sorted(full_packs, key=_pack_sort_key)[0]
+    return sorted(packs_for_dut, key=_pack_sort_key)[0]
+
+
+def _suite_label_for_dut(manifest: Dict[str, Any], canonical_pack: Dict[str, Any] | None) -> Dict[str, str | None]:
+    explicit = _normalize_suite_label((canonical_pack or {}).get("status"))
+    if explicit:
+        return {"label": explicit, "source": "pack.status"}
+
+    if _is_legacy_manifest(manifest):
+        return {"label": "legacy", "source": "manifest.tags_or_description"}
+
+    lifecycle = _normalize_suite_label(manifest.get("lifecycle_stage"))
+    verified_status = bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else False
+    if lifecycle == "golden" and verified_status:
+        return {"label": "golden", "source": "manifest.lifecycle_stage+verified.status"}
+    if lifecycle == "pre_release":
+        return {"label": "pre_release", "source": "manifest.lifecycle_stage"}
+    if lifecycle == "testing":
+        return {"label": "testing", "source": "manifest.lifecycle_stage"}
+    if lifecycle == "candidate":
+        return {"label": "candidate", "source": "manifest.lifecycle_stage"}
+    if verified_status:
+        return {"label": "pre_release", "source": "manifest.verified.status"}
+    return {"label": "candidate", "source": "default_inference"}
+
+
+def _load_bench_profile(repo_root: Path, board_id: str, bench_profile_id: str | None) -> Dict[str, Any]:
+    profile_id = str(bench_profile_id or "").strip()
+    if not profile_id:
+        return {}
+    path = repo_root / "configs" / "bench_profiles" / f"{profile_id}.yaml"
+    if not path.exists():
+        return {}
+    raw = _simple_yaml_load(str(path))
+    profile = raw.get("bench_profile", {}) if isinstance(raw, dict) else {}
+    if not isinstance(profile, dict):
+        return {}
+    return {
+        "id": profile.get("id") or profile_id,
+        "path": path.relative_to(repo_root).as_posix(),
+        "board_id": profile.get("board_id") or board_id,
+        "description": profile.get("description"),
+        "connections": list(profile.get("bench_connections") or []),
+        "observe_map": dict(profile.get("observe_map") or {}),
+        "verification_views": dict(profile.get("verification_views") or {}),
+        "default_wiring": dict(profile.get("default_wiring") or {}),
+        "safe_pins": list(profile.get("safe_pins") or []),
+    }
+
+
+def _tests_by_stage(pack: Dict[str, Any], plans_by_path: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    stages = pack.get("stages") if isinstance(pack.get("stages"), dict) else {}
+    if not stages:
+        return [
+            {
+                "stage": "all",
+                "tests": [
+                    {
+                        "name": plans_by_path.get(path, {}).get("name") or Path(path).stem,
+                        "path": path,
+                    }
+                    for path in (pack.get("tests") or [])
+                ],
+            }
+        ]
+    items: List[Dict[str, Any]] = []
+    for stage_key in sorted(stages.keys(), key=lambda value: int(value) if str(value).isdigit() else str(value)):
+        tests = []
+        for path in stages.get(stage_key) or []:
+            plan = plans_by_path.get(str(path), {})
+            tests.append({"name": plan.get("name") or Path(str(path)).stem, "path": str(path)})
+        items.append({"stage": str(stage_key), "tests": tests})
+    return items
+
+
 def build_instrument_instance_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
     return build_resolved_instrument_inventory(repo_root or REPO_ROOT)
 
@@ -477,6 +631,9 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
         for entry in assets.list_duts(source_root):
             manifest = entry.get("manifest") or {}
             dut_id = str(manifest.get("id") or entry.get("id") or Path(entry["path"]).name)
+            packs_for_dut = [item for item in packs if item.get("board") == dut_id]
+            canonical_pack = _select_canonical_pack(manifest, packs_for_dut)
+            suite_label = _suite_label_for_dut(manifest, canonical_pack)
             tests: List[Dict[str, Any]] = []
             for plan in plans_by_path.values():
                 if plan.get("board") == dut_id or plan.get("dut") == dut_id:
@@ -541,6 +698,14 @@ def build_inventory(repo_root: Path | None = None) -> Dict[str, Any]:
                     "lifecycle_stage": str(manifest.get("lifecycle_stage") or "").strip() or None,
                     "board_config": board_config.relative_to(root).as_posix() if board_config.exists() else None,
                     "verified_status": bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else None,
+                    "suite_label": suite_label.get("label"),
+                    "suite_label_source": suite_label.get("source"),
+                    "canonical_pack": {
+                        "name": canonical_pack.get("name"),
+                        "path": canonical_pack.get("path"),
+                        "status": canonical_pack.get("status"),
+                        "bench_profile": canonical_pack.get("bench_profile"),
+                    } if canonical_pack else None,
                     "tests": tests,
                 }
             )
@@ -659,6 +824,87 @@ def describe_connection(board_id: str, test_path: str, repo_root: Path | None = 
             payload.get("connection_setup", {}).get("source_summary")
             if isinstance(payload.get("connection_setup"), dict)
             else {}
+        ),
+    }
+
+
+def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]:
+    root = Path(repo_root or REPO_ROOT)
+    plans_by_path, _ = _load_plan_index(root)
+    packs = _load_pack_index(root)
+    dut = assets.load_dut_prefer_user(board_id)
+    if not isinstance(dut, dict):
+        return {"ok": False, "error": f"dut not found: {board_id}"}
+    manifest = dut.get("manifest") if isinstance(dut.get("manifest"), dict) else {}
+    board_cfg = _load_board_cfg(root, board_id)
+    packs_for_dut = [item for item in packs if item.get("board") == board_id]
+    canonical_pack = _select_canonical_pack(manifest, packs_for_dut)
+    suite_label = _suite_label_for_dut(manifest, canonical_pack)
+    bench_profile_id = (
+        str((canonical_pack or {}).get("bench_profile") or "").strip()
+        or str(board_cfg.extra.get("default_bench_profile") or "").strip()
+        or None
+    )
+    bench_profile = _load_bench_profile(root, board_id, bench_profile_id)
+    representative_test = None
+    for path in (canonical_pack or {}).get("tests") or []:
+        if str(path).strip():
+            representative_test = str(path)
+            break
+    representative_payload = (
+        describe_test(board_id=board_id, test_path=representative_test, repo_root=root)
+        if representative_test
+        else None
+    )
+    return {
+        "ok": True,
+        "dut": {
+            "id": board_id,
+            "name": manifest.get("name") or board_cfg.name or board_id,
+            "mcu": manifest.get("mcu") or board_cfg.mcu,
+            "family": manifest.get("family"),
+            "description": manifest.get("description"),
+            "source": "user" if "/assets_user/" in str(dut.get("path") or "") else "golden",
+            "lifecycle_stage": str(manifest.get("lifecycle_stage") or "").strip() or None,
+            "verified_status": bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else None,
+        },
+        "suite": {
+            "label": suite_label.get("label"),
+            "label_source": suite_label.get("source"),
+            "canonical_pack": {
+                "name": (canonical_pack or {}).get("name"),
+                "path": (canonical_pack or {}).get("path"),
+                "status": (canonical_pack or {}).get("status"),
+                "description": (canonical_pack or {}).get("description"),
+                "bench_profile": bench_profile_id,
+                "test_count": len((canonical_pack or {}).get("tests") or []),
+                "stage_count": len((canonical_pack or {}).get("stages") or {}),
+                "stages": _tests_by_stage(canonical_pack or {}, plans_by_path) if canonical_pack else [],
+            } if canonical_pack else None,
+        },
+        "selected_board_profile": _selected_board_profile_payload(root, board_id, board_cfg),
+        "selected_instrument": (
+            representative_payload.get("selected_instrument")
+            if isinstance(representative_payload, dict) and representative_payload.get("ok")
+            else None
+        ),
+        "bench_profile": bench_profile,
+        "connection_setup": (
+            representative_payload.get("connection_setup")
+            if isinstance(representative_payload, dict) and representative_payload.get("ok")
+            else None
+        ),
+        "connections": list(bench_profile.get("connections") or []),
+        "tests": sorted(
+            [
+                {
+                    "name": plan.get("name") or Path(plan["path"]).stem,
+                    "path": plan["path"],
+                }
+                for plan in plans_by_path.values()
+                if plan.get("board") == board_id or plan.get("dut") == board_id
+            ],
+            key=lambda item: item["path"],
         ),
     }
 
@@ -811,6 +1057,58 @@ def render_describe_text(payload: Dict[str, Any]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_describe_dut_text(payload: Dict[str, Any]) -> str:
+    if not payload.get("ok"):
+        return f"error: {payload.get('error')}\n"
+    lines: List[str] = []
+    dut = payload.get("dut", {}) if isinstance(payload.get("dut"), dict) else {}
+    suite = payload.get("suite", {}) if isinstance(payload.get("suite"), dict) else {}
+    canonical_pack = suite.get("canonical_pack", {}) if isinstance(suite.get("canonical_pack"), dict) else {}
+    lines.append(f"dut: {dut.get('id')}")
+    if dut.get("name"):
+        lines.append(f"name: {dut.get('name')}")
+    if dut.get("mcu"):
+        lines.append(f"mcu: {dut.get('mcu')}")
+    if dut.get("family"):
+        lines.append(f"family: {dut.get('family')}")
+    if dut.get("lifecycle_stage"):
+        lines.append(f"lifecycle_stage: {dut.get('lifecycle_stage')}")
+    if suite.get("label"):
+        lines.append(f"suite_label: {suite.get('label')}")
+    if suite.get("label_source"):
+        lines.append(f"suite_label_source: {suite.get('label_source')}")
+    if canonical_pack:
+        lines.append(f"canonical_pack: {canonical_pack.get('path')}")
+        if canonical_pack.get("name"):
+            lines.append(f"canonical_pack_name: {canonical_pack.get('name')}")
+        if canonical_pack.get("status"):
+            lines.append(f"canonical_pack_status: {canonical_pack.get('status')}")
+        if canonical_pack.get("bench_profile"):
+            lines.append(f"bench_profile: {canonical_pack.get('bench_profile')}")
+        lines.append(f"stage_count: {canonical_pack.get('stage_count', 0)}")
+        lines.append(f"test_count: {canonical_pack.get('test_count', 0)}")
+    selected_instrument = payload.get("selected_instrument", {}) if isinstance(payload.get("selected_instrument"), dict) else {}
+    if selected_instrument:
+        lines.append(f"selected_instrument: {selected_instrument.get('id')}")
+        if selected_instrument.get("type"):
+            lines.append(f"selected_instrument_type: {selected_instrument.get('type')}")
+        endpoint = selected_instrument.get("endpoint") if isinstance(selected_instrument.get("endpoint"), dict) else {}
+        if endpoint.get("host") and endpoint.get("port") is not None:
+            lines.append(f"selected_instrument_endpoint: {endpoint.get('host')}:{endpoint.get('port')}")
+    bench_profile = payload.get("bench_profile", {}) if isinstance(payload.get("bench_profile"), dict) else {}
+    if bench_profile:
+        lines.append("connections:")
+        for conn in bench_profile.get("connections") or []:
+            lines.append(f"  - {conn.get('from')} -> {conn.get('to')}")
+    if canonical_pack.get("stages"):
+        lines.append("stages:")
+        for stage in canonical_pack.get("stages") or []:
+            lines.append(f"  - stage {stage.get('stage')}:")
+            for test in stage.get("tests") or []:
+                lines.append(f"    {test.get('name')} ({test.get('path')})")
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def render_connection_text(payload: Dict[str, Any]) -> str:
     if not payload.get("ok"):
         return f"error: {payload.get('error')}\n"
@@ -875,9 +1173,13 @@ def render_text(inventory: Dict[str, Any]) -> str:
     for dut in inventory.get("duts") or []:
         source = dut.get("source") or "golden"
         lifecycle = dut.get("lifecycle_stage")
+        suite_label = dut.get("suite_label")
+        canonical_pack = (dut.get("canonical_pack") or {}).get("name") if isinstance(dut.get("canonical_pack"), dict) else None
         source_tag = f" [{source}]" if source != "golden" else ""
         lifecycle_tag = f" stage={lifecycle}" if lifecycle else ""
-        lines.append(f"{dut['dut_id']} ({dut.get('mcu')}){source_tag}{lifecycle_tag}")
+        suite_tag = f" suite={suite_label}" if suite_label else ""
+        pack_tag = f" pack={canonical_pack}" if canonical_pack else ""
+        lines.append(f"{dut['dut_id']} ({dut.get('mcu')}){source_tag}{lifecycle_tag}{suite_tag}{pack_tag}")
         tests = dut.get("tests") or []
         if not tests:
             lines.append("  programs: none")

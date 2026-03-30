@@ -70,6 +70,7 @@ def test_inventory_text_render_omits_generic_section():
     assert "stm32f103_gpio_signature" in text
     assert "stm32f103_uart_banner" in text
     assert "rp2040_gpio_signature" in text
+    assert "suite=golden" in text
 
 
 def test_inventory_plan_index_surfaces_structured_metadata_for_pilot_plans():
@@ -458,6 +459,55 @@ def test_describe_test_for_stm32f103_gpio_signature_multi_signal_contract():
     assert any(conn["from"] == "PA5" and conn["to"] == "P0.1" for conn in payload["connections"])
     rendered = inventory.render_describe_text(payload)
     assert "frequency_ratio: pa4_fast/pa5_half_rate min=1.8 max=2.2" in rendered
+
+
+def test_build_inventory_surfaces_suite_label_and_canonical_pack():
+    payload = inventory.build_inventory(REPO_ROOT)
+    stm32f103 = next(item for item in payload["duts"] if item["dut_id"] == "stm32f103_gpio")
+    assert stm32f103["suite_label"] == "golden"
+    assert stm32f103["canonical_pack"]["path"] == "packs/stm32f103c8t6_golden.json"
+
+    legacy_uart = next(item for item in payload["duts"] if item["dut_id"] == "stm32f103_uart")
+    assert legacy_uart["suite_label"] == "legacy"
+
+    stm32f411 = next(item for item in payload["duts"] if item["dut_id"] == "stm32f411ceu6")
+    assert stm32f411["suite_label"] == "golden"
+    assert stm32f411["canonical_pack"]["path"] == "packs/stm32f411ceu6_golden.json"
+
+
+def test_describe_dut_for_stm32f103_gpio_suite():
+    payload = inventory.describe_dut("stm32f103_gpio", REPO_ROOT)
+    assert payload["ok"] is True
+    assert payload["dut"]["id"] == "stm32f103_gpio"
+    assert payload["suite"]["label"] == "golden"
+    assert payload["suite"]["canonical_pack"]["path"] == "packs/stm32f103c8t6_golden.json"
+    assert payload["suite"]["canonical_pack"]["bench_profile"] == "stm32f103_gpio__stage3"
+    assert payload["suite"]["canonical_pack"]["stage_count"] == 4
+    assert payload["suite"]["canonical_pack"]["test_count"] == 24
+    assert payload["selected_instrument"]["id"] == "esp32jtag_stm32f103_golden"
+    assert payload["bench_profile"]["id"] == "stm32f103_gpio__stage3"
+    assert any(conn["from"] == "PA8" and conn["to"] == "PB8" for conn in payload["connections"])
+    assert payload["suite"]["canonical_pack"]["stages"][0]["stage"] == "0"
+    rendered = inventory.render_describe_dut_text(payload)
+    assert "suite_label: golden" in rendered
+    assert "canonical_pack: packs/stm32f103c8t6_golden.json" in rendered
+    assert "selected_instrument: esp32jtag_stm32f103_golden" in rendered
+    assert "PA8 -> PB8" in rendered
+
+
+def test_inventory_describe_dut_cli_text_output():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "."
+    res = subprocess.run(
+        [sys.executable, "-m", "ael", "inventory", "describe-dut", "--board", "stm32f103_gpio", "--format", "text"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+    )
+    assert "suite_label: golden" in res.stdout
+    assert "canonical_pack: packs/stm32f103c8t6_golden.json" in res.stdout
 
 
 def test_describe_test_for_stm32f401_led_blink():

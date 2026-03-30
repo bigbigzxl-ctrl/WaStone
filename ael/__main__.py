@@ -319,6 +319,9 @@ def main():
     inventory_list.add_argument("--format", choices=["json", "text"], default="json")
     inventory_instances = inventory_sub.add_parser("instances")
     inventory_instances.add_argument("--format", choices=["json", "text"], default="json")
+    inventory_describe_dut = inventory_sub.add_parser("describe-dut")
+    inventory_describe_dut.add_argument("--board", required=True)
+    inventory_describe_dut.add_argument("--format", choices=["json", "text"], default="json")
     inventory_describe = inventory_sub.add_parser("describe-test")
     inventory_describe.add_argument("--board", required=True)
     inventory_describe.add_argument("--test", required=True)
@@ -756,6 +759,13 @@ def main():
             else:
                 print(json.dumps(payload, indent=2, sort_keys=True))
             sys.exit(0)
+        if args.inventory_cmd == "describe-dut":
+            payload = inventory.describe_dut(board_id=args.board, repo_root=Path(repo_root))
+            if args.format == "text":
+                print(inventory.render_describe_dut_text(payload), end="")
+            else:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            sys.exit(0 if payload.get("ok") else 1)
         if args.inventory_cmd == "describe-test":
             payload = inventory.describe_test(board_id=args.board, test_path=args.test, repo_root=Path(repo_root))
             if args.format == "text":
