@@ -571,6 +571,54 @@ def test_inventory_suites_cli_text_output():
     assert "stm32f411ceu6" in res.stdout
 
 
+def test_list_suites_grouped_by_taxonomy():
+    payload = inventory.list_suites(
+        repo_root=REPO_ROOT,
+        vendor="st",
+        family="stm32",
+        label="golden",
+        group_by="taxonomy",
+    )
+    assert payload["filters"]["group_by"] == "taxonomy"
+    assert payload["groups"]
+    f4_group = next(group for group in payload["groups"] if group["series"] == "stm32f4")
+    f4_ids = {item["dut_id"] for item in f4_group["suites"]}
+    assert "stm32f401rct6" in f4_ids
+    assert "stm32f407_discovery" in f4_ids
+    assert "stm32f411ceu6" in f4_ids
+
+
+def test_inventory_suites_cli_grouped_text_output():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "."
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ael",
+            "inventory",
+            "suites",
+            "--vendor",
+            "st",
+            "--family",
+            "stm32",
+            "--label",
+            "golden",
+            "--group-by",
+            "taxonomy",
+            "--format",
+            "text",
+        ],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+    )
+    assert "group: mcu / st / stm32 / stm32f4" in res.stdout
+    assert "stm32f407_discovery" in res.stdout
+
+
 def test_describe_test_for_stm32f401_led_blink():
     payload = inventory.describe_test("stm32f401rct6", "tests/plans/stm32f401_led_blink.json", REPO_ROOT)
     assert payload["ok"] is True

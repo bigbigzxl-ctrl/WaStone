@@ -1002,6 +1002,7 @@ def list_suites(
     line: str | None = None,
     part_number: str | None = None,
     label: str | None = None,
+    group_by: str | None = None,
 ) -> Dict[str, Any]:
     payload = build_inventory(repo_root)
     filters = {
@@ -1012,6 +1013,7 @@ def list_suites(
         "line": str(line or "").strip().lower() or None,
         "part_number": str(part_number or "").strip().lower() or None,
         "label": _normalize_suite_label(label),
+        "group_by": str(group_by or "").strip().lower() or "none",
     }
 
     suites: List[Dict[str, Any]] = []
@@ -1045,12 +1047,37 @@ def list_suites(
                 "test_count": len(dut.get("tests") or []),
             }
         )
+    grouped: List[Dict[str, Any]] = []
+    if filters["group_by"] == "taxonomy":
+        buckets: Dict[Tuple[str, str, str, str], List[Dict[str, Any]]] = {}
+        for item in suites:
+            classification = item.get("classification") if isinstance(item.get("classification"), dict) else {}
+            key = (
+                str(classification.get("platform_class") or "unknown"),
+                str(classification.get("vendor") or "unknown"),
+                str(classification.get("family") or "unknown"),
+                str(classification.get("series") or "unknown"),
+            )
+            buckets.setdefault(key, []).append(item)
+        for key in sorted(buckets.keys()):
+            grouped.append(
+                {
+                    "platform_class": key[0],
+                    "vendor": key[1],
+                    "family": key[2],
+                    "series": key[3],
+                    "suite_count": len(buckets[key]),
+                    "suites": sorted(buckets[key], key=lambda item: str(item.get("dut_id") or "")),
+                }
+            )
+
     return {
         "ok": True,
         "generated_at": payload.get("generated_at"),
         "filters": filters,
         "summary": {"suite_count": len(suites)},
         "suites": sorted(suites, key=lambda item: str(item.get("dut_id") or "")),
+        "groups": grouped,
     }
 
 
@@ -1265,6 +1292,28 @@ def render_suite_list_text(payload: Dict[str, Any]) -> str:
         lines.append("filters: " + ", ".join(active_filters))
     lines.append(f"suite_count: {((payload.get('summary') or {}).get('suite_count', 0))}")
     lines.append("")
+    groups = payload.get("groups") if isinstance(payload.get("groups"), list) else []
+    if groups:
+        for group in groups:
+            lines.append(
+                "group: "
+                f"{group.get('platform_class')} / {group.get('vendor')} / {group.get('family')} / {group.get('series')}"
+            )
+            lines.append(f"  suite_count: {group.get('suite_count', 0)}")
+            for item in group.get("suites") or []:
+                classification = item.get("classification") if isinstance(item.get("classification"), dict) else {}
+                pack = item.get("canonical_pack") if isinstance(item.get("canonical_pack"), dict) else {}
+                parts = [
+                    f"  - {item.get('dut_id')}",
+                    f"label={item.get('suite_label')}",
+                ]
+                if classification.get("line"):
+                    parts.append(f"line={classification.get('line')}")
+                if pack.get("name"):
+                    parts.append(f"pack={pack.get('name')}")
+                lines.append("  ".join(parts))
+            lines.append("")
+        return "\n".join(lines).rstrip() + "\n"
     for item in payload.get("suites") or []:
         classification = item.get("classification") if isinstance(item.get("classification"), dict) else {}
         pack = item.get("canonical_pack") if isinstance(item.get("canonical_pack"), dict) else {}
