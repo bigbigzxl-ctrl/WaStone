@@ -4,6 +4,14 @@ mcu: stm32f030c8t6
 family: stm32f0
 description: STM32F030C8T6 GPIO/signature bench DUT
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f0
+  line: stm32f030
+  part_number: stm32f030c8t6
+
 board:
   vendor: Generic
   form_factor: breakout

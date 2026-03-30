@@ -4,6 +4,14 @@ mcu: stm32f103c8t6
 family: stm32f1
 description: Legacy STM32F103C8T6 Bluepill UART bridge bench DUT; not the canonical staged golden suite path
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f1
+  line: stm32f103
+  part_number: stm32f103c8t6
+
 board:
   vendor: Generic
   form_factor: bluepill

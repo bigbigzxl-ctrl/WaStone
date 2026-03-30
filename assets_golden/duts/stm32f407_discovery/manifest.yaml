@@ -4,6 +4,14 @@ mcu: stm32f407vgt6
 family: stm32f4
 description: STM32F4 Discovery board — ST-Link direct integration
 
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f4
+  line: stm32f407
+  part_number: stm32f407vgt6
+
 board:
   vendor: STMicroelectronics
   form_factor: discovery

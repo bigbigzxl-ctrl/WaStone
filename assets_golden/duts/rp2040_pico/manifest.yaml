@@ -4,6 +4,14 @@ mcu: rp2040
 family: rp2040
 description: Raspberry Pi Pico (RP2040) blink + LA verify
 
+classification:
+  platform_class: mcu
+  vendor: raspberry_pi
+  family: rp2040
+  series: rp2040
+  line: rp2040
+  part_number: rp2040
+
 board:
   vendor: Raspberry Pi Foundation
   form_factor: pico

@@ -4,6 +4,14 @@ mcu: esp32s3
 family: esp32
 description: ESP32-S3 DevKit GPIO waveform + UART banner
 
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32s3
+  line: esp32s3
+  part_number: esp32s3
+
 board:
   vendor: Espressif
   form_factor: devkit

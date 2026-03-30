@@ -4,6 +4,14 @@ mcu: rp2350
 family: rp2
 description: Raspberry Pi Pico 2 (RP2350) GPIO signature + ESP32JTAG SWD verify
 
+classification:
+  platform_class: mcu
+  vendor: raspberry_pi
+  family: rp2350
+  series: rp2350
+  line: rp2350
+  part_number: rp2350
+
 board:
   vendor: Raspberry Pi Foundation
   form_factor: pico

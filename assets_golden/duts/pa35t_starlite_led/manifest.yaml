@@ -3,6 +3,13 @@ name: PA35T StarLite LED Blink
 board: pa35t_starlite
 mcu: xc7a35t
 family: xilinx_artix7
+classification:
+  platform_class: fpga
+  vendor: xilinx
+  family: artix7
+  series: artix7
+  line: xc7a35t
+  part_number: xc7a35tfgg484-2
 purpose: >
   Minimal LED blink design for the PA35T StarLite board (Xilinx Artix-7 xc7a35tfgg484-2).
   Drives led[0] and led[1] (W22, Y22) in a rotating pattern via a parameterized counter.

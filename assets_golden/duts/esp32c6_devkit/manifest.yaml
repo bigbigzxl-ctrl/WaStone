@@ -4,6 +4,14 @@ mcu: esp32c6
 family: esp32
 description: ESP32-C6 DevKit GPIO waveform + UART banner (minimal phase-1 path)
 
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32c6
+  line: esp32c6
+  part_number: esp32c6
+
 board:
   vendor: Espressif
   form_factor: devkit

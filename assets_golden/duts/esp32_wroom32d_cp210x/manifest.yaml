@@ -17,6 +17,13 @@ default_packs:
 description: ESP32-WROOM-32D devkit with CP210x USB-UART bridge. 12 isolated test
   programs (truth layer) + test_full_suite convenience binary. Covers Hello/NVS/WiFi/BLE/Sleep/PWM/INTR/PCNT/UART/ADC/SPI/I2C.
   Single USB port, reset_strategy=rts required.
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32
+  line: esp32
+  part_number: esp32
 family: esp32
 flash:
   method: idf_esptool
