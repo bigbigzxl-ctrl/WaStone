@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32g431_uart_dma",
+  "board": "stm32g431cbu6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage2", "dma", "usart"],
+  "covers": ["dma", "dmamux", "usart1", "uart_dma"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32g431_uart_dma",
+    "artifact_stem": "stm32g431_uart_dma_app",
+    "build_dir": "artifacts/build_stm32g431_uart_dma"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20007F00"
+  },
+  "bench_setup": {
+    "notes": "DMA-driven USART1 loopback. DMA1_CH4(TX via DMAMUX req 25) sends 8 bytes; DMA1_CH5(RX via DMAMUX req 24) receives them. Firmware compares TX/RX buffers and reports PASS/FAIL via mailbox. Requires PA9↔PA10 loopback wire (existing bench wiring). Error codes: 0xE001=timeout, 0xE002=mismatch, 0xE003=DMA transfer error.",
+    "peripheral_signals": [
+      { "role": "USART1_TX", "dut_signal": "PA9",  "direction": "output",
+        "notes": "USART1 TX, AF7. DMA1_CH4 (DMAMUX request 25)." },
+      { "role": "USART1_RX", "dut_signal": "PA10", "direction": "input",
+        "notes": "USART1 RX, AF7. DMA1_CH5 (DMAMUX request 24). Loopback: PA9→PA10." }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32g431_dac_mailbox",
+  "board": "stm32g431cbu6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage3", "dac", "adc"],
+  "covers": ["dac", "dac1", "adc2", "internal_routing"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32g431_dac_mailbox",
+    "artifact_stem": "stm32g431_dac_mailbox_app",
+    "build_dir": "artifacts/build_stm32g431_dac_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20007F00"
+  },
+  "bench_setup": {
+    "notes": "DAC1_OUT1 (PA4) internal readback via ADC2_IN17. No external wiring required — internal routing on G431. HIGH: DHR12R1=3723 → ADC>2500; LOW: DHR12R1=372 → ADC<1000. PA4 in analog mode. Error codes: 0xE001=ADC timeout, 0xE002=HIGH value too low (DAC/ADC not connected), 0xE003=LOW value too high.",
+    "peripheral_signals": [
+      { "role": "DAC1_OUT1", "dut_signal": "PA4", "direction": "output",
+        "notes": "DAC1 CH1 output. Internally routed to ADC2_IN17. PA4 configured as analog. LA probe P0.2 on PA4 is high-impedance — no conflict." }
+    ]
+  }
+}
