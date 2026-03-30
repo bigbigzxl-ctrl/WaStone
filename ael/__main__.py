@@ -326,6 +326,7 @@ def main():
     inventory_suites.add_argument("--part-number")
     inventory_suites.add_argument("--label")
     inventory_suites.add_argument("--group-by", choices=["none", "taxonomy"], default="none")
+    inventory_suites.add_argument("--canonical-only", action="store_true")
     inventory_suites.add_argument("--format", choices=["json", "text"], default="json")
     inventory_instances = inventory_sub.add_parser("instances")
     inventory_instances.add_argument("--format", choices=["json", "text"], default="json")
@@ -773,6 +774,7 @@ def main():
                 part_number=args.part_number,
                 label=args.label,
                 group_by=args.group_by,
+                canonical_only=args.canonical_only,
             )
             if args.format == "text":
                 print(inventory.render_suite_list_text(payload), end="")

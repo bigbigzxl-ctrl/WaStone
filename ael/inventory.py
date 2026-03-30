@@ -1005,6 +1005,7 @@ def list_suites(
     part_number: str | None = None,
     label: str | None = None,
     group_by: str | None = None,
+    canonical_only: bool = False,
 ) -> Dict[str, Any]:
     payload = build_inventory(repo_root)
     filters = {
@@ -1016,11 +1017,17 @@ def list_suites(
         "part_number": str(part_number or "").strip().lower() or None,
         "label": _normalize_suite_label(label),
         "group_by": str(group_by or "").strip().lower() or "none",
+        "canonical_only": bool(canonical_only),
     }
 
     suites: List[Dict[str, Any]] = []
     for dut in payload.get("duts") or []:
         classification = dut.get("classification") if isinstance(dut.get("classification"), dict) else {}
+        if filters["canonical_only"]:
+            if dut.get("source") != "golden":
+                continue
+            if dut.get("suite_label") == "legacy":
+                continue
         if filters["platform_class"] and classification.get("platform_class") != filters["platform_class"]:
             continue
         if filters["vendor"] and classification.get("vendor") != filters["vendor"]:
@@ -1040,6 +1047,7 @@ def list_suites(
                 "dut_id": dut.get("dut_id"),
                 "mcu": dut.get("mcu"),
                 "family": dut.get("family"),
+                "source": dut.get("source"),
                 "classification": classification,
                 "suite_label": dut.get("suite_label"),
                 "suite_label_source": dut.get("suite_label_source"),

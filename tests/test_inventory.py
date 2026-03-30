@@ -549,6 +549,22 @@ def test_list_suites_esp32_golden_includes_completed_full_suites():
     assert "esp32_wroom32d_cp210x" in ids
 
 
+def test_list_suites_canonical_only_excludes_legacy_and_branch_paths():
+    payload = inventory.list_suites(
+        repo_root=REPO_ROOT,
+        vendor="espressif",
+        family="esp32",
+        canonical_only=True,
+    )
+    ids = {item["dut_id"] for item in payload["suites"]}
+    assert "esp32c3_devkit" not in ids
+    assert "esp32c6_devkit" not in ids
+    assert "esp32s3_devkit" not in ids
+    assert "esp32c3_devkit_native_usb" in ids
+    assert "esp32c6_devkit_dual_usb" in ids
+    assert all(item["source"] == "golden" for item in payload["suites"])
+
+
 def test_inventory_suites_cli_text_output():
     env = os.environ.copy()
     env["PYTHONPATH"] = "."
@@ -627,6 +643,37 @@ def test_inventory_suites_cli_grouped_text_output():
     )
     assert "group: mcu / st / stm32 / stm32f4" in res.stdout
     assert "stm32f407_discovery" in res.stdout
+
+
+def test_inventory_suites_cli_canonical_only_output():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "."
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "ael",
+            "inventory",
+            "suites",
+            "--vendor",
+            "espressif",
+            "--family",
+            "esp32",
+            "--canonical-only",
+            "--format",
+            "text",
+        ],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+    )
+    assert "vendor=espressif" in res.stdout
+    assert "family=esp32" in res.stdout
+    assert "canonical_only=True" in res.stdout
+    assert "esp32c6_devkit_dual_usb" in res.stdout
+    assert "esp32c6_devkit  " not in res.stdout
 
 
 def test_describe_test_for_stm32f401_led_blink():
