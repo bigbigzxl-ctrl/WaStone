@@ -21,11 +21,10 @@ board:
     target_id: 1
     reset_available: false
     gdb_launch_cmds:
-      - "monitor a"
+      - "monitor swdp_scan"
       - "file {firmware}"
       - "attach {target_id}"
       - "load"
-      - "set *(unsigned int*)0xE000EDF0 = 0xA05F0001"
       - "detach"
   power_and_boot:
     reset_strategy: connect_under_reset
