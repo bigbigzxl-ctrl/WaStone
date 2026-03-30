@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h750_pll1_clock",
+  "board": "stm32h750vbt6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "no_wire", "stage2"],
+  "covers": ["pll1", "rcc", "flash_latency", "vos1", "tim2"],
+  "build": {
+    "project_dir": "firmware/targets/stm32h750_pll1_clock",
+    "artifact_stem": "stm32h750_pll1_clock_app",
+    "build_dir": "artifacts/build_stm32h750_pll1_clock"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2000FF00"
+  },
+  "bench_setup": {
+    "notes": "PLL1 full-speed clock self-test. HSI 64 MHz → PLL1 (PLLM=4, PLLN=50, PLLP=2) → SYSCLK=400 MHz. VOS1, Flash LATENCY=4/WRHIGHFREQ=2. D1HCLK=200 MHz (HPRE=/2), APB1=100 MHz (D2PPRE1=/2), TIM2 clock=200 MHz. Measures TIM2 ticks in 1 ms SysTick interval; expects 180000–220000 (~200000). On PASS: detail0 = measured TIM2 ticks per ms. No wiring required.",
+    "peripheral_signals": []
+  }
+}

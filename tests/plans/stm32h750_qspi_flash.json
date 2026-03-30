@@ -21,7 +21,7 @@
     "addr": "0x2000FF00"
   },
   "bench_setup": {
-    "notes": "QUADSPI NOR flash JEDEC ID read. YD board has W25Q64 on QUADSPI bank 1. Pins: PB2(CLK,AF9), PB6(NCS,AF10), PD11(IO0,AF9), PD12(IO1,AF9), PD13(IO3,AF9), PE2(IO2,AF9). Config: PRESCALER=1 (32 MHz), CKMODE=3, SSHIFT=1, FSIZE=22. Sends 0x9F (READ_ID) in 1-line SPI, expects 0xEF4017 (Winbond W25Q64). On PASS: detail0=0x00EF4017. No loopback wiring required (board-level connection).",
+    "notes": "QUADSPI NOR flash JEDEC ID read. YD board has W25Q128 on QUADSPI bank 1 (confirmed 0x18 capacity byte). Pins: PB2(CLK,AF9), PB6(NCS,AF10), PD11(IO0,AF9), PD12(IO1,AF9), PD13(IO3,AF9), PE2(IO2,AF9). Config: PRESCALER=1 (32 MHz), CKMODE=3, SSHIFT=1, FSIZE=22. Sends 0x9F (READ_ID) in 1-line SPI, expects 0xEF4018 (Winbond W25Q128). On PASS: detail0=0x00EF4018. No loopback wiring required (board-level connection).",
     "peripheral_signals": []
   }
 }

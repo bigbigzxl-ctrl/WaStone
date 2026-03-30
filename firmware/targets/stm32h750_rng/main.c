@@ -28,14 +28,14 @@
 /* ── RCC ─────────────────────────────────────────────────────────── */
 #define RCC_BASE        0x58024400u
 #define RCC_CR          (*(volatile uint32_t *)(RCC_BASE + 0x000u))
-#define RCC_AHB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0D4u))
+#define RCC_AHB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0DCu))   /* AHB2ENR at offset 0xDC (not 0xD4=AHB3ENR) */
 
-#define RCC_CR_HSI48ON   (1u << 16u)
-#define RCC_CR_HSI48RDY  (1u << 17u)
+#define RCC_CR_HSI48ON   (1u << 12u)   /* HSI48ON at bit 12 per RM0433 */
+#define RCC_CR_HSI48RDY  (1u << 13u)   /* HSI48RDY at bit 13 */
 #define RCC_AHB2ENR_RNGEN (1u << 6u)
 
-/* ── RNG (0x48060800, AHB2) ──────────────────────────────────────── */
-#define RNG_BASE  0x48060800u
+/* ── RNG (AHB2, D2_AHB2PERIPH_BASE+0x1800 = 0x48021800) ─────────── */
+#define RNG_BASE  0x48021800u
 #define RNG_CR    (*(volatile uint32_t *)(RNG_BASE + 0x00u))
 #define RNG_SR    (*(volatile uint32_t *)(RNG_BASE + 0x04u))
 #define RNG_DR    (*(volatile uint32_t *)(RNG_BASE + 0x08u))

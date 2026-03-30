@@ -3,7 +3,7 @@
  *
  * YD-STM32H750VBT6 board has W25Q64 (Winbond 64 Mbit) on QUADSPI bank 1.
  * Reads JEDEC ID (0x9F) in 1-line SPI mode.
- * Expected: 0xEF 0x40 0x17 (Winbond, SPI Flash, 64 Mbit).
+ * Expected: 0xEF 0x40 0x18 (Winbond, SPI Flash, 128 Mbit = W25Q128).
  *
  * GPIO (AF9=QUADSPI, AF10=QUADSPI_NCS, from MiniSTM32H7xx/06-SPIFlash_Test.ioc):
  *   PB2  = QUADSPI_CLK    AF9
@@ -23,7 +23,7 @@
  *   0xE001 = TCF timeout (transfer never completed)
  *   0xE002 = wrong JEDEC manufacturer byte (expected 0xEF)
  *   0xE003 = wrong JEDEC memory type byte (expected 0x40)
- *   0xE004 = wrong JEDEC capacity byte (expected 0x17 = 64 Mbit)
+ *   0xE004 = wrong JEDEC capacity byte (expected 0x18 = 128 Mbit)
  */
 
 #define AEL_MAILBOX_ADDR  0x2000FF00u
@@ -204,10 +204,10 @@ int main(void)
     }
     QSPI_FCR = QSPI_FCR_CTCF;
 
-    /* Verify JEDEC ID: 0xEF 0x40 0x17 for W25Q64 */
+    /* Verify JEDEC ID: 0xEF 0x40 0x18 for W25Q128 (actual chip on YD board) */
     if (id[0] != 0xEFu) { ael_mailbox_fail(0xE002u, id[0]); while (1) {} }
     if (id[1] != 0x40u) { ael_mailbox_fail(0xE003u, id[1]); while (1) {} }
-    if (id[2] != 0x17u) { ael_mailbox_fail(0xE004u, id[2]); while (1) {} }
+    if (id[2] != 0x18u) { ael_mailbox_fail(0xE004u, id[2]); while (1) {} }
 
     ael_mailbox_pass();
     AEL_MAILBOX->detail0 = ((uint32_t)id[0] << 16u) |

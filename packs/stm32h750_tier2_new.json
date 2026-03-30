@@ -1,0 +1,16 @@
+{
+  "name": "stm32h750_tier2_new",
+  "description": "STM32H750 Tier 2 new experiments: PLL1, BDMA, DAC2, LPTIM, RTC",
+  "board": "stm32h750vbt6",
+  "bench_profile": "stm32h750vbt6__default",
+  "status": "experimental",
+  "tests": [
+    "tests/plans/stm32h750_pll1_clock.json",
+    "tests/plans/stm32h750_rng.json",
+    "tests/plans/stm32h750_crc.json",
+    "tests/plans/stm32h750_wwdg.json",
+    "tests/plans/stm32h750_i2c_loopback.json",
+    "tests/plans/stm32h750_tim1_pwm.json",
+    "tests/plans/stm32h750_qspi_flash.json"
+  ]
+}
