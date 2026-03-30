@@ -501,45 +501,36 @@ AEL completed full bring-up and validation on STM32F407VGT6 Discovery using the 
 
 ---
 
-### STM32H750 — Full Smoke Validation (7/7 PASS)
+### STM32H750 — Golden Suite Complete (25/25 PASS)
 
-AEL successfully completed full bring-up and validation on STM32H750.
+AEL completed full bring-up, validation, and golden suite certification on STM32H750VBT6 (YD-STM32H750VBT6).
 
-**All tests passed:**
+**25 tests across 4 stages (verified 2026-03-30):**
 
-- minimal_runtime_mailbox
-- wiring_verify
-- adc_dac_loopback
-- gpio_loopback
-- uart_loopback
-- exti_trigger
-- pwm_capture
+Stage 0 — Boot gate:
+- blinky_visual, minimal_runtime_mailbox
 
-### What this proves
+Stage 1 — No-wire self-tests:
+- timer_mailbox, internal_temp, RNG, CRC, WWDG, TIM1-PWM, QSPI flash, PLL1 clock, BDMA, LPTIM, RTC
 
-- Autonomous firmware generation and execution
-- Multi-domain validation (digital, analog, timing, interrupt, communication)
-- Real hardware debugging and strategy adaptation
-- Rule extraction from failures
+Stage 2 — Bench wiring loopbacks:
+- wiring_verify, IWDG, EXTI, UART loopback, SPI loopback, UART DMA, FDCAN loopback, I2C loopback
 
-👉 This marks the first full autonomous bring-up on STM32H7-class MCU.
+Stage 3 — Mixed-signal:
+- gpio_loopback, pwm_capture, adc_dac_loopback
 
-### Key Insight
+**Wiring:** PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5, PB6↔PB10, PB7↔PB11
 
-The primary bottleneck has shifted from software to physical wiring.
-
-→ Next phase: reconfigurable socket + FPGA routing fabric
-
----
+👉 First full autonomous bring-up on STM32H7-class MCU. Golden pack certified.
 
 📄 [Full postmortem](docs/methodology/stm32h750_milestone_postmortem_v0_1.md)
-📄 [Smoke pack](packs/smoke_stm32h750.json)
+📄 [Golden pack](packs/stm32h750vbt6_golden.json)
 
 ---
 
-### STM32G431 — Full Smoke Validation (9/9 PASS)
+### STM32G431 — Golden Suite Complete (9/9 PASS)
 
-AEL completed full bring-up and validation on STM32G431CBU6.
+AEL completed full bring-up and golden suite certification on STM32G431CBU6.
 
 **All tests passed:**
 
@@ -561,13 +552,13 @@ AEL completed full bring-up and validation on STM32G431CBU6.
 👉 First board to use the `minimal_runtime_mailbox` Step 0 debug-path gate as part of the pack.
 
 📄 [Full postmortem](docs/methodology/stm32g431_milestone_postmortem_v0_1.md)
-📄 [Smoke pack](packs/smoke_stm32g431.json)
+📄 [Golden pack](packs/stm32g431cbu6_golden.json)
 
 ---
 
-### STM32F411 / STM32F401 — Verified (8/8 PASS)
+### STM32F411 / STM32F401 — Golden Suite Complete (8/8 PASS)
 
-AEL completed full bring-up on both STM32F4-family boards.
+AEL completed full bring-up and golden suite certification on both STM32F4-family boards.
 
 **STM32F411CEU6 (Black Pill)** and **STM32F401RCT6** — 8 experiments each:
 
@@ -584,7 +575,7 @@ These boards established the reference bring-up template used for all subsequent
 
 📄 [STM32F411 board doc](docs/boards/stm32f411ceu6.md)
 📄 [STM32F401 board doc](docs/boards/stm32f401rct6.md)
-📄 [F411 smoke pack](packs/smoke_stm32f411.json) | 📄 [F401 smoke pack](packs/smoke_stm32f401.json)
+📄 [F411 golden pack](packs/stm32f411ceu6_golden.json) | 📄 [F401 golden pack](packs/stm32f401rct6_golden.json)
 
 ---
 
@@ -627,6 +618,17 @@ This pack is fully validated (7/7 PASS) and serves as the regression baseline fo
 
 📄 [Baseline document](docs/methodology/smoke_stm32f407_baseline_v0_1.md)
 📄 [Smoke pack](packs/smoke_stm32f407.json)
+
+---
+
+### STM32U585 — Bring-up In Progress
+
+AEL is currently bringing up the STM32U585CIU6 (WeAct CoreBoard), an STM32U5-class ultra-low-power MCU with TrustZone.
+
+**Status:** In progress — firmware and test plan framework ready, validation running.
+
+**Planned coverage (21 tests):**
+blinky, minimal_runtime, timer, UID, RNG, CRC, CORDIC, ADC temp/vref, DAC+ADC, GPIO loopback, UART loopback, SPI loopback, I2C loopback, EXTI, IWDG, PWM capture, button idle, ADC drive
 
 ---
 
