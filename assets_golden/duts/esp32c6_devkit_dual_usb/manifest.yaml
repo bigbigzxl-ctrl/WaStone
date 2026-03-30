@@ -1,0 +1,68 @@
+id: esp32c6_devkit_dual_usb
+name: ESP32-C6 DevKit Dual USB
+description: >
+  ESP32-C6 dual-USB devkit — full 13-test Rule-B hardware suite
+  (HELLO/NVS/TEMP/WIFI/BLE/SLEEP/PWM/GPIO_INTR/PCNT/UART/ADC/SPI/I2C).
+  Uses native USB for flash and CH341 UART bridge for console/observe.
+lifecycle_stage: merged_to_main
+
+classification:
+  platform_class: mcu
+  vendor: espressif
+  family: esp32
+  series: esp32c6
+  line: esp32c6
+  part_number: esp32c6
+
+family: esp32
+mcu: esp32c6
+
+board:
+  vendor: Espressif
+  form_factor: devkit
+
+tags:
+  - esp32
+  - esp32c6
+  - devkit
+  - dual_usb
+
+board_configs:
+  - id: default
+    path: configs/boards/esp32c6_devkit_dual_usb.yaml
+    primary: true
+    instrument_family: none
+
+build_type: idf
+build:
+  type: idf
+  project_dir: firmware/targets/esp32c6_suite_ext
+
+flash_method: idf_esptool
+flash:
+  method: idf_esptool
+
+mcus:
+  - id: main
+    mcu: esp32c6
+    role: dut
+    family: esp32
+    clock_hz: 160000000
+    build:
+      type: idf
+      project_dir: firmware/targets/esp32c6_suite_ext
+    flash:
+      method: idf_esptool
+
+default_packs:
+  - packs/esp32c6_devkit_full.json
+
+compile_validation: passed
+compile_validation_note: "Rule-B suite established with full-suite closeout 13/13 PASS verified 2026-03-25"
+
+verified:
+  status: true
+  date: 2026-03-25
+  note: "13/13 PASS on Rule-B full suite for ESP32-C6 DevKit Dual USB."
+  verified_on:
+    bench_id: default

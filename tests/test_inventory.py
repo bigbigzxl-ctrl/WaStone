@@ -539,6 +539,16 @@ def test_list_suites_filters_stm32_family_and_f4_series():
     assert all(item["classification"]["series"] == "stm32f4" for item in f4_payload["suites"])
 
 
+def test_list_suites_esp32_golden_includes_completed_full_suites():
+    payload = inventory.list_suites(repo_root=REPO_ROOT, vendor="espressif", family="esp32", label="golden")
+    ids = {item["dut_id"] for item in payload["suites"]}
+    assert "esp32c3_devkit_native_usb" in ids
+    assert "esp32c5_devkit_dual_usb" in ids
+    assert "esp32c6_devkit_dual_usb" in ids
+    assert "esp32s3_devkit_dual_usb" in ids
+    assert "esp32_wroom32d_cp210x" in ids
+
+
 def test_inventory_suites_cli_text_output():
     env = os.environ.copy()
     env["PYTHONPATH"] = "."

@@ -587,6 +587,8 @@ def _suite_label_for_dut(manifest: Dict[str, Any], canonical_pack: Dict[str, Any
     verified_status = bool((manifest.get("verified") or {}).get("status")) if isinstance(manifest.get("verified"), dict) else False
     if lifecycle == "golden" and verified_status:
         return {"label": "golden", "source": "manifest.lifecycle_stage+verified.status"}
+    if lifecycle == "pre_release" and verified_status and canonical_pack:
+        return {"label": "golden", "source": "manifest.lifecycle_stage+verified.status+canonical_pack"}
     if lifecycle == "pre_release":
         return {"label": "pre_release", "source": "manifest.lifecycle_stage"}
     if lifecycle == "testing":
