@@ -1,7 +1,7 @@
 bench_profile:
   id: stm32h750vbt6__default
   board_id: stm32h750vbt6
-  description: "Self-loopback wiring: PB8↔PB9 (GPIO/EXTI/PWM), PA9↔PA10 (UART), PA4→PA0 (DAC→ADC)"
+  description: "Self-loopback wiring: PB8↔PB9 (GPIO/EXTI/PWM), PA9↔PA10 (UART), PA4→PA0 (DAC→ADC), PB4↔PB5 (SPI MISO↔MOSI)"
 
   bench_connections:
     - from: PB8
@@ -10,6 +10,8 @@ bench_profile:
       to: PA10
     - from: PA4
       to: PA0
+    - from: PB4
+      to: PB5
     - from: GND
       to: probe GND
 
@@ -23,5 +25,7 @@ bench_profile:
     - PA4
     - PA9
     - PA10
+    - PB4
+    - PB5
     - PB8
     - PB9

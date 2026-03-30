@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h750_spi_loopback",
+  "board": "stm32h750vbt6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "loopback", "stage2"],
+  "covers": ["spi1", "gpio_af"],
+  "build": {
+    "project_dir": "firmware/targets/stm32h750_spi_loopback",
+    "artifact_stem": "stm32h750_spi_loopback_app",
+    "build_dir": "artifacts/build_stm32h750_spi_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x38000000"
+  },
+  "bench_setup": {
+    "notes": "Stage 2 SPI1 MISO↔MOSI loopback. SPI1 master sends 4 bytes {0x12,0x34,0xAB,0xCD} at 16 MHz (MBR=/4, 64MHz APB2), reads back via MISO↔MOSI bench wire PB4↔PB5. SCK=PB3 (AF5, no wire). SPIv2: TSIZE=4, CSTART, polling TXP/RXP. On PASS: detail0=packed 4-byte received data. On FAIL: error_code bits0-3=byte mismatch, 0x10=TX timeout, 0x20=RX timeout. Wiring: PB4↔PB5.",
+    "peripheral_signals": [
+      {
+        "role": "SPI1_MISO",
+        "dut_signal": "PB4",
+        "direction": "input",
+        "notes": "SPI1 MISO, AF5. Wire: PB4↔PB5."
+      },
+      {
+        "role": "SPI1_MOSI",
+        "dut_signal": "PB5",
+        "direction": "output",
+        "notes": "SPI1 MOSI, AF5. Wire: PB4↔PB5."
+      },
+      {
+        "role": "SPI1_SCK",
+        "dut_signal": "PB3",
+        "direction": "output",
+        "notes": "SPI1 SCK, AF5. No bench wire needed."
+      }
+    ]
+  }
+}

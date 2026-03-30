@@ -1,0 +1,48 @@
+{
+  "name": "stm32h750vbt6_golden",
+  "description": "STM32H750VBT6 Golden Test Suite — 14 tests across 4 stages. Stage0: blinky + mailbox health. Stage1: timer IRQ + internal temp (no wiring). Stage2: 7 peripheral tests incl DMA UART + SPI + FDCAN internal loopback. Stage3: GPIO loopback + PWM capture + ADC/DAC. Wiring: PB8↔PB9, PA9↔PA10, PA4→PA0, PB4↔PB5.",
+  "board": "stm32h750vbt6",
+  "bench_profile": "stm32h750vbt6__default",
+  "status": "golden",
+  "verified_date": "2026-03-29",
+  "stages": {
+    "0": [
+      "tests/plans/stm32h750_blinky_visual.json",
+      "tests/plans/stm32h750_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32h750_timer_mailbox.json",
+      "tests/plans/stm32h750_internal_temp_mailbox.json"
+    ],
+    "2": [
+      "tests/plans/stm32h750_wiring_verify.json",
+      "tests/plans/stm32h750_iwdg.json",
+      "tests/plans/stm32h750_exti_trigger.json",
+      "tests/plans/stm32h750_uart_loopback.json",
+      "tests/plans/stm32h750_spi_loopback.json",
+      "tests/plans/stm32h750_uart_dma.json",
+      "tests/plans/stm32h750_fdcan_loopback.json"
+    ],
+    "3": [
+      "tests/plans/stm32h750_gpio_loopback.json",
+      "tests/plans/stm32h750_pwm_capture.json",
+      "tests/plans/stm32h750_adc_dac_loopback.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32h750_blinky_visual.json",
+    "tests/plans/stm32h750_minimal_runtime_mailbox.json",
+    "tests/plans/stm32h750_timer_mailbox.json",
+    "tests/plans/stm32h750_internal_temp_mailbox.json",
+    "tests/plans/stm32h750_wiring_verify.json",
+    "tests/plans/stm32h750_iwdg.json",
+    "tests/plans/stm32h750_exti_trigger.json",
+    "tests/plans/stm32h750_uart_loopback.json",
+    "tests/plans/stm32h750_spi_loopback.json",
+    "tests/plans/stm32h750_uart_dma.json",
+    "tests/plans/stm32h750_fdcan_loopback.json",
+    "tests/plans/stm32h750_gpio_loopback.json",
+    "tests/plans/stm32h750_pwm_capture.json",
+    "tests/plans/stm32h750_adc_dac_loopback.json"
+  ]
+}
