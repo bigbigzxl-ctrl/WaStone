@@ -2140,9 +2140,9 @@
   },
   "stm32u585ciu6|stm32u585_blinky_mailbox": {
     "exp_id": "46c659e7-58fd-4e78-97f5-e3cb9dcf0ce2",
-    "success_count": 6,
+    "success_count": 10,
     "failure_count": 0,
-    "last_seen": 1774833996.1887083,
+    "last_seen": 1774884565.1607246,
     "confidence": 1.0,
     "known_failures": {}
   },
@@ -2156,26 +2156,26 @@
   },
   "stm32u585ciu6|stm32u585_minimal_runtime_mailbox": {
     "exp_id": "e2d5664a-96ba-4612-94a6-497ee39a5e6f",
-    "success_count": 1,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774835390.0014234,
-    "confidence": 0.5,
+    "last_seen": 1774884565.1660342,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_uid_mailbox": {
     "exp_id": "db5a441f-e3bb-4d78-9220-98d1cadc8a18",
-    "success_count": 1,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774835445.4926915,
-    "confidence": 0.5,
+    "last_seen": 1774884565.1716125,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_button_idle_mailbox": {
     "exp_id": "f3ef6750-a0ba-4426-ba12-b80229b003cc",
-    "success_count": 3,
+    "success_count": 7,
     "failure_count": 2,
-    "last_seen": 1774856036.7809715,
-    "confidence": 0.7,
+    "last_seen": 1774884565.1761265,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "3eab8ee6-c815-4f09-902c-808c7768a7ec",
@@ -2186,26 +2186,26 @@
   },
   "stm32u585ciu6|stm32u585_rng_mailbox": {
     "exp_id": "359fd4d7-3990-4f69-b0a6-5827ced8bb5e",
-    "success_count": 2,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774857058.9819927,
-    "confidence": 0.6,
+    "last_seen": 1774884565.1879134,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_crc_mailbox": {
     "exp_id": "89c941c9-8e63-413f-bfff-cd2629dd43b9",
-    "success_count": 2,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774857038.3813264,
-    "confidence": 0.6,
+    "last_seen": 1774884565.1832259,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_cordic_mailbox": {
     "exp_id": "54266801-e00e-4c7d-b1dd-9c2991f8b664",
-    "success_count": 1,
+    "success_count": 4,
     "failure_count": 2,
-    "last_seen": 1774837534.6106427,
-    "confidence": 0.5,
+    "last_seen": 1774884565.1921673,
+    "confidence": 0.8,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "78f80d20-6624-44d5-9556-d08a008722c0",
@@ -2216,30 +2216,30 @@
   },
   "stm32u585ciu6|stm32u585_timer_mailbox": {
     "exp_id": "45e0be5d-5fbb-4fd0-b780-74cfb805b03c",
-    "success_count": 2,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774857082.289902,
-    "confidence": 0.6,
+    "last_seen": 1774884565.2022786,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_iwdg_mailbox": {
     "exp_id": "47db7cd7-faa1-441b-b42d-d29c54469147",
-    "success_count": 2,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1774857107.2703528,
-    "confidence": 0.6,
+    "last_seen": 1774884565.196974,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_adc_temp_mailbox": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 17,
-    "last_seen": 1774855554.0951414,
+    "failure_count": 18,
+    "last_seen": 1774881737.0204542,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "b3a0e1eb-4d35-48d1-9cef-41489597c5a4",
-        "count": 15,
+        "count": 16,
         "last_raw": "[stm32u585ciu6] stm32u585_adc_temp_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       },
       "preflight": {
@@ -2252,13 +2252,13 @@
   "stm32u585ciu6|stm32u585_adc_vref_mailbox": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 2,
-    "last_seen": 1774836741.4174323,
+    "failure_count": 3,
+    "last_seen": 1774884048.891133,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "531d576d-87b0-4a62-afc8-7e08ed961636",
-        "count": 2,
+        "count": 3,
         "last_raw": "[stm32u585ciu6] stm32u585_adc_vref_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
@@ -2367,40 +2367,40 @@
   },
   "stm32u585ciu6|stm32u585_gpio_loopback_mailbox": {
     "exp_id": "908c7642-ba03-458f-84d4-bca703dcc66d",
-    "success_count": 1,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1774861877.3078406,
-    "confidence": 0.5,
+    "last_seen": 1774884565.2063098,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_exti_mailbox": {
-    "exp_id": null,
-    "success_count": 0,
-    "failure_count": 1,
-    "last_seen": 1774861926.5730295,
-    "confidence": 0.5,
+    "exp_id": "d9c63d1b-ff9e-42ee-877a-21c523840d65",
+    "success_count": 3,
+    "failure_count": 5,
+    "last_seen": 1774884565.2247813,
+    "confidence": 0.7,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "01ad999b-20da-4ff8-8f77-3c795a60d302",
-        "count": 1,
+        "count": 5,
         "last_raw": "[stm32u585ciu6] stm32u585_exti_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "stm32u585ciu6|stm32u585_uart_loopback_mailbox": {
     "exp_id": "703f3920-1dbc-4fae-ba42-d676d35a94ed",
-    "success_count": 1,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1774862027.9433405,
-    "confidence": 0.5,
+    "last_seen": 1774884565.2117887,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "stm32u585ciu6|stm32u585_spi_loopback_mailbox": {
     "exp_id": "802e13a2-7a30-4d64-807b-0b36b37ffe17",
-    "success_count": 2,
+    "success_count": 5,
     "failure_count": 31,
-    "last_seen": 1774874572.152139,
-    "confidence": 0.6,
+    "last_seen": 1774884565.2165737,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "99b42c29-2868-4603-836f-0c8797a3bb93",
@@ -2726,13 +2726,13 @@
   "stm32u585ciu6|stm32u585_i2c_loopback_mailbox": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 1,
-    "last_seen": 1774874625.7846422,
+    "failure_count": 5,
+    "last_seen": 1774883184.8927586,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "40f34a2e-8cf2-4c50-8a4b-bf3bb238f3f8",
-        "count": 1,
+        "count": 5,
         "last_raw": "[stm32u585ciu6] stm32u585_i2c_loopback_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
@@ -2740,13 +2740,13 @@
   "stm32u585ciu6|stm32u585_dac_adc_mailbox": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 17,
-    "last_seen": 1774878006.262909,
+    "failure_count": 30,
+    "last_seen": 1774881623.8551893,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "78e3625c-a6d3-4590-8ee6-3d7dd0be566a",
-        "count": 17,
+        "count": 30,
         "last_raw": "[stm32u585ciu6] stm32u585_dac_adc_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
@@ -2848,5 +2848,33 @@
     "last_seen": 1774878639.0659657,
     "confidence": 0.6,
     "known_failures": {}
+  },
+  "stm32u585ciu6|stm32u585_pwm_capture_mailbox": {
+    "exp_id": "7262132d-0fec-458d-8c48-007f465de767",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1774884565.2206943,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "11bc9d65-abec-4f3e-a867-a773a43911ba",
+        "count": 1,
+        "last_raw": "[stm32u585ciu6] stm32u585_pwm_capture_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32u585ciu6|stm32u585_adc1_drive_mailbox": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1774884046.728691,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "33c879cc-5272-485f-9776-32aa12ea095c",
+        "count": 1,
+        "last_raw": "[stm32u585ciu6] stm32u585_adc1_drive_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
   }
 }

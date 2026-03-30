@@ -1,0 +1,46 @@
+{
+  "name": "stm32u585ciu6_golden",
+  "description": "STM32U585CIU6 Golden Test Suite — 14 tests across 3 stages. Stage0: blinky + mailbox health (no wire). Stage1: timer + internal math (no wire). Stage2: peripheral tests. Wiring: PA7↔PA6 (SPI loopback), PA9↔PA10 (UART loopback), PB0↔PB1 (GPIO loopback), PA8→PB4 (PWM capture + EXTI). NOTE: ADC tests skipped (VDDA HW issue on this board unit). I2C loopback requires PB6↔PB10, PB7↔PB3 (not wired in current bench).",
+  "board": "stm32u585ciu6",
+  "bench_profile": "stm32u585ciu6__default",
+  "status": "golden",
+  "verified_date": "2026-03-30",
+  "stages": {
+    "0": [
+      "tests/plans/stm32u585_blinky_mailbox.json",
+      "tests/plans/stm32u585_minimal_runtime_mailbox.json",
+      "tests/plans/stm32u585_uid_mailbox.json",
+      "tests/plans/stm32u585_button_idle_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32u585_crc_mailbox.json",
+      "tests/plans/stm32u585_rng_mailbox.json",
+      "tests/plans/stm32u585_cordic_mailbox.json",
+      "tests/plans/stm32u585_iwdg_mailbox.json",
+      "tests/plans/stm32u585_timer_mailbox.json"
+    ],
+    "2": [
+      "tests/plans/stm32u585_gpio_loopback_mailbox.json",
+      "tests/plans/stm32u585_uart_loopback_mailbox.json",
+      "tests/plans/stm32u585_spi_loopback_mailbox.json",
+      "tests/plans/stm32u585_pwm_capture_mailbox.json",
+      "tests/plans/stm32u585_exti_mailbox.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32u585_blinky_mailbox.json",
+    "tests/plans/stm32u585_minimal_runtime_mailbox.json",
+    "tests/plans/stm32u585_uid_mailbox.json",
+    "tests/plans/stm32u585_button_idle_mailbox.json",
+    "tests/plans/stm32u585_crc_mailbox.json",
+    "tests/plans/stm32u585_rng_mailbox.json",
+    "tests/plans/stm32u585_cordic_mailbox.json",
+    "tests/plans/stm32u585_iwdg_mailbox.json",
+    "tests/plans/stm32u585_timer_mailbox.json",
+    "tests/plans/stm32u585_gpio_loopback_mailbox.json",
+    "tests/plans/stm32u585_uart_loopback_mailbox.json",
+    "tests/plans/stm32u585_spi_loopback_mailbox.json",
+    "tests/plans/stm32u585_pwm_capture_mailbox.json",
+    "tests/plans/stm32u585_exti_mailbox.json"
+  ]
+}
