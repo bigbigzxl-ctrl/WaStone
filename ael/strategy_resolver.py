@@ -40,6 +40,8 @@ def normalize_probe_cfg(raw: Dict[str, Any] | Any) -> Dict[str, Any]:
         cfg["ip"] = connection["ip"]
     if "gdb_port" not in cfg and "gdb_port" in connection:
         cfg["gdb_port"] = connection["gdb_port"]
+    if "gdb_cmd" not in cfg and "gdb_cmd" in connection:
+        cfg["gdb_cmd"] = connection["gdb_cmd"]
     if "gdb_cmd" not in cfg:
         cfg["gdb_cmd"] = raw.get("gdb_cmd") if isinstance(raw, dict) else None
     if isinstance(instance, dict):

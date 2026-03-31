@@ -13,14 +13,14 @@ board:
     post_load_settle_s: 2.0
     target_id: 1
     gdb_launch_cmds:
+      - "monitor reset halt"
       - "file {firmware}"
-      - "monitor swdp_scan"
-      - "attach {target_id}"
       - "load"
-      - "attach {target_id}"
+      - "monitor reset run"
       - "detach"
   mailbox_verify_defaults:
-    skip_attach: false
+    skip_attach: true
+    halt_before_read: false
   default_wiring:
     swd: "external"
     reset: "NC"

@@ -17,6 +17,7 @@ _MANIFEST_PROVIDERS: dict[str, InstrumentProvider] = {
 _CONTROL_PROVIDERS: dict[str, InstrumentProvider] = {
     "esp32jtag": ESP32JTAG_PROVIDER,
     "stlink": STLINK_PROVIDER,
+    "daplink": STLINK_PROVIDER,
 }
 
 

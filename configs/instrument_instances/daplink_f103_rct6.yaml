@@ -6,14 +6,17 @@ instance:
 connection:
   endpoint: "local:cmsis-dap-lu"
   serial_port: "/dev/ttyACM0"
+  ip: "127.0.0.1"
+  gdb_port: 3333
+  gdb_cmd: "arm-none-eabi-gdb"
 
 communication:
-  primary: openocd_local
+  primary: gdb_remote
   surfaces:
-    - name: openocd_local
+    - name: gdb_remote
       transport: usb_local
-      endpoint: "local:cmsis-dap-lu"
-      protocol: openocd
+      endpoint: "127.0.0.1:3333"
+      protocol: gdb_remote
       invocation_style: request_response
     - name: uart_console
       transport: usb_local
@@ -22,5 +25,5 @@ communication:
       invocation_style: request_response
 
 capability_surfaces:
-  swd: openocd_local
+  swd: gdb_remote
   uart: uart_console
