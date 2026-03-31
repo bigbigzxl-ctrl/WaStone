@@ -7,7 +7,7 @@ connection:
   endpoint: "local:cmsis-dap-lu"
   serial_port: "/dev/ttyACM0"
   ip: "127.0.0.1"
-  gdb_port: 3334
+  gdb_port: 3333
   gdb_cmd: "arm-none-eabi-gdb"
 
 communication:
@@ -15,7 +15,7 @@ communication:
   surfaces:
     - name: gdb_remote
       transport: usb_local
-      endpoint: "127.0.0.1:3334"
+      endpoint: "127.0.0.1:3333"
       protocol: gdb_remote
       invocation_style: request_response
     - name: uart_console
