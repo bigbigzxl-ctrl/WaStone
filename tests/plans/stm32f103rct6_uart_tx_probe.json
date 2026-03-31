@@ -1,20 +1,20 @@
 {
   "schema_version": "1.0",
   "test_kind": "baremetal_mailbox",
-  "name": "stm32f103rct6_uart_dma",
+  "name": "stm32f103rct6_uart_tx_probe",
   "board": "stm32f103rct6",
   "supported_instruments": ["stlink", "esp32jtag", "daplink"],
   "requires": {
     "mailbox": true,
     "datacapture": false
   },
-  "labels": ["mailbox", "portable", "uart_observed"],
-  "covers": ["usart1", "dma1", "uart_dma", "uart_tx"],
+  "labels": ["mailbox", "diagnostic", "connectivity", "uart_observed"],
+  "covers": ["usart1", "uart_tx", "wiring", "pre_stage2_connectivity"],
   "preflight": { "enabled": false },
   "build": {
-    "project_dir": "firmware/targets/stm32f103rct6_uart_dma",
-    "artifact_stem": "stm32f103rct6_uart_dma_app",
-    "build_dir": "artifacts/build_stm32f103rct6_uart_dma"
+    "project_dir": "firmware/targets/stm32f103rct6_uart_tx_probe",
+    "artifact_stem": "stm32f103rct6_uart_tx_probe_app",
+    "build_dir": "artifacts/build_stm32f103rct6_uart_tx_probe"
   },
   "signal_checks": [],
   "mailbox_verify": {
@@ -28,7 +28,7 @@
     "profile": "stm32",
     "duration_s": 6,
     "expect_patterns": [
-      "AEL_UART_DMA A1 B2 C3 D4 55 66 77 88"
+      "AEL_UART_TX_PROBE"
     ]
   },
   "bench_setup": {
@@ -37,19 +37,19 @@
       "baud": 115200,
       "required": true
     },
-    "notes": "USART1 DMA TX proof on the current DAPLink UART fixture. DMA1 Channel4 feeds USART1_DR with a fixed frame over PA9 at 115200 8N1 and reports PASS through mailbox after the first complete DMA transfer. Host UART should observe 'AEL_UART_DMA A1 B2 C3 D4 55 66 77 88'.",
+    "notes": "Pre-Stage2 UART TX connectivity proof on the DAPLink serial bridge. This test proves PA9 -> DAPLink RX works. UART RX connectivity from DAPLink TX -> PA10 is still present physically but is not auto-proven by the current generic runner.",
     "peripheral_signals": [
       {
-        "role": "UART_TX_DMA",
+        "role": "UART_TX",
         "dut_signal": "PA9/USART1_TX",
         "direction": "output",
         "notes": "Connect STM32 PA9 to DAPLink RX."
       },
       {
-        "role": "UART_RX_DMA",
+        "role": "UART_RX",
         "dut_signal": "PA10/USART1_RX",
         "direction": "input",
-        "notes": "Connect DAPLink TX to STM32 PA10. Present on the fixture but unused by this TX proof."
+        "notes": "Connect DAPLink TX to STM32 PA10. Not auto-proven by this probe."
       }
     ]
   }

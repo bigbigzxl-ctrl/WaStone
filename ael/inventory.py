@@ -237,6 +237,7 @@ def _load_pack_index(repo_root: Path) -> List[Dict[str, Any]]:
                     "bench_profile": payload.get("bench_profile"),
                     "status": payload.get("status"),
                     "description": payload.get("description") or payload.get("notes"),
+                    "pre_stage2_connectivity": [str(t) for t in (payload.get("pre_stage2_connectivity") or [])],
                     "stages": payload.get("stages") if isinstance(payload.get("stages"), dict) else {},
                     # "programs" is the preferred key; "tests" is the legacy alias
                     "tests": [str(t) for t in (payload.get("programs") or payload.get("tests") or [])],
@@ -647,8 +648,23 @@ def _load_bench_profile(repo_root: Path, board_id: str, bench_profile_id: str | 
 
 def _tests_by_stage(pack: Dict[str, Any], plans_by_path: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
     stages = pack.get("stages") if isinstance(pack.get("stages"), dict) else {}
+    pre_stage2 = pack.get("pre_stage2_connectivity") if isinstance(pack.get("pre_stage2_connectivity"), list) else []
     if not stages:
-        return [
+        items = []
+        if pre_stage2:
+            items.append(
+                {
+                    "stage": "pre-stage2-connectivity",
+                    "tests": [
+                        {
+                            "name": plans_by_path.get(path, {}).get("name") or Path(path).stem,
+                            "path": path,
+                        }
+                        for path in pre_stage2
+                    ],
+                }
+            )
+        items.append(
             {
                 "stage": "all",
                 "tests": [
@@ -659,8 +675,15 @@ def _tests_by_stage(pack: Dict[str, Any], plans_by_path: Dict[str, Dict[str, Any
                     for path in (pack.get("tests") or [])
                 ],
             }
-        ]
+        )
+        return items
     items: List[Dict[str, Any]] = []
+    if pre_stage2:
+        tests = []
+        for path in pre_stage2:
+            plan = plans_by_path.get(str(path), {})
+            tests.append({"name": plan.get("name") or Path(str(path)).stem, "path": str(path)})
+        items.append({"stage": "pre-stage2-connectivity", "tests": tests})
     for stage_key in sorted(stages.keys(), key=lambda value: int(value) if str(value).isdigit() else str(value)):
         tests = []
         for path in stages.get(stage_key) or []:
@@ -998,6 +1021,7 @@ def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]
                 "bench_profile": bench_profile_id,
                 "test_count": len((canonical_pack or {}).get("tests") or []),
                 "stage_count": len((canonical_pack or {}).get("stages") or {}),
+                "pre_stage2_count": len((canonical_pack or {}).get("pre_stage2_connectivity") or []),
                 "stages": _tests_by_stage(canonical_pack or {}, plans_by_path) if canonical_pack else [],
             } if canonical_pack else None,
         },
@@ -1309,6 +1333,8 @@ def render_describe_dut_text(payload: Dict[str, Any]) -> str:
         if canonical_pack.get("bench_profile"):
             lines.append(f"bench_profile: {canonical_pack.get('bench_profile')}")
         lines.append(f"stage_count: {canonical_pack.get('stage_count', 0)}")
+        if canonical_pack.get("pre_stage2_count"):
+            lines.append(f"pre_stage2_connectivity_count: {canonical_pack.get('pre_stage2_count', 0)}")
         lines.append(f"test_count: {canonical_pack.get('test_count', 0)}")
     selected_instrument = payload.get("selected_instrument", {}) if isinstance(payload.get("selected_instrument"), dict) else {}
     if selected_instrument:

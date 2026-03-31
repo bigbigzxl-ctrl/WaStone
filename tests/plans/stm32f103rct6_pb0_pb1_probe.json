@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103rct6_pb0_pb1_probe",
+  "board": "stm32f103rct6",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "diagnostic", "connectivity"],
+  "covers": ["gpio", "wiring", "pre_stage2_connectivity"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103rct6_pb0_pb1_probe",
+    "artifact_stem": "stm32f103rct6_pb0_pb1_probe_app",
+    "build_dir": "artifacts/build_stm32f103rct6_pb0_pb1_probe"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 4.0,
+    "addr": "0x2000BC00"
+  },
+  "bench_setup": {
+    "notes": "Pre-Stage2 digital connectivity probe for PB0 -> PB1. PB0 toggles and PB1 must track both high and low states. This proves the jumper exists before richer GPIO/EXTI tests run.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_PROBE_DRIVER",
+        "dut_signal": "PB0",
+        "direction": "output",
+        "notes": "Wire PB0 -> PB1."
+      },
+      {
+        "role": "GPIO_PROBE_INPUT",
+        "dut_signal": "PB1",
+        "direction": "input",
+        "notes": "Wire PB0 -> PB1."
+      }
+    ]
+  }
+}

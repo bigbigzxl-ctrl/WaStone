@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "test_kind": "visual_smoke",
   "name": "stm32f103rct6_pc7_blinky_visual",
-  "supported_instruments": ["stlink", "esp32jtag"],
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
   "requires": {
     "mailbox": false,
     "datacapture": false

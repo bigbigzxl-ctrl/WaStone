@@ -258,6 +258,17 @@ def test_describe_test_for_rp2350_uart_banner():
     assert "host serial -> /dev/ttyACM0" in rendered
 
 
+def test_describe_dut_surfaces_pre_stage2_connectivity_for_stm32f103rct6():
+    payload = inventory.describe_dut("stm32f103rct6", REPO_ROOT)
+    assert payload["ok"] is True
+    canonical_pack = payload["suite"]["canonical_pack"]
+    assert canonical_pack["name"] == "stm32f103rct6_golden"
+    rendered = inventory.render_describe_dut_text(payload)
+    # This assertion is forward-looking: once the pack declares connectivity,
+    # it must be surfaced in the describe output rather than hidden.
+    assert "pre-stage2-connectivity" in rendered or "pre_stage2_connectivity_count:" in rendered
+
+
 def test_describe_test_for_rp2350_gpio_signature_contract():
     payload = inventory.describe_test("rp2350_pico2", "tests/plans/rp2350_gpio_signature.json", REPO_ROOT)
     assert payload["ok"] is True

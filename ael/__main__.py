@@ -4143,6 +4143,58 @@ def run_pack(pack_path, board_override=None, stop_on_fail=False, no_flash=False,
     pack_board = board_override or pack.get("board")
     pack_bench_profile = pack.get("bench_profile")
     tests = pack.get("programs") or pack.get("tests") or []
+    pre_stage2 = pack.get("pre_stage2_connectivity") if isinstance(pack.get("pre_stage2_connectivity"), list) else []
+
+    def _sorted_stage_keys(stage_map):
+        return sorted(stage_map.keys(), key=lambda value: int(value) if str(value).isdigit() else str(value))
+
+    def _ordered_tests_with_connectivity(pack_payload, base_tests):
+        stage_map = pack_payload.get("stages") if isinstance(pack_payload.get("stages"), dict) else {}
+        connectivity = pack_payload.get("pre_stage2_connectivity") if isinstance(pack_payload.get("pre_stage2_connectivity"), list) else []
+        if not stage_map:
+            if not connectivity:
+                return list(base_tests)
+            seen = set()
+            ordered = []
+            for item in list(connectivity) + list(base_tests):
+                if item in seen:
+                    continue
+                seen.add(item)
+                ordered.append(item)
+            return ordered
+
+        ordered = []
+        seen = set()
+        inserted_connectivity = False
+        for stage_key in _sorted_stage_keys(stage_map):
+            if not inserted_connectivity:
+                numeric = int(stage_key) if str(stage_key).isdigit() else None
+                if numeric is not None and numeric >= 2 and connectivity:
+                    for item in connectivity:
+                        if item in seen:
+                            continue
+                        seen.add(item)
+                        ordered.append(item)
+                    inserted_connectivity = True
+            for item in stage_map.get(stage_key) or []:
+                if item in seen:
+                    continue
+                seen.add(item)
+                ordered.append(item)
+        if connectivity and not inserted_connectivity:
+            for item in connectivity:
+                if item in seen:
+                    continue
+                seen.add(item)
+                ordered.append(item)
+        for item in base_tests:
+            if item in seen:
+                continue
+            seen.add(item)
+            ordered.append(item)
+        return ordered
+
+    tests = _ordered_tests_with_connectivity(pack, tests)
 
     if stage_filter is not None:
         stages = pack.get("stages")
@@ -4150,16 +4202,24 @@ def run_pack(pack_path, board_override=None, stop_on_fail=False, no_flash=False,
             print(f"Pack: --stage specified but pack '{pack_name}' has no 'stages' field")
             return 2
         selected = []
+        include_connectivity = False
         for s in stage_filter:
             if s not in stages:
                 available = ", ".join(sorted(stages.keys()))
                 print(f"Pack: stage '{s}' not found in pack. Available: {available}")
                 return 2
             selected.extend(stages[s])
+            if str(s).isdigit() and int(str(s)) >= 2:
+                include_connectivity = True
+        if include_connectivity and pre_stage2:
+            selected = list(pre_stage2) + selected
         # Preserve original order and deduplicate
         seen = set()
         tests = [t for t in tests if t in selected and not (t in seen or seen.add(t))]
-        print(f"Pack: stage filter {stage_filter} → {len(tests)} test(s)")
+        if include_connectivity and pre_stage2:
+            print(f"Pack: stage filter {stage_filter} + pre-stage2 connectivity → {len(tests)} test(s)")
+        else:
+            print(f"Pack: stage filter {stage_filter} → {len(tests)} test(s)")
 
     if not pack_board or not tests:
         print("Pack: missing board or tests")

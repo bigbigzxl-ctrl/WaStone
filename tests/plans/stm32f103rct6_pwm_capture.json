@@ -3,7 +3,7 @@
   "test_kind": "baremetal_mailbox",
   "name": "stm32f103rct6_pwm_capture",
   "board": "stm32f103rct6",
-  "supported_instruments": ["stlink", "esp32jtag"],
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
   "requires": {
     "mailbox": true,
     "datacapture": false

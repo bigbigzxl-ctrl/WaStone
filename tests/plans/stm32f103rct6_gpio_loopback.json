@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "test_kind": "baremetal_mailbox",
   "name": "stm32f103rct6_gpio_loopback",
-  "supported_instruments": ["stlink", "esp32jtag"],
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
   "requires": {
     "mailbox": true,
     "datacapture": false

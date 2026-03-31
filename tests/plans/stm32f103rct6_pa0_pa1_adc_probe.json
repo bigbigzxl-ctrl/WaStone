@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103rct6_pa0_pa1_adc_probe",
+  "board": "stm32f103rct6",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "diagnostic", "connectivity"],
+  "covers": ["adc", "wiring", "pre_stage2_connectivity"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103rct6_pa0_pa1_adc_probe",
+    "artifact_stem": "stm32f103rct6_pa0_pa1_adc_probe_app",
+    "build_dir": "artifacts/build_stm32f103rct6_pa0_pa1_adc_probe"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 4.0,
+    "addr": "0x2000BC00"
+  },
+  "bench_setup": {
+    "notes": "Pre-Stage2 analog connectivity probe for PA0 -> PA1. PA0 is driven high and low once; PA1 ADC must cross relaxed thresholds in both directions. This proves the analog path exists before the full ADC loopback test runs.",
+    "peripheral_signals": [
+      {
+        "role": "ADC_DRIVER",
+        "dut_signal": "PA0",
+        "direction": "output",
+        "notes": "Wire PA0 -> PA1."
+      },
+      {
+        "role": "ADC_IN",
+        "dut_signal": "PA1",
+        "direction": "input",
+        "notes": "ADC1_IN1 analog input. Wire PA0 -> PA1."
+      }
+    ]
+  }
+}
