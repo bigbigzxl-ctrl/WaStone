@@ -130,7 +130,7 @@ int main(void)
         ael_mailbox_fail(ERR_PERIOD_RANGE, period_us);
         while (1) {}
     }
-    if (high_us < 250U || high_us > 550U) {
+    if (high_us < 300U || high_us > 700U) {
         ael_mailbox_fail(ERR_DUTY_RANGE, high_us);
         while (1) {}
     }
