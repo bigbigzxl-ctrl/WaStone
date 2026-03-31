@@ -456,7 +456,7 @@ def _local_stlink_server_available(ip: str, port: int, bootstrap: dict | None = 
     state = bootstrap if isinstance(bootstrap, dict) else {}
     if not _is_local_host(ip) or int(port or 0) <= 0:
         return False
-    if state.get("managed"):
+    if state.get("managed") or state.get("skip_port_probe"):
         # Let GDB be the first real client after we spawn st-util locally.
         return True
     return _port_is_listening(ip, port)
@@ -638,6 +638,7 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
             last_error = stlink_bootstrap.get("error") or "local ST-Link GDB server startup failed"
     elif _is_local_host(ip) and port:
         stlink_bootstrap["port_checked"] = True
+        stlink_bootstrap["skip_port_probe"] = True
 
     for idx, strat in enumerate(strategies, start=1):
             if last_error and not ok and stlink_bootstrap.get("port_checked") and not stlink_bootstrap.get("ok", True):
