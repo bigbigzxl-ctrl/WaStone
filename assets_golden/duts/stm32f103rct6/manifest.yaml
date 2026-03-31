@@ -64,6 +64,16 @@ notes:
     - PB8 <-> PB9
     - PA0 <-> PA1
     - PB15 <-> PB14
+  auto_connectivity_covered:
+    - PC8 <-> PC9
+    - PB0 <-> PB1
+    - PB8 <-> PB9
+    - PA0 <-> PA1
+    - PB15 <-> PB14
+    - PA9 -> DAPLink RX
+  not_auto_connectivity_covered:
+    - DAPLink TX -> PA10 is physically present but does not yet have a dedicated pre-stage2 RX probe
+    - PC7 LED path is non-canonical due board-specific hardware ambiguity
   non_canonical_legacy_paths:
     - PC7 visual LED path retained only as a non-gating diagnostic due board-specific hardware ambiguity
 verified:

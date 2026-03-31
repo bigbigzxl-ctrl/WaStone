@@ -267,6 +267,8 @@ def test_describe_dut_surfaces_pre_stage2_connectivity_for_stm32f103rct6():
     # This assertion is forward-looking: once the pack declares connectivity,
     # it must be surfaced in the describe output rather than hidden.
     assert "pre-stage2-connectivity" in rendered or "pre_stage2_connectivity_count:" in rendered
+    assert "auto_connectivity_covered:" in rendered
+    assert "not_auto_connectivity_covered:" in rendered
 
 
 def test_describe_test_for_rp2350_gpio_signature_contract():

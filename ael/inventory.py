@@ -1010,6 +1010,7 @@ def describe_dut(board_id: str, repo_root: Path | None = None) -> Dict[str, Any]
                 canonical_pack=canonical_pack,
             ),
         },
+        "dut_notes": dict(manifest.get("notes") or {}) if isinstance(manifest.get("notes"), dict) else {},
         "suite": {
             "label": suite_label.get("label"),
             "label_source": suite_label.get("source"),
@@ -1345,10 +1346,26 @@ def render_describe_dut_text(payload: Dict[str, Any]) -> str:
         if endpoint.get("host") and endpoint.get("port") is not None:
             lines.append(f"selected_instrument_endpoint: {endpoint.get('host')}:{endpoint.get('port')}")
     bench_profile = payload.get("bench_profile", {}) if isinstance(payload.get("bench_profile"), dict) else {}
+    dut_notes = payload.get("dut_notes", {}) if isinstance(payload.get("dut_notes"), dict) else {}
     if bench_profile:
         lines.append("connections:")
         for conn in bench_profile.get("connections") or []:
             lines.append(f"  - {conn.get('from')} -> {conn.get('to')}")
+    canonical_wiring = dut_notes.get("canonical_wiring") if isinstance(dut_notes.get("canonical_wiring"), list) else []
+    if canonical_wiring:
+        lines.append("canonical_wiring:")
+        for item in canonical_wiring:
+            lines.append(f"  - {item}")
+    covered = dut_notes.get("auto_connectivity_covered") if isinstance(dut_notes.get("auto_connectivity_covered"), list) else []
+    if covered:
+        lines.append("auto_connectivity_covered:")
+        for item in covered:
+            lines.append(f"  - {item}")
+    not_covered = dut_notes.get("not_auto_connectivity_covered") if isinstance(dut_notes.get("not_auto_connectivity_covered"), list) else []
+    if not_covered:
+        lines.append("not_auto_connectivity_covered:")
+        for item in not_covered:
+            lines.append(f"  - {item}")
     if canonical_pack.get("stages"):
         lines.append("stages:")
         for stage in canonical_pack.get("stages") or []:
