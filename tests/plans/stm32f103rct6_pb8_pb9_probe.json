@@ -21,7 +21,7 @@
     "addr": "0x2000BC00"
   },
   "bench_setup": {
-    "notes": "Diagnostic GPIO probe. PB8 drives repeated high/low states; PB9 is polled directly as a plain input. detail0 packs successful reads as (high_ok << 16) | low_ok. Wire: PB8 -> PB9.",
+    "notes": "Diagnostic GPIO probe. PB8 drives repeated high/low states; PB9 is polled directly as an input pull-down so the idle low state is deterministic. detail0 packs successful reads as (high_ok << 16) | low_ok. Wire: PB8 -> PB9.",
     "peripheral_signals": [
       {
         "role": "GPIO_PROBE_DRIVER",
@@ -33,7 +33,7 @@
         "role": "GPIO_PROBE_INPUT",
         "dut_signal": "PB9",
         "direction": "input",
-        "notes": "GPIO input floating. Wire: PB8 -> PB9."
+        "notes": "GPIO input pull-down. Wire: PB8 -> PB9."
       }
     ]
   }

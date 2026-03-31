@@ -3,7 +3,7 @@
  *
  * Observable behaviour:
  *   - PB8 (output push-pull) toggles high/low 10 times
- *   - PB9 (input floating) must track each state
+ *   - PB9 (input pull-down) must track each state
  *   - PASS after 20 correct reads
  *   - detail0 = ((high_ok << 16) | low_ok)
  *
@@ -38,31 +38,32 @@ int main(void)
 
     /*
      * PB8: output push-pull 50 MHz -> CRH[3:0] = 0x3
-     * PB9: input floating         -> CRH[7:4] = 0x4
+     * PB9: input pull-down        -> CRH[7:4] = 0x8, ODR9 = 0
      */
     GPIOB_CRH &= ~0xFFU;
-    GPIOB_CRH |=  0x43U;
+    GPIOB_CRH |=  0x83U;
+    GPIOB_ODR &= ~(1U << 9);
 
     ael_mailbox_init();
 
     for (uint32_t i = 0U; i < 10U; i++) {
         GPIOB_ODR |= (1U << 8);
         delay(12000U);
+        AEL_MAILBOX->detail0 = (high_ok << 16) | low_ok;
         if (GPIOB_IDR & (1U << 9)) {
             high_ok++;
         } else {
-            AEL_MAILBOX->detail0 = (high_ok << 16) | low_ok;
-            ael_mailbox_fail(0x01U, i);
+            ael_mailbox_fail(0x01U, (high_ok << 16) | low_ok);
             while (1) {}
         }
 
         GPIOB_ODR &= ~(1U << 8);
         delay(12000U);
+        AEL_MAILBOX->detail0 = (high_ok << 16) | low_ok;
         if ((GPIOB_IDR & (1U << 9)) == 0U) {
             low_ok++;
         } else {
-            AEL_MAILBOX->detail0 = (high_ok << 16) | low_ok;
-            ael_mailbox_fail(0x02U, i);
+            ael_mailbox_fail(0x02U, (high_ok << 16) | low_ok);
             while (1) {}
         }
 
