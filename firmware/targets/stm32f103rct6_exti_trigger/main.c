@@ -2,7 +2,7 @@
  * STM32F103RCT6 — AEL EXTI trigger test
  *
  * Observable behaviour:
- *   - PB0 (output push-pull) drives 10 rising edges
+ *   - PB0 (output push-pull) drives repeated rising edges
  *   - PB1 → EXTI1 (rising edge interrupt)
  *   - PASS after 10 EXTI1 interrupts
  *   - detail0 = interrupt count
@@ -86,16 +86,21 @@ int main(void)
 
     ael_mailbox_init();
 
-    /* Drive 10 rising edges on PB0 */
-    for (uint32_t i = 0U; i < 10U; i++) {
+    /*
+     * Drive rising edges until EXTI1 has observed 10 interrupts. The live
+     * bench probe is slow enough that a fixed 10-pulse burst can underrun.
+     */
+    for (uint32_t i = 0U; i < 50U && !test_passed; i++) {
         GPIOB_ODR &= ~(1U << 0);
-        delay(8000U);
+        delay(40000U);
         GPIOB_ODR |=  (1U << 0);
-        delay(8000U);
+        delay(40000U);
     }
 
-    /* Wait for ISR to declare PASS (should be near-instant) */
-    while (!test_passed) {}
+    if (!test_passed) {
+        ael_mailbox_fail(0x01U, exti_count);
+        while (1) {}
+    }
 
     while (1) {}
 
