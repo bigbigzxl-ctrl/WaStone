@@ -13,16 +13,68 @@ Current scope is intentionally small:
 
 ## Storage
 
-Global append-only archive:
+### Daily archive files (current)
 
-- `workflow_archive/events.jsonl`
+Events are written to per-day JSONL files inside `workflow_archive/`:
 
-Per-run append-only archive:
+```
+workflow_archive/
+  2026-03-07.jsonl
+  2026-03-08.jsonl
+  ...
+  YYYY-MM-DD.jsonl   ← one file per calendar day (event timestamp, not wall clock)
+```
 
-- `runs/<run_id>/workflow_events.jsonl`
+Each file contains one JSON object per line, sorted by insertion time within the day.
 
-The global archive is the simplest future ingestion point.
-The per-run archive keeps each run self-contained and easy to inspect alongside `meta.json`, `result.json`, and `artifacts/run_plan.json`.
+The target daily file is chosen from the event's own `timestamp` field, so
+replayed or backfilled events always land in the correct file regardless of
+when they are written.
+
+### Per-run archive (unchanged)
+
+Each run also keeps a self-contained copy of its events:
+
+```
+runs/<run_id>/workflow_events.jsonl
+```
+
+### Legacy monolithic file (pre-migration)
+
+Before daily rotation was introduced, all events were written to:
+
+```
+workflow_archive/events.jsonl
+```
+
+This file is no longer written to.  If it still exists on disk, `read_events()`
+will include it transparently alongside the new daily files (backward compat).
+Run the migration tool to split it and rename it to `events.jsonl.bak`.
+
+## Migration
+
+To migrate an existing `workflow_archive/events.jsonl` to daily files:
+
+```bash
+# Dry run first — shows per-day counts, writes nothing
+python3 tools/migrate_workflow_archive.py --dry-run
+
+# Real migration
+python3 tools/migrate_workflow_archive.py
+```
+
+The tool:
+1. Parses every line from `events.jsonl`
+2. Extracts the `timestamp` field and routes each event to `YYYY-MM-DD.jsonl`
+3. Verifies written line count equals parsed line count
+4. Renames `events.jsonl` to `events.jsonl.bak` on success (never deletes)
+5. Prints a per-day breakdown
+
+Custom archive root:
+
+```bash
+python3 tools/migrate_workflow_archive.py --archive-root /path/to/workflow_archive
+```
 
 ## Record Shape
 
@@ -112,15 +164,32 @@ If these are not present, the archive still records runtime workflow progress no
 
 ## Inspect Helper
 
-A small CLI helper is available:
-
 ```bash
+# Show last 20 events across all daily files
 python3 -m ael workflow-archive show --limit 20
+
+# Filter by run id
 python3 -m ael workflow-archive show --run-id <run_id>
+
+# Filter by date range
+python3 -m ael workflow-archive show --date-from 2026-03-01 --date-to 2026-03-31
+
+# Read a specific file (e.g. per-run archive)
 python3 -m ael workflow-archive show --source runs/<run_id>/workflow_events.jsonl
 ```
 
-This only pretty-prints recent records. It does not add search, analytics, or summary logic.
+`--date-from` / `--date-to` narrow the file scan by filename when using the
+global source, so they are efficient even with many daily files.
+
+## Git Tracking
+
+Daily archive files and the migration backup are runtime-generated data and
+are excluded from git via `.gitignore`:
+
+```
+workflow_archive/*.jsonl
+workflow_archive/*.jsonl.bak
+```
 
 ## Why This Is Minimal
 

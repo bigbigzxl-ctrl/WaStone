@@ -372,6 +372,8 @@ def main():
     archive_show.add_argument("--limit", type=int, default=20)
     archive_show.add_argument("--run-id", default=None)
     archive_show.add_argument("--source", default="global", help="global or a path to a JSONL archive file")
+    archive_show.add_argument("--date-from", default=None, metavar="YYYY-MM-DD", help="start date filter (inclusive, global source only)")
+    archive_show.add_argument("--date-to", default=None, metavar="YYYY-MM-DD", help="end date filter (inclusive, global source only)")
 
     hw_check_p = sub.add_parser("hw-check")
     hw_check_p.add_argument("--board", required=True)
@@ -864,7 +866,13 @@ def main():
             sys.exit(0 if payload.get("ok") else 1)
     if args.cmd == "workflow-archive":
         if args.archive_cmd == "show":
-            records = workflow_archive.read_events(limit=args.limit, run_id=args.run_id, source=args.source)
+            records = workflow_archive.read_events(
+                limit=args.limit,
+                run_id=args.run_id,
+                source=args.source,
+                date_from=args.date_from,
+                date_to=args.date_to,
+            )
             print(json.dumps(records, indent=2, sort_keys=True))
             sys.exit(0)
     if args.cmd == "hw-check":

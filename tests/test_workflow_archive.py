@@ -32,13 +32,14 @@ def test_workflow_archive_records_plan_run(monkeypatch, tmp_path):
 
     assert code == 0
 
-    global_archive = tmp_path / "workflow_archive" / "events.jsonl"
     run_archive = run_paths.root / "workflow_events.jsonl"
-
-    assert global_archive.exists()
     assert run_archive.exists()
 
-    records = _read_jsonl(global_archive)
+    daily_files = sorted((tmp_path / "workflow_archive").glob("????-??-??.jsonl"))
+    assert len(daily_files) >= 1, f"Expected at least one daily archive file, found: {daily_files}"
+    records = []
+    for f in daily_files:
+        records.extend(_read_jsonl(f))
     assert [(r["category"], r["actor"], r["action"]) for r in records] == [
         ("runtime", "ael", "run_started"),
         ("workflow", "user", "request"),
