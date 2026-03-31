@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_iwdg",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "mailbox"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_iwdg",
+    "artifact_stem": "stm32f407vet6_iwdg",
+    "build_dir": "artifacts/build_stm32f407vet6_iwdg"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 8.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "IWDG watchdog test. No wiring required. Phase 1: kicks watchdog 20 times at 50 ms intervals (~1 s), writes PASS, then stops kicking. Phase 2 (after IWDG reset ~100 ms later): detects RCC_CSR.IWDGRSTF, writes PASS with detail0=0xDEAD. settle_s=8 to cover both phases. PASS condition: detail0=0xDEAD confirms IWDG reset was detected.",
+    "peripheral_signals": []
+  }
+}

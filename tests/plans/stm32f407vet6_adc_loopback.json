@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_adc_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "adc",
+    "gpio",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_adc_loopback",
+    "artifact_stem": "stm32f407vet6_adc_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_adc_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "ADC loopback: PC0 (GPIO output) drives high/low, PC1 (ADC1_IN11, analog) reads back via wire. 5 cycles required for PASS. Thresholds: high > 3000 counts, low < 500 counts (12-bit, 3.3V). detail0 = pass_count. Wire required: PC0 \u2192 PC1. NOTE: PC0 is also connected to LA P0.0 in bench wiring \u2014 LA is high-impedance and does not affect the test.",
+    "peripheral_signals": [
+      {
+        "role": "ADC_DRIVER",
+        "dut_signal": "PC0",
+        "direction": "output",
+        "notes": "GPIO output push-pull. Drives 3.3V or 0V. Wire: PC0 \u2192 PC1."
+      },
+      {
+        "role": "ADC_IN",
+        "dut_signal": "PC1",
+        "direction": "input",
+        "notes": "ADC1_IN11, analog mode, no pull. Wire: PC0 \u2192 PC1."
+      }
+    ]
+  }
+}

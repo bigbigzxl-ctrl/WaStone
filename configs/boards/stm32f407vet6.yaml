@@ -1,0 +1,36 @@
+board:
+  name: STM32F407VET6 custom board via ESP32JTAG
+  target: stm32f407vet6
+  # MCU: STM32F407VET6 — 512 KB Flash (NOT 1 MB; VGT6 on Discovery is 1 MB)
+  instrument_instance: esp32jtag_stm32_golden
+  clock_hz: 16000000
+  build:
+    type: arm_debug
+    project_dir: firmware/targets/stm32f407vet6_blink
+    artifact_stem: stm32f407vet6_app
+  flash:
+    speed_khz: 1000
+    reset_strategy: connect_under_reset
+    post_load_settle_s: 5.0
+    target_id: 1
+    gdb_launch_cmds:
+      - "file {firmware}"
+      - "monitor a"
+      - "attach {target_id}"
+      - "load"
+      - "attach {target_id}"
+      - "detach"
+  mailbox_verify_defaults:
+    attach_monitor_cmd: "monitor a"
+    halt_before_read: true
+    skip_attach: false
+  default_wiring:
+    swd: "P3"
+    reset: "NC"
+    verify: "NC"
+  power_and_boot:
+    reset_strategy: connect_under_reset
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3

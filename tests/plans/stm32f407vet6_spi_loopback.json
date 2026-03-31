@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_spi_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "spi",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_spi_loopback",
+    "artifact_stem": "stm32f407vet6_spi_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_spi_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "SPI1 loopback: PA7 (MOSI, AF5) \u2192 PA6 (MISO, AF5), PA5 = SCK. Master, 8-bit, mode 0, ~62.5 kHz (APB2/256 at 16 MHz). Sends {0xA5, 0x5A, 0xF0, 0x0F, 0x12, 0x34, 0x56, 0x78}, verifies echo. PASS after all 8 bytes matched. Wire required: PA7 \u2192 PA6.",
+    "peripheral_signals": [
+      {
+        "role": "SPI_MOSI",
+        "dut_signal": "PA7",
+        "direction": "output",
+        "notes": "SPI1 MOSI, AF5. Wire: PA7 \u2192 PA6."
+      },
+      {
+        "role": "SPI_MISO",
+        "dut_signal": "PA6",
+        "direction": "input",
+        "notes": "SPI1 MISO, AF5. Wire: PA7 \u2192 PA6."
+      }
+    ]
+  }
+}

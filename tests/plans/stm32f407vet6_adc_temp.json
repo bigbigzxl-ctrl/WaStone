@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_adc_temp",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "adc"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_adc_temp",
+    "artifact_stem": "stm32f407vet6_adc_temp",
+    "build_dir": "artifacts/build_stm32f407vet6_adc_temp"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "ADC1 internal temperature sensor (channel 16). No external wiring required. PASS if temperature is in range 10\u201370 \u00b0C. detail0 = raw ADC count (0\u20134095). error_code=0x01 with detail0=raw if out of range.",
+    "peripheral_signals": []
+  }
+}

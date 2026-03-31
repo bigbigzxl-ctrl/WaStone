@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_uart_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "uart",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_uart_loopback",
+    "artifact_stem": "stm32f407vet6_uart_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_uart_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "USART2 loopback at 115200 baud (HSI 16 MHz, BRR=0x8B). PD5 (TX, AF7) \u2192 PD6 (RX, AF7). Sends {0x55, 0xAA, 0x12, 0x34}, verifies echo. PASS after all 4 bytes matched. detail0 = heartbeat after PASS. Wire required: PD5 \u2192 PD6. NOTE: PA9/PA10 occupied by onboard ST-Link UART on Discovery \u2014 use PD5/PD6 on VET6.",
+    "peripheral_signals": [
+      {
+        "role": "UART_TX",
+        "dut_signal": "PD5",
+        "direction": "output",
+        "notes": "USART2 TX, AF7. Wire: PD5 \u2192 PD6."
+      },
+      {
+        "role": "UART_RX",
+        "dut_signal": "PD6",
+        "direction": "input",
+        "notes": "USART2 RX, AF7. Wire: PD5 \u2192 PD6."
+      }
+    ]
+  }
+}

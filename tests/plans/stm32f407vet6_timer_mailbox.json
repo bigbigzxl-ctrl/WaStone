@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_timer_mailbox",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "timer"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_timer_mailbox",
+    "artifact_stem": "stm32f407vet6_timer_mailbox",
+    "build_dir": "artifacts/build_stm32f407vet6_timer_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "TIM3 interrupt mailbox test. No wiring required. TIM3 fires at ~10 Hz (HSI 16 MHz, PSC=15999, ARR=99). PASS after 10 interrupts (~1 s). detail0 = interrupt count.",
+    "peripheral_signals": []
+  }
+}

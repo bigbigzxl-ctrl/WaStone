@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_gpio_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "gpio",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_gpio_loopback",
+    "artifact_stem": "stm32f407vet6_gpio_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_gpio_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "GPIO loopback: PC2 (output) drives high/low, PC3 (input, pull-down) reads back. 10 cycles required for PASS. detail0 = pass_count. error_code: 0x10|cycle = HIGH fail, 0x20|cycle = LOW fail. Wire required: PC2 \u2192 PC3.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_OUT",
+        "dut_signal": "PC2",
+        "direction": "output",
+        "notes": "Drives high then low each cycle. Wire: PC2 \u2192 PC3."
+      },
+      {
+        "role": "GPIO_IN",
+        "dut_signal": "PC3",
+        "direction": "input",
+        "notes": "Input with pull-down. Reads back state driven by PC2."
+      }
+    ]
+  }
+}

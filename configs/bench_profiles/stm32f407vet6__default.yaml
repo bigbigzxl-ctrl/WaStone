@@ -1,0 +1,43 @@
+bench_profile:
+  id: stm32f407vet6__default
+  board_id: stm32f407vet6
+  description: >
+    ESP32JTAG SWD on P3. LA P0.0=PC0, P0.1=PA5.
+    Loopback wiring: PC2→PC3, PD5↔PD6, PA7→PA6.
+    EXTI wiring: PB8→PB9. ADC loopback: PC0→PC1.
+
+  bench_connections:
+    - from: PC0
+      to: P0.0
+    - from: PA5
+      to: P0.1
+    - from: PC2
+      to: PC3
+    - from: PD5
+      to: PD6
+    - from: PA7
+      to: PA6
+    - from: GND
+      to: probe GND
+
+  observe_map:
+    pc0: P0.0
+    pa5: P0.1
+
+  default_wiring:
+    swd: "P3"
+    reset: "NC"
+    verify: "NC"
+
+  safe_pins:
+    - PC0
+    - PC1
+    - PC2
+    - PC3
+    - PD5
+    - PD6
+    - PA5
+    - PA6
+    - PA7
+    - PB8
+    - PB9

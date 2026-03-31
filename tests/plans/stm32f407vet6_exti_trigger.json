@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_exti_trigger",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "exti",
+    "gpio"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_exti_trigger",
+    "artifact_stem": "stm32f407vet6_exti_trigger",
+    "build_dir": "artifacts/build_stm32f407vet6_exti_trigger"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "EXTI trigger test. PB8 (output) drives 10 rising edges (1 ms low + 1 ms high). PB9 (input, pull-down) routed via SYSCFG to EXTI9, rising-edge interrupt. PASS after all 10 EXTI9_5 interrupts received. detail0 = interrupt count. Wire required: PB8 \u2192 PB9.",
+    "peripheral_signals": [
+      {
+        "role": "EXTI_DRIVER",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "Drives 10 rising edges. Wire: PB8 \u2192 PB9."
+      },
+      {
+        "role": "EXTI_INPUT",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "EXTI9 input with pull-down, SYSCFG routed to Port B."
+      }
+    ]
+  }
+}
