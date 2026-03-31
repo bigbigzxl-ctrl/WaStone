@@ -2,12 +2,12 @@
  * STM32F103RCT6 — AEL EXTI trigger test
  *
  * Observable behaviour:
- *   - PB8 (output push-pull) drives 10 rising edges
- *   - PB9 → EXTI9 (rising edge interrupt)
- *   - PASS after 10 EXTI9 interrupts
+ *   - PB0 (output push-pull) drives 10 rising edges
+ *   - PB1 → EXTI1 (rising edge interrupt)
+ *   - PASS after 10 EXTI1 interrupts
  *   - detail0 = interrupt count
  *
- * Wiring required: PB8 → PB9
+ * Wiring required: PB0 → PB1
  * Mailbox address: 0x2000BC00
  */
 
@@ -22,7 +22,7 @@
 
 /* AFIO */
 #define AFIO_BASE       0x40010000U
-#define AFIO_EXTICR3    (*(volatile uint32_t *)(AFIO_BASE + 0x10U))
+#define AFIO_EXTICR1    (*(volatile uint32_t *)(AFIO_BASE + 0x08U))
 
 /* EXTI */
 #define EXTI_BASE       0x40010400U
@@ -32,7 +32,7 @@
 
 /* GPIOB */
 #define GPIOB_BASE      0x40010C00U
-#define GPIOB_CRH       (*(volatile uint32_t *)(GPIOB_BASE + 0x04U))
+#define GPIOB_CRL       (*(volatile uint32_t *)(GPIOB_BASE + 0x00U))
 #define GPIOB_ODR       (*(volatile uint32_t *)(GPIOB_BASE + 0x0CU))
 
 /* NVIC */
@@ -41,10 +41,10 @@
 static volatile uint32_t exti_count  = 0U;
 static volatile uint32_t test_passed = 0U;
 
-void EXTI9_5_IRQHandler(void)
+void EXTI1_IRQHandler(void)
 {
-    if (EXTI_PR & (1U << 9)) {
-        EXTI_PR = (1U << 9);   /* clear pending */
+    if (EXTI_PR & (1U << 1)) {
+        EXTI_PR = (1U << 1);   /* clear pending */
         exti_count++;
         AEL_MAILBOX->detail0 = exti_count;
         if (exti_count >= 10U && !test_passed) {
@@ -65,30 +65,32 @@ int main(void)
     RCC_APB2ENR |= (1U << 3) | (1U << 0);
 
     /*
-     * PB8: output push-pull 50 MHz → CRH[3:0]  = 0x3 (CNF=00,MODE=11)
-     * PB9: input floating           → CRH[7:4]  = 0x4 (CNF=01,MODE=00)
+     * PB0: output push-pull 50 MHz -> CRL[3:0] = 0x3
+     * PB1: input pull-down         -> CRL[7:4] = 0x8, ODR1 = 0
      */
-    GPIOB_CRH &= ~0xFFU;
-    GPIOB_CRH |=  0x43U;
+    GPIOB_CRL &= ~0xFFU;
+    GPIOB_CRL |=  0x83U;
+    GPIOB_ODR &= ~(1U << 1);
 
-    /* AFIO_EXTICR3 bits [7:4] = 0x1 → PB9 drives EXTI9 */
-    AFIO_EXTICR3 &= ~(0xFU << 4);
-    AFIO_EXTICR3 |=  (0x1U << 4);
+    /* AFIO_EXTICR1 bits [7:4] = 0x1 -> PB1 drives EXTI1 */
+    AFIO_EXTICR1 &= ~(0xFU << 4);
+    AFIO_EXTICR1 |=  (0x1U << 4);
 
-    /* Enable EXTI9 rising edge */
-    EXTI_IMR  |= (1U << 9);
-    EXTI_RTSR |= (1U << 9);
+    /* Enable EXTI1 rising edge */
+    EXTI_PR    = (1U << 1);
+    EXTI_IMR  |= (1U << 1);
+    EXTI_RTSR |= (1U << 1);
 
-    /* NVIC: EXTI9_5 = IRQ 23 */
-    NVIC_ISER0 = (1U << 23);
+    /* NVIC: EXTI1 = IRQ 7 */
+    NVIC_ISER0 = (1U << 7);
 
     ael_mailbox_init();
 
-    /* Drive 10 rising edges on PB8 */
+    /* Drive 10 rising edges on PB0 */
     for (uint32_t i = 0U; i < 10U; i++) {
-        GPIOB_ODR &= ~(1U << 8);
+        GPIOB_ODR &= ~(1U << 0);
         delay(8000U);
-        GPIOB_ODR |=  (1U << 8);
+        GPIOB_ODR |=  (1U << 0);
         delay(8000U);
     }
 

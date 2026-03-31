@@ -21,19 +21,19 @@
     "addr": "0x2000BC00"
   },
   "bench_setup": {
-    "notes": "EXTI trigger: PB8 (output) drives 10 rising edges, PB9 -> EXTI9_5 IRQ23. PASS after 10 interrupts. detail0 = interrupt count. AFIO_EXTICR3[7:4]=0x1 routes PB9 to EXTI9.",
+    "notes": "EXTI trigger: PB0 (output) drives 10 rising edges, PB1 -> EXTI1 IRQ7. PASS after 10 interrupts. detail0 = interrupt count. AFIO_EXTICR1[7:4]=0x1 routes PB1 to EXTI1; PB1 is configured as input pull-down for a deterministic idle low.",
     "peripheral_signals": [
       {
         "role": "EXTI_DRIVER",
-        "dut_signal": "PB8",
+        "dut_signal": "PB0",
         "direction": "output",
-        "notes": "GPIO output push-pull. Wire: PB8 -> PB9."
+        "notes": "GPIO output push-pull. Wire: PB0 -> PB1."
       },
       {
         "role": "EXTI_INPUT",
-        "dut_signal": "PB9",
+        "dut_signal": "PB1",
         "direction": "input",
-        "notes": "EXTI9, input floating. Wire: PB8 -> PB9."
+        "notes": "EXTI1, input pull-down. Wire: PB0 -> PB1."
       }
     ]
   }
