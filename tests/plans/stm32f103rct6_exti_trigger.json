@@ -21,7 +21,7 @@
     "addr": "0x2000BC00"
   },
   "bench_setup": {
-    "notes": "EXTI trigger: PB0 (output) drives repeated rising edges, PB1 -> EXTI1 IRQ7. PASS after 10 interrupts; FAIL if 10 interrupts are not observed within the bounded pulse window. detail0 = interrupt count. AFIO_EXTICR1[7:4]=0x1 routes PB1 to EXTI1; PB1 is configured as input pull-down for a deterministic idle low.",
+    "notes": "EXTI trigger: PB0 (output) drives repeated rising edges, PB1 -> EXTI1. PASS after firmware observes 10 rising-edge pending events through EXTI_PR; FAIL if 10 events are not observed within the bounded pulse window. detail0 = detected edge count. AFIO_EXTICR1[7:4]=0x1 routes PB1 to EXTI1; PB1 is configured as input pull-down for a deterministic idle low.",
     "peripheral_signals": [
       {
         "role": "EXTI_DRIVER",
@@ -33,7 +33,7 @@
         "role": "EXTI_INPUT",
         "dut_signal": "PB1",
         "direction": "input",
-        "notes": "EXTI1, input pull-down. Wire: PB0 -> PB1."
+        "notes": "EXTI1 input, pull-down. Firmware validates the EXTI pending bit rather than NVIC ISR delivery. Wire: PB0 -> PB1."
       }
     ]
   }

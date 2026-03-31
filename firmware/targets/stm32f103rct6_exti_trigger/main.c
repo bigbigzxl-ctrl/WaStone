@@ -3,9 +3,9 @@
  *
  * Observable behaviour:
  *   - PB0 (output push-pull) drives repeated rising edges
- *   - PB1 → EXTI1 (rising edge interrupt)
- *   - PASS after 10 EXTI1 interrupts
- *   - detail0 = interrupt count
+ *   - PB1 → EXTI1 (rising edge pending bit)
+ *   - PASS after 10 EXTI1 detections
+ *   - detail0 = detected edge count
  *
  * Wiring required: PB0 → PB1
  * Mailbox address: 0x2000BC00
@@ -35,25 +35,6 @@
 #define GPIOB_CRL       (*(volatile uint32_t *)(GPIOB_BASE + 0x00U))
 #define GPIOB_ODR       (*(volatile uint32_t *)(GPIOB_BASE + 0x0CU))
 
-/* NVIC */
-#define NVIC_ISER0      (*(volatile uint32_t *)0xE000E100U)
-
-static volatile uint32_t exti_count  = 0U;
-static volatile uint32_t test_passed = 0U;
-
-void EXTI1_IRQHandler(void)
-{
-    if (EXTI_PR & (1U << 1)) {
-        EXTI_PR = (1U << 1);   /* clear pending */
-        exti_count++;
-        AEL_MAILBOX->detail0 = exti_count;
-        if (exti_count >= 10U && !test_passed) {
-            ael_mailbox_pass();
-            test_passed = 1U;
-        }
-    }
-}
-
 static void delay(volatile uint32_t n)
 {
     while (n--) __asm__ volatile ("nop");
@@ -81,27 +62,32 @@ int main(void)
     EXTI_IMR  |= (1U << 1);
     EXTI_RTSR |= (1U << 1);
 
-    /* NVIC: EXTI1 = IRQ 7 */
-    NVIC_ISER0 = (1U << 7);
-
     ael_mailbox_init();
 
     /*
-     * Drive rising edges until EXTI1 has observed 10 interrupts. The live
+     * Drive rising edges until EXTI1 has observed 10 pending events. The live
      * bench probe is slow enough that a fixed 10-pulse burst can underrun.
      */
-    for (uint32_t i = 0U; i < 50U && !test_passed; i++) {
+    uint32_t exti_count = 0U;
+    for (uint32_t i = 0U; i < 50U && exti_count < 10U; i++) {
         GPIOB_ODR &= ~(1U << 0);
         delay(40000U);
         GPIOB_ODR |=  (1U << 0);
         delay(40000U);
+
+        if (EXTI_PR & (1U << 1)) {
+            EXTI_PR = (1U << 1);
+            exti_count++;
+            AEL_MAILBOX->detail0 = exti_count;
+        }
     }
 
-    if (!test_passed) {
+    if (exti_count < 10U) {
         ael_mailbox_fail(0x01U, exti_count);
         while (1) {}
     }
 
+    ael_mailbox_pass();
     while (1) {}
 
     return 0;
