@@ -113,6 +113,32 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### STM32 + DAPLink Milestone — AEL Brings Up CMSIS-DAP on Linux and Completes `STM32F103RCT6` Golden Suite (2026-03-31)
+
+AEL now supports a practical `DAPLink` / `CMSIS-DAP` workflow for STM32 development on Linux, and that path has already been carried through to a completed golden suite on a real `STM32F103RCT6` target.
+
+**What was done:**
+
+- Brought up a real `CMSIS-DAP_LU` DAPLink probe on Linux
+- Installed and tested `pyOCD`, then documented why it was not the right tool path for this specific HID-style probe
+- Switched to `OpenOCD`, forced the working `cmsis_dap_backend hid` path, and established stable SWD flash/debug access
+- Identified the target in software as `STM32F1 high-density / Cortex-M3`, matching `STM32F103RCT6`
+- Validated DAPLink UART on `PA9/PA10`
+- Built and validated a formal `STM32F103RCT6` staged suite on the DAPLink fixture
+- Promoted that suite to canonical `golden` status in AEL
+
+**Why this matters:**
+
+This milestone proves AEL is not limited to ST-Link or WiFi-based instruments for STM32 workflows. A low-cost USB DAPLink probe can also be brought under AI control for real STM32 development: identify the chip, recover flash access, program firmware, read mailbox state, validate UART behavior, and close out a full golden suite.
+
+**Canonical result:**
+
+- DUT: `stm32f103rct6`
+- pack: [`packs/stm32f103rct6_golden.json`](packs/stm32f103rct6_golden.json)
+- tutorial: [`docs/tutorials/stm32f103rct6_daplink_to_golden_suite_tutorial_2026-03-31.md`](docs/tutorials/stm32f103rct6_daplink_to_golden_suite_tutorial_2026-03-31.md)
+
+---
+
 ### AMD(Xilinx) Artix XC7A35T — Closed-Loop FPGA Verification via ESP32JTAG LA (2026-03-27) 
 ### The first FPGA milestone is complete: AEL can now take over, modify, build, program, instrument, and verify a Xilinx FPGA project on real hardware!
 
