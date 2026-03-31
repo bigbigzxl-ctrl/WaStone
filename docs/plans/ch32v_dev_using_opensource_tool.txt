@@ -1,0 +1,248 @@
+直接说如何用开源的方法在用Ubuntu进行开发,我有WCHlink。
+
+我去确认一下 Ubuntu 下这颗芯片配合 WCH-Link 的开源工具链现状，然后直接给你可操作步骤。
+
+Thought for 29s
+
+可以，在 Ubuntu 下用开源方式开发 CH32V305 + WCH-Link，我建议你直接走这条最稳的路线：
+
+gcc + make/cmake + open-source uploader/debugger + 官方 EVT/社区模板
+
+其中：
+
+CH32V305 和 CH32V307 属于同一 CH32V30x 系列，官方开源仓库 openwch/ch32v307 明确写了同时覆盖 CH32V305/7，所以很多启动文件、外设库、示例都可以直接参考这个仓库。
+Ubuntu 下可行的开源下载/调试链路主要有两类：
+wlink（Rust 命令行工具）和 支持 WCH-Link 的 OpenOCD 分支。wlink 项目明确支持 CH32V30x 和 WCH-Link(RV)。
+社区现成方案已经证明：标准 GNU RISC-V 工具链 + Makefile/模板工程可以在 Linux 上用于 CH32V 系列开发。
+
+我下面直接按“最实用可落地”来讲。
+
+一、推荐你用的方案
+方案 A：最推荐
+
+xPack / riscv-none-embed-gcc + Makefile/CMake + wlink
+
+优点：
+
+全程命令行，适合 Ubuntu
+比 IDE 干净
+wlink 是开源的，适合你说的“开源方法”
+方案 B：也可以
+
+标准 GCC + Makefile/CMake + WCH 的 OpenOCD 分支
+
+社区已有 CH32V307 的 GNU Make/CMake 模板项目，说明这条路能走通。
+
+二、你需要的东西
+1. 编译器
+
+装一个 RISC-V 交叉编译器。社区资料表明，xPack 的 riscv-none-embed-gcc 常被用于 CH32V 工程。
+
+Ubuntu 可以先试：
+
+sudo apt update
+sudo apt install git make cmake ninja-build gcc-riscv64-unknown-elf binutils-riscv64-unknown-elf gdb-multiarch libusb-1.0-0-dev
+
+更稳一点也可以直接用 xPack 预编译工具链。社区模板就是这么干的。
+
+2. 芯片支持包 / 代码基底
+
+最直接的来源：
+
+官方开源仓库：openwch/ch32v307
+这里包含 CH32V305/7 的资料、EVT、示例。
+
+你可以先拉下来：
+
+git clone https://github.com/openwch/ch32v307.git
+
+这里面的 EVT 目录就是你最常用的参考来源。官方仓库里也有很多外设示例。
+
+3. 下载/调试工具
+首选：wlink
+
+这是开源的 WCH-Link 命令行工具，支持 CH32V30x。
+
+cargo install wlink
+
+如果你还没装 Rust：
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+cargo install wlink
+备选：WCH OpenOCD 分支
+
+社区资料明确提到，要用“懂 WCH 协议”的 OpenOCD 分支，不是主线 OpenOCD 随便就行。
+
+三、接线
+
+CH32V305 一般通过 SWD 类两线接口（WCH 自己这套调试下载链路） 接 WCH-Link。你通常至少要接：
+
+3V3
+GND
+SWDIO
+SWCLK
+NRST（强烈建议接）
+
+具体到你板子丝印，常见是 SWDIO/SWCLK 或 DIO/CLK。
+如果是官方 EVT 板或者兼容板，通常已经把下载口引出来了。
+
+四、在 Ubuntu 里先确认 WCH-Link 被识别
+
+插上后看：
+
+lsusb
+dmesg | tail -n 50
+
+再看是否有权限问题。很多社区工程都会附带 udev rules，说明 Linux 下通常要加规则。
+
+可以先建一个规则文件：
+
+sudo nano /etc/udev/rules.d/99-wch-link.rules
+
+常见写法类似：
+
+SUBSYSTEM=="usb", MODE="0666"
+
+然后：
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+更严谨的写法最好按你 lsusb 看到的 VID:PID 来写。
+
+五、最简单的工程组织方法
+
+你可以直接建一个最小工程：
+
+mkdir ch32v305_blinky
+cd ch32v305_blinky
+mkdir -p src startup include linker
+
+建议从 openwch/ch32v307 里拷这些东西出来作为基础：
+
+启动文件 startup_*.S
+系统初始化文件 system_ch32v30x.c
+头文件
+外设库源码
+链接脚本 .ld
+
+因为 CH32V305/307 共用 CH32V30x 平台，这条参考路径是合理的。
+
+六、一个可用的 Makefile 思路
+
+你可以先按这种结构来：
+
+PREFIX ?= riscv64-unknown-elf
+CC      = $(PREFIX)-gcc
+OBJCOPY = $(PREFIX)-objcopy
+SIZE    = $(PREFIX)-size
+
+CFLAGS  = -march=rv32imafc -mabi=ilp32f -Os -g \
+          -ffunction-sections -fdata-sections \
+          -Iinclude
+
+LDFLAGS = -T linker/ch32v30x.ld -Wl,--gc-sections
+
+SRCS = \
+  src/main.c \
+  startup/startup_ch32v30x.S \
+  src/system_ch32v30x.c
+
+TARGET = app
+
+all: $(TARGET).bin
+
+$(TARGET).elf: $(SRCS)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+	$(SIZE) $@
+
+$(TARGET).bin: $(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
+
+clean:
+	rm -f $(TARGET).elf $(TARGET).bin
+
+注意：
+
+-march / -mabi 要和你的启动文件、库一致
+CH32V30x 带 FPU，社区和官方资料也都表明这一代性能更高并带单精度浮点扩展。
+七、下载程序
+用 wlink
+
+先编译出 app.elf 或 app.bin。
+
+常见思路是：
+
+wlink flash app.elf
+
+或查看帮助：
+
+wlink --help
+
+因为 wlink 就是专门做 WCH-Link(RV) + CH32 系列 的开源命令行工具。
+
+用 OpenOCD 分支
+
+如果你用的是支持 WCH-Link 的 OpenOCD 分支，通常会类似这样：
+
+openocd -f interface/wlink.cfg -f target/wch-riscv.cfg
+
+社区讨论明确提到需要这种 WCH 专用 fork 才能正常工作。
+
+然后另开一个终端：
+
+riscv64-unknown-elf-gdb app.elf
+
+GDB 里：
+
+target extended-remote :3333
+monitor reset halt
+load
+monitor reset init
+continue
+八、调试
+
+如果用 OpenOCD 分支，GDB 调试就是标准流程。
+如果用 wlink，它本身更偏向下载/基础操作；完整源码级调试时，OpenOCD 路线通常更顺手一些。这个是工具定位差异，不是你板子的问题。
+
+九、最省事的开源起步方式
+
+你现在最省时间的做法，不是自己从零搭全部文件，而是：
+
+路线 1：拿现成模板改成 CH32V305
+
+社区有 CH32V307 的 Makefile/CMake 模板项目，已经说明这套 Linux + GCC + OpenOCD 的做法可行。
+
+路线 2：直接从官方 EVT 示例裁剪
+
+openwch/ch32v307 里面有大量示例，你直接拿一个 GPIO/USART/TIM 例子改板级引脚最稳。
+
+十、我对你最实用的建议
+
+你现在手上有 CH32V305 板 + WCH-Link + Ubuntu，最推荐这样干：
+
+git clone https://github.com/openwch/ch32v307.git
+安装 RISC-V GCC
+安装 wlink
+从 EVT 里挑一个最简单的 GPIO/USART 例子
+改成纯 Makefile 工程
+先做到：
+编译通过
+wlink 能识别芯片
+下载一个 LED blink
+再上串口 printf
+之后再加 OpenOCD + GDB 调试
+
+这样最稳。
+
+十一、一个现实提醒
+
+“完全开源” 这件事上，CH32V 系列通常会混合使用：
+
+开源编译器 / 开源下载器 / 开源构建系统
+但启动文件、头文件、EVT 外设库很多人仍然会直接复用 WCH 提供的资料
+
+也就是说，你完全可以在 Ubuntu 下走开源开发流程，但工程底座往往还是会参考官方 EVT，这在 CH32V 圈子里很常见。
+
+如果你愿意，我下一条可以直接给你一个 Ubuntu 下 CH32V305 的最小 blinky 工程目录 + main.c + Makefile + 下载命令。
