@@ -2,12 +2,12 @@
  * STM32F103RCT6 — AEL EXTI trigger test
  *
  * Observable behaviour:
- *   - PB0 (output push-pull) drives repeated rising edges
- *   - PB1 → EXTI1 (rising edge pending bit)
+ *   - PA0 (output push-pull) drives repeated rising edges
+ *   - PA1 → EXTI1 (rising edge pending bit)
  *   - PASS after 10 EXTI1 detections
  *   - detail0 = detected edge count
  *
- * Wiring required: PB0 → PB1
+ * Wiring required: PA0 → PA1
  * Mailbox address: 0x2000BC00
  */
 
@@ -30,10 +30,10 @@
 #define EXTI_RTSR       (*(volatile uint32_t *)(EXTI_BASE + 0x08U))
 #define EXTI_PR         (*(volatile uint32_t *)(EXTI_BASE + 0x14U))
 
-/* GPIOB */
-#define GPIOB_BASE      0x40010C00U
-#define GPIOB_CRL       (*(volatile uint32_t *)(GPIOB_BASE + 0x00U))
-#define GPIOB_ODR       (*(volatile uint32_t *)(GPIOB_BASE + 0x0CU))
+/* GPIOA */
+#define GPIOA_BASE      0x40010800U
+#define GPIOA_CRL       (*(volatile uint32_t *)(GPIOA_BASE + 0x00U))
+#define GPIOA_ODR       (*(volatile uint32_t *)(GPIOA_BASE + 0x0CU))
 
 static void delay(volatile uint32_t n)
 {
@@ -42,20 +42,19 @@ static void delay(volatile uint32_t n)
 
 int main(void)
 {
-    /* Enable GPIOB + AFIO clocks (APB2 bits 3 and 0) */
-    RCC_APB2ENR |= (1U << 3) | (1U << 0);
+    /* Enable GPIOA + AFIO clocks (APB2 bits 2 and 0) */
+    RCC_APB2ENR |= (1U << 2) | (1U << 0);
 
     /*
-     * PB0: output push-pull 50 MHz -> CRL[3:0] = 0x3
-     * PB1: input pull-down         -> CRL[7:4] = 0x8, ODR1 = 0
+     * PA0: output push-pull 50 MHz -> CRL[3:0] = 0x3
+     * PA1: input pull-down         -> CRL[7:4] = 0x8, ODR1 = 0
      */
-    GPIOB_CRL &= ~0xFFU;
-    GPIOB_CRL |=  0x83U;
-    GPIOB_ODR &= ~(1U << 1);
+    GPIOA_CRL &= ~0xFFU;
+    GPIOA_CRL |=  0x83U;
+    GPIOA_ODR &= ~(1U << 1);
 
-    /* AFIO_EXTICR1 bits [7:4] = 0x1 -> PB1 drives EXTI1 */
+    /* AFIO_EXTICR1 bits [7:4] = 0x0 -> PA1 drives EXTI1 (default route) */
     AFIO_EXTICR1 &= ~(0xFU << 4);
-    AFIO_EXTICR1 |=  (0x1U << 4);
 
     /* Enable EXTI1 rising edge */
     EXTI_PR    = (1U << 1);
@@ -70,9 +69,9 @@ int main(void)
      */
     uint32_t exti_count = 0U;
     for (uint32_t i = 0U; i < 50U && exti_count < 10U; i++) {
-        GPIOB_ODR &= ~(1U << 0);
+        GPIOA_ODR &= ~(1U << 0);
         delay(40000U);
-        GPIOB_ODR |=  (1U << 0);
+        GPIOA_ODR |=  (1U << 0);
         delay(40000U);
 
         if (EXTI_PR & (1U << 1)) {
