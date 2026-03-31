@@ -1,6 +1,6 @@
 {
   "name": "stm32f103rct6_staged_candidate",
-  "description": "STM32F103RCT6 staged candidate suite on current DAPLink/SWD/UART and jumper wiring. Stage0: PC7 blinky + minimal runtime. Stage1: timer, SysTick, internal temp. Stage2: GPIO, EXTI, ADC, SPI, IWDG, UART multibyte TX, and UART DMA TX on current fixture. Stage3: UART banner proof via DAPLink serial.",
+  "description": "STM32F103RCT6 staged candidate suite on current DAPLink/SWD/UART and jumper wiring. Stage0: PC7 blinky + minimal runtime. Stage1: timer, SysTick, internal temp. Stage2: GPIO, EXTI, ADC, SPI, IWDG, UART multibyte TX, UART DMA TX, capture, and PWM capture on current fixture. Stage3: UART banner proof via DAPLink serial.",
   "board": "stm32f103rct6",
   "status": "candidate",
   "stages": {
@@ -19,6 +19,8 @@
       "tests/plans/stm32f103rct6_adc_loopback.json",
       "tests/plans/stm32f103rct6_spi_loopback.json",
       "tests/plans/stm32f103rct6_iwdg.json",
+      "tests/plans/stm32f103rct6_capture_mailbox.json",
+      "tests/plans/stm32f103rct6_pwm_capture.json",
       "tests/plans/stm32f103rct6_uart_multibyte.json",
       "tests/plans/stm32f103rct6_uart_dma.json"
     ],
@@ -37,6 +39,8 @@
     "tests/plans/stm32f103rct6_adc_loopback.json",
     "tests/plans/stm32f103rct6_spi_loopback.json",
     "tests/plans/stm32f103rct6_iwdg.json",
+    "tests/plans/stm32f103rct6_capture_mailbox.json",
+    "tests/plans/stm32f103rct6_pwm_capture.json",
     "tests/plans/stm32f103rct6_uart_multibyte.json",
     "tests/plans/stm32f103rct6_uart_dma.json",
     "tests/plans/stm32f103rct6_uart_banner.json"
