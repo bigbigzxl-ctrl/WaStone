@@ -107,6 +107,25 @@ def _is_local_host(ip: str) -> bool:
     return value in {"127.0.0.1", "localhost", "::1"}
 
 
+def _uses_external_local_gdb_server(probe_cfg) -> bool:
+    if not isinstance(probe_cfg, dict):
+        return False
+    for key in ("type", "type_id", "probe_type"):
+        value = str(probe_cfg.get(key) or "").strip().lower()
+        if value == "daplink":
+            return True
+    endpoint = str(probe_cfg.get("endpoint") or "").strip().lower()
+    if "cmsis-dap" in endpoint:
+        return True
+    connection = probe_cfg.get("connection")
+    if isinstance(connection, dict):
+        for key in ("endpoint", "probe_endpoint"):
+            value = str(connection.get(key) or "").strip().lower()
+            if "cmsis-dap" in value:
+                return True
+    return False
+
+
 def _port_is_listening(ip: str, port: int, timeout_s: float = 0.25) -> bool:
     try:
         with socket.create_connection((ip, int(port)), timeout=timeout_s):
@@ -613,10 +632,12 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
     strategy_used = ""
     last_error = ""
     stlink_bootstrap = {"ok": True, "managed": False, "port_checked": False, "server_log_path": "", "error": "", "diagnostic_code": "", "skip_port_probe": False, "pid": 0}
-    if _is_local_host(ip) and port:
+    if _is_local_host(ip) and port and not _uses_external_local_gdb_server(probe_cfg):
         stlink_bootstrap = _ensure_local_stlink_gdb_server(probe_cfg, emit, flash_log_path=flash_log_path)
         if not stlink_bootstrap.get("ok", True):
             last_error = stlink_bootstrap.get("error") or "local ST-Link GDB server startup failed"
+    elif _is_local_host(ip) and port:
+        stlink_bootstrap["port_checked"] = True
 
     for idx, strat in enumerate(strategies, start=1):
             if last_error and not ok and stlink_bootstrap.get("port_checked") and not stlink_bootstrap.get("ok", True):
