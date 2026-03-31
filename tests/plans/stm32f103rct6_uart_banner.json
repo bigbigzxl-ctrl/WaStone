@@ -1,0 +1,44 @@
+{
+  "name": "stm32f103rct6_uart_banner",
+  "board": "stm32f103rct6",
+  "pin": "sig",
+  "duration_s": 1.0,
+  "min_edges": 2,
+  "max_edges": 20000,
+  "build": {
+    "project_dir": "firmware/targets/stm32f103rct6_uart_banner",
+    "artifact_stem": "stm32f103rct6_uart_banner_app",
+    "build_dir": "artifacts/build_stm32f103rct6_uart_banner"
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_READY STM32F103RCT6 UART"
+    ]
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10."
+      }
+    ]
+  }
+}

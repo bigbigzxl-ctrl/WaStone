@@ -1,8 +1,8 @@
 id: stm32f103rct6
-name: STM32F103RCT6 Mailbox Bench
+name: STM32F103RCT6 Staged Candidate Bench
 mcu: stm32f103rct6
 family: stm32f1
-description: STM32F103RCT6 mailbox-verify bench DUT
+description: STM32F103RCT6 staged candidate DUT on current DAPLink/SWD/UART and jumper wiring
 
 classification:
   platform_class: mcu
@@ -37,16 +37,32 @@ board_configs:
     path: configs/boards/stm32f103rct6_stlink.yaml
     instrument_family: stlink
 
-lifecycle_stage: draft
+lifecycle_stage: testing
 
 build:
   type: arm_debug
   project_dir: firmware/targets/stm32f103rct6_mailbox
 flash:
   method: gdb_swd
+default_packs:
+  - packs/stm32f103rct6_staged_candidate.json
 tags:
   - stm32
   - stm32f1
   - mailbox
+  - staged_suite
+  - candidate
+tests:
+  - packs/stm32f103rct6_staged_candidate.json
+notes:
+  canonical_pack: packs/stm32f103rct6_staged_candidate.json
+  canonical_wiring:
+    - DAPLink SWD
+    - DAPLink UART <-> PA9/PA10
+    - PC7 -> LED
+    - PB0 <-> PB1
+    - PB8 <-> PB9
+    - PA0 <-> PA1
+    - PB15 <-> PB14
 verified:
   status: false
