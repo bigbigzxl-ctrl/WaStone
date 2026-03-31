@@ -1,5 +1,134 @@
 # STM32F103RCT6: From DAPLink Bring-Up To Golden Suite
 
+## Quick Start
+
+If you just want the shortest working path, do this.
+
+### 1. Wire the bench
+
+- DAPLink `SWDIO` -> target `SWDIO`
+- DAPLink `SWCLK` -> target `SWCLK`
+- DAPLink `NRST` -> target `NRST`
+- DAPLink `GND` -> target `GND`
+- DAPLink `TX` -> target `PA10 / USART1_RX`
+- DAPLink `RX` -> target `PA9 / USART1_TX`
+- jumper `PC8 <-> PC9`
+- jumper `PB0 <-> PB1`
+- jumper `PB8 <-> PB9`
+- jumper `PA0 <-> PA1`
+- jumper `PB15 <-> PB14`
+
+### 2. Add Linux udev access
+
+```bash
+sudo tee /etc/udev/rules.d/99-cmsis-dap-lu.rules >/dev/null <<'EOF'
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="c251", ATTRS{idProduct}=="f001", MODE="0666"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="c251", ATTRS{idProduct}=="f001", MODE="0666"
+EOF
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+Unplug and replug the probe after that.
+
+### 3. Verify the host sees the probe
+
+```bash
+ls -l /dev/hidraw* /dev/ttyACM*
+dmesg | tail -n 30
+```
+
+Expected signs:
+
+- a `hidraw*` node for the CMSIS-DAP interface
+- a `ttyACM*` node for the UART bridge
+
+### 4. Use OpenOCD, not pyOCD, for this probe
+
+`pyOCD` was installed first but did not enumerate this HID-style `CMSIS-DAP_LU`
+reliably. `OpenOCD` worked once the backend was forced to `hid`.
+
+```bash
+openocd -f interface/cmsis-dap.cfg -c "cmsis_dap_backend hid; adapter speed 1000" -f target/stm32f1x.cfg -c "init; reset halt; exit"
+```
+
+Expected signs:
+
+- `CMSIS-DAP: Interface ready`
+- `SWD DPIDR ...`
+- target halted successfully
+
+### 5. Identify the chip before assuming the target family
+
+For the working `STM32F103RCT6` board, the key identity values were:
+
+- `SWD DPIDR = 0x1ba01477`
+- `CPUID = 0x411fc231`
+- `DBGMCU_IDCODE = 0x10036414`
+
+That identifies:
+
+- `Cortex-M3`
+- `STM32F1 high-density`
+- matching `STM32F103RCT6`
+
+### 6. If flash fails, unlock and mass erase
+
+```bash
+openocd -f interface/cmsis-dap.cfg -c "cmsis_dap_backend hid; adapter speed 1000" -f target/stm32f1x.cfg -c "init; reset halt; stm32f1x unlock 0; reset halt; stm32f1x mass_erase 0; program artifacts/build_stm32f103rct6_mailbox/stm32f103rct6_mailbox_app.elf verify reset exit"
+```
+
+This was the recovery path that turned a connectable-but-not-programmable board
+into a working board.
+
+### 7. Read mailbox results carefully
+
+When reading mailbox state through OpenOCD, remember:
+
+- OpenOCD `sleep` is in milliseconds, not seconds
+
+So use `sleep 2000`, not `sleep 2`, if you mean 2 seconds.
+
+### 8. Verify UART through DAPLink
+
+Set the serial device and capture output:
+
+```bash
+stty -F /dev/ttyACM0 115200 raw -echo
+timeout 10 cat /dev/ttyACM0
+```
+
+For the validated UART banner target, the expected output is:
+
+- `AEL_READY STM32F103RCT6 UART`
+
+### 9. Use the canonical STM32F103RCT6 golden wiring
+
+The final canonical suite does not depend on the ambiguous `PC7` LED path.
+It uses:
+
+- DAPLink SWD
+- DAPLink UART `<-> PA9/PA10`
+- `PC8 <-> PC9`
+- `PB0 <-> PB1`
+- `PB8 <-> PB9`
+- `PA0 <-> PA1`
+- `PB15 <-> PB14`
+
+### 10. Run the canonical pack
+
+```bash
+PYTHONPATH=. python3 -m ael inventory describe-dut --board stm32f103rct6 --format text
+PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103rct6_golden.json --board stm32f103rct6
+```
+
+The canonical pack is:
+
+- [stm32f103rct6_golden.json](/nvme1t/work/codex/ai-embedded-lab/packs/stm32f103rct6_golden.json)
+
+The rest of this document explains how we got there, what failed first, and
+why the final setup looks the way it does.
+
 ## Purpose
 
 This tutorial records the full path from first plugging a Linux host into a
