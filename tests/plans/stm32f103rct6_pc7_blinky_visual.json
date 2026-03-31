@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "visual_smoke",
+  "name": "stm32f103rct6_pc7_blinky_visual",
+  "supported_instruments": ["stlink", "esp32jtag"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["visual", "stage0", "board_health"],
+  "covers": ["gpio", "board_health", "boot"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103rct6_pc7_blinky_visual",
+    "artifact_stem": "stm32f103rct6_pc7_blinky_visual_app",
+    "build_dir": "artifacts/build_stm32f103rct6_pc7_blinky_visual"
+  },
+  "bench_setup": {
+    "notes": "Visual-only PC7 LED blink smoke test for STM32F103RCT6. Requires SWD and onboard LED on PC7.",
+    "peripheral_signals": [
+      {
+        "role": "STATUS_LED",
+        "dut_signal": "PC7",
+        "direction": "output",
+        "notes": "Visual-only LED output."
+      }
+    ]
+  }
+}
