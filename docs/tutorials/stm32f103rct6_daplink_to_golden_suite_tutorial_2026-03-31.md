@@ -124,7 +124,7 @@ PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103rct6_golden.json --board 
 
 The canonical pack is:
 
-- [stm32f103rct6_golden.json](/nvme1t/work/codex/ai-embedded-lab/packs/stm32f103rct6_golden.json)
+- [stm32f103rct6_golden.json](../../packs/stm32f103rct6_golden.json)
 
 The rest of this document explains how we got there, what failed first, and
 why the final setup looks the way it does.
@@ -152,13 +152,13 @@ assumptions, and bench-specific traps that mattered.
 At the end of this process, the repo now contains:
 
 - a canonical `STM32F103RCT6` golden pack  
-  [stm32f103rct6_golden.json](/nvme1t/work/codex/ai-embedded-lab/packs/stm32f103rct6_golden.json)
+  [stm32f103rct6_golden.json](../../packs/stm32f103rct6_golden.json)
 - a golden DUT manifest  
-  [manifest.yaml](/nvme1t/work/codex/ai-embedded-lab/assets_golden/duts/stm32f103rct6/manifest.yaml)
+  [manifest.yaml](../../assets_golden/duts/stm32f103rct6/manifest.yaml)
 - a local DAPLink instrument entry  
-  [daplink_f103_rct6.yaml](/nvme1t/work/codex/ai-embedded-lab/configs/instrument_instances/daplink_f103_rct6.yaml)
+  [daplink_f103_rct6.yaml](../../configs/instrument_instances/daplink_f103_rct6.yaml)
 - a closeout report  
-  [stm32f103rct6_golden_suite_closeout_2026-03-31.md](/nvme1t/work/codex/ai-embedded-lab/docs/reports/stm32f103rct6_golden_suite_closeout_2026-03-31.md)
+  [stm32f103rct6_golden_suite_closeout_2026-03-31.md](../reports/stm32f103rct6_golden_suite_closeout_2026-03-31.md)
 - supporting reusable skills for:
   - DAPLink/OpenOCD programming
   - DAPLink live validation
@@ -527,7 +527,7 @@ That was the right sequence.
 
 The staged candidate pack started here:
 
-- [stm32f103rct6_staged_candidate.json](/nvme1t/work/codex/ai-embedded-lab/packs/stm32f103rct6_staged_candidate.json)
+- [stm32f103rct6_staged_candidate.json](../../packs/stm32f103rct6_staged_candidate.json)
 
 It initially included:
 
@@ -793,11 +793,11 @@ Promotion should follow:
 
 Final canonical pack:
 
-- [stm32f103rct6_golden.json](/nvme1t/work/codex/ai-embedded-lab/packs/stm32f103rct6_golden.json)
+- [stm32f103rct6_golden.json](../../packs/stm32f103rct6_golden.json)
 
 Final canonical DUT:
 
-- [manifest.yaml](/nvme1t/work/codex/ai-embedded-lab/assets_golden/duts/stm32f103rct6/manifest.yaml)
+- [manifest.yaml](../../assets_golden/duts/stm32f103rct6/manifest.yaml)
 
 Final stages:
 
@@ -912,20 +912,20 @@ timeout 5 cat /dev/ttyACM0
 
 Programming skill:
 
-- [daplink_openocd_stm32f103rct6_programming_skill_2026-03-30.md](/nvme1t/work/codex/ai-embedded-lab/docs/skills/daplink_openocd_stm32f103rct6_programming_skill_2026-03-30.md)
+- [daplink_openocd_stm32f103rct6_programming_skill_2026-03-30.md](../skills/daplink_openocd_stm32f103rct6_programming_skill_2026-03-30.md)
 
 Candidate validation closeout:
 
-- [stm32f103rct6_staged_candidate_live_validation_closeout_2026-03-31.md](/nvme1t/work/codex/ai-embedded-lab/docs/reports/stm32f103rct6_staged_candidate_live_validation_closeout_2026-03-31.md)
+- [stm32f103rct6_staged_candidate_live_validation_closeout_2026-03-31.md](../reports/stm32f103rct6_staged_candidate_live_validation_closeout_2026-03-31.md)
 
 Golden closeout:
 
-- [stm32f103rct6_golden_suite_closeout_2026-03-31.md](/nvme1t/work/codex/ai-embedded-lab/docs/reports/stm32f103rct6_golden_suite_closeout_2026-03-31.md)
+- [stm32f103rct6_golden_suite_closeout_2026-03-31.md](../reports/stm32f103rct6_golden_suite_closeout_2026-03-31.md)
 
 DAPLink live-validation skill:
 
-- [stm32f103rct6_daplink_live_validation_skill_2026-03-31.md](/nvme1t/work/codex/ai-embedded-lab/docs/skills/stm32f103rct6_daplink_live_validation_skill_2026-03-31.md)
+- [stm32f103rct6_daplink_live_validation_skill_2026-03-31.md](../skills/stm32f103rct6_daplink_live_validation_skill_2026-03-31.md)
 
 Stage 0 migration skill:
 
-- [stage0_visual_to_gpio_probe_migration_2026-03-31.md](/nvme1t/work/codex/ai-embedded-lab/docs/skills/stage0_visual_to_gpio_probe_migration_2026-03-31.md)
+- [stage0_visual_to_gpio_probe_migration_2026-03-31.md](../skills/stage0_visual_to_gpio_probe_migration_2026-03-31.md)
