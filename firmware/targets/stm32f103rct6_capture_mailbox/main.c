@@ -39,13 +39,10 @@
 #define ERR_RISE_TIMEOUT  0xC102U
 #define ERR_PERIOD_RANGE  0xC103U
 
-static void delay_us(volatile uint32_t us)
+static void delay_us(uint32_t us)
 {
-    while (us--) {
-        for (volatile uint32_t i = 0U; i < 8U; i++) {
-            __asm__ volatile ("nop");
-        }
-    }
+    uint32_t start = TIM2_CNT;
+    while ((uint32_t)(TIM2_CNT - start) < us) {}
 }
 
 static uint32_t wait_for_level(uint32_t level, uint32_t timeout_us)
