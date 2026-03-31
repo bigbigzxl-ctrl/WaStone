@@ -1,15 +1,22 @@
 {
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
   "name": "stm32f103rct6_uart_banner",
   "board": "stm32f103rct6",
-  "pin": "sig",
-  "duration_s": 1.0,
-  "min_edges": 2,
-  "max_edges": 20000,
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["uart_observed", "stage3", "banner"],
+  "covers": ["usart1", "uart_tx", "banner"],
+  "preflight": { "enabled": false },
   "build": {
     "project_dir": "firmware/targets/stm32f103rct6_uart_banner",
     "artifact_stem": "stm32f103rct6_uart_banner_app",
     "build_dir": "artifacts/build_stm32f103rct6_uart_banner"
   },
+  "signal_checks": [],
   "observe_uart": {
     "enabled": true,
     "port": "/dev/ttyACM0",
@@ -26,6 +33,7 @@
       "baud": 115200,
       "required": true
     },
+    "notes": "Stage 3 UART banner proof on the DAPLink serial bridge. This fixture does not provide a separate logic-analyzer verify pin, so this proof is intentionally UART-only.",
     "peripheral_signals": [
       {
         "role": "uart_tx",
