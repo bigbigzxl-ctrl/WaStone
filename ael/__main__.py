@@ -4309,6 +4309,12 @@ def run_pack(pack_path, board_override=None, stop_on_fail=False, no_flash=False,
         result["results"].append(entry)
         result["ok"] = result["ok"] and entry["ok"]
         _write("pack_result.json", result)
+        if not entry["ok"]:
+            artifacts_result = _load_json(run_paths.artifacts_dir / "result.json")
+            if artifacts_result.get("failure_kind") == "transport_error":
+                remaining = len(tests) - tests.index(t) - 1
+                print(f"Pack: ABORT — instrument transport failure (preflight), skipping {remaining} remaining test(s)")
+                break
         if stop_on_fail and not entry["ok"]:
             break
 

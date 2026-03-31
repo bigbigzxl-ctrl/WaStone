@@ -872,5 +872,24 @@
     "status_health_schema_version_counts": {},
     "timestamp": "2026-03-30T11:18:02Z",
     "total_count": 0
+  },
+  {
+    "baseline_readiness_status": "unavailable",
+    "capability_taxonomy_version_counts": {},
+    "doctor_check_schema_version_counts": {},
+    "fail_count": 0,
+    "failure_boundary_counts": {},
+    "failure_class_counts": {},
+    "health_status": "unknown",
+    "instrument_family_counts": {},
+    "instrument_health_counts": {},
+    "ok": true,
+    "pass_count": 81,
+    "recovery_hint_counts": {},
+    "run_id": "",
+    "schema_review_status": "no_schema_signals",
+    "status_health_schema_version_counts": {},
+    "timestamp": "2026-03-31T23:02:32Z",
+    "total_count": 81
   }
 ]

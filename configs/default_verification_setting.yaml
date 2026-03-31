@@ -17,6 +17,9 @@
         },
         {
           "pack": "packs/stm32g431cbu6_golden.json"
+        },
+        {
+          "pack": "packs/stm32h750vbt6_golden.json"
         }
       ]
     }

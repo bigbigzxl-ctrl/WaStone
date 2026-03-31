@@ -223,7 +223,11 @@ class _PreflightAdapter:
         if out_json:
             _write_json(out_json, info or {})
         if not ok:
-            return {"ok": False, "error_summary": "preflight failed", "result": info or {}}
+            result = {"ok": False, "error_summary": "preflight failed", "result": info or {}}
+            fk = (info or {}).get("failure_kind")
+            if fk:
+                result["failure_kind"] = fk
+            return result
         return {"ok": True, "result": info or {}}
 
 

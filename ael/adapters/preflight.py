@@ -212,7 +212,7 @@ def _parse_targets(stdout_text: str):
 def _monitor_targets(ip, port, gdb_cmd):
     if not gdb_cmd:
         print("Preflight: gdb_cmd not set, skipping monitor targets")
-        return False, []
+        return False, [], "probe_transport_unhealthy"
     last_error = ""
     targets = []
     for attempt in range(1, 4):
@@ -226,7 +226,7 @@ def _monitor_targets(ip, port, gdb_cmd):
             if ok:
                 print("Preflight: monitor targets -> OK")
                 print("Preflight: targets: " + ", ".join(targets))
-                return True, targets
+                return True, targets, None
             last_error = combined or f"return code {res.returncode}"
             print(f"Preflight: monitor targets attempt {attempt}/3 -> FAIL")
             if combined:
@@ -246,7 +246,7 @@ def _monitor_targets(ip, port, gdb_cmd):
         output_failed = _monitor_output_failed(combined)
         if res.returncode == 0 and not output_failed:
             print("Preflight: monitor version fallback -> OK (targets unavailable)")
-            return True, targets
+            return True, targets, None
         if combined:
             last_error = combined
     except Exception as exc:
@@ -267,7 +267,7 @@ def _monitor_targets(ip, port, gdb_cmd):
         else:
             print("Hint: Probe IP is reachable but debug monitor is unhealthy.")
             print("Hint: Power-cycle/reset ESP32JTAG, then retry. This can be automated in a future recovery step.")
-    return False, targets
+    return False, targets, failure_kind
 
 
 def _parse_samples(buffer: bytes):
@@ -417,7 +417,7 @@ def run(probe_cfg):
 
     ok_ping = _ping(ip)
     ok_tcp = _check_tcp(ip, port)
-    ok_mon, targets = _monitor_targets(ip, port, gdb_cmd)
+    ok_mon, targets, mon_failure_kind = _monitor_targets(ip, port, gdb_cmd)
     if capture_check == "targetin":
         ok_la = True
         print("Preflight: capture self-test skipped (TARGETIN-backed path)")
@@ -434,6 +434,8 @@ def run(probe_cfg):
         "capture_check": capture_check,
         "port_config": port_cfg,
     }
+    if not ok_mon and mon_failure_kind == "probe_transport_unhealthy":
+        info["failure_kind"] = "transport_error"
 
     # ICMP/TCP checks can transiently fail while the probe is still stabilizing.
     # If monitor + capture checks pass, treat ping/tcp as advisory.

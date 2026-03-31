@@ -247,7 +247,12 @@ def _stlink_doctor(probe_cfg: Dict[str, Any]) -> Dict[str, Any]:
 def _stlink_preflight_probe(probe_cfg: Dict[str, Any]) -> Dict[str, Any]:
     status = _stlink_get_status(probe_cfg)
     if status.get("status") != "ok":
-        return _native_error("preflight_failed", "stlink preflight failed", retryable=True)
+        return _native_error(
+            "preflight_failed",
+            "stlink preflight failed",
+            retryable=True,
+            details={"protocol_version": NATIVE_API_PROTOCOL, "preflight": {"failure_kind": "transport_error"}},
+        )
     status_data = (status.get("data") or {}) if isinstance(status.get("data"), dict) else {}
     gdb_check = ((status_data.get("endpoints") or {}).get("gdb_remote") or {}) if isinstance(status_data.get("endpoints"), dict) else {}
     if bool(gdb_check.get("ok")):
@@ -256,7 +261,7 @@ def _stlink_preflight_probe(probe_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "preflight_failed",
         "stlink preflight could not reach the GDB remote endpoint",
         retryable=True,
-        details={"protocol_version": NATIVE_API_PROTOCOL, "preflight": {"gdb_remote": gdb_check}},
+        details={"protocol_version": NATIVE_API_PROTOCOL, "preflight": {"gdb_remote": gdb_check, "failure_kind": "transport_error"}},
     )
 
 
