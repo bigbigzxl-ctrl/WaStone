@@ -36,7 +36,7 @@ static void uart1_init(void)
     /* PA9 = USART1 TX, 50 MHz alternate-function push-pull. */
     GPIOA_CRH &= ~(0xFu << 4);
     GPIOA_CRH |=  (0xBu << 4);
-    USART1_BRR = 0x457u; /* 8 MHz / 115200 */
+    USART1_BRR = 0x45u; /* 8 MHz / 115200 */
     USART1_CR1 = USART_CR1_UE | USART_CR1_TE;
 }
 
