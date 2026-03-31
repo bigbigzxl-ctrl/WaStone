@@ -1,7 +1,7 @@
 board:
   name: STM32F103RCT6
   target: stm32f103rct6
-  instrument_instance: esp32jtag_stm32_golden
+  instrument_instance: daplink_f103_rct6
   clock_hz: 8000000
   build:
     type: arm_debug
@@ -25,6 +25,7 @@ board:
     swd: "external"
     reset: "NC"
     verify: "NC"
+    uart: "daplink_usb_uart"
   power_and_boot:
     reset_strategy: connect_under_reset
     boot_mode_default: normal

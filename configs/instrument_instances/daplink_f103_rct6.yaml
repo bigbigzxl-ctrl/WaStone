@@ -1,0 +1,26 @@
+instance:
+  id: daplink_f103_rct6
+  type: daplink
+  label: DAPLink — STM32F103RCT6 (local USB, OpenOCD)
+
+connection:
+  endpoint: "local:cmsis-dap-lu"
+  serial_port: "/dev/ttyACM0"
+
+communication:
+  primary: openocd_local
+  surfaces:
+    - name: openocd_local
+      transport: usb_local
+      endpoint: "local:cmsis-dap-lu"
+      protocol: openocd
+      invocation_style: request_response
+    - name: uart_console
+      transport: usb_local
+      endpoint: "/dev/ttyACM0"
+      protocol: uart
+      invocation_style: request_response
+
+capability_surfaces:
+  swd: openocd_local
+  uart: uart_console

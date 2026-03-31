@@ -1,0 +1,48 @@
+{
+  "name": "stm32f103rct6_golden",
+  "description": "STM32F103RCT6 canonical golden suite on the current local DAPLink/SWD/UART and jumper fixture. Stage0 uses a machine-verified GPIOC probe instead of the unreliable PC7 LED path. Stage1 covers timer, SysTick, and internal temperature. Stage2 covers GPIO, EXTI, ADC, SPI, IWDG, capture, PWM capture, UART multibyte TX, and UART DMA TX. Stage3 keeps the UART banner proof on DAPLink serial.",
+  "board": "stm32f103rct6",
+  "status": "golden",
+  "stages": {
+    "0": [
+      "tests/plans/stm32f103rct6_pc8_pc9_probe.json",
+      "tests/plans/stm32f103rct6_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32f103rct6_timer_mailbox.json",
+      "tests/plans/stm32f103rct6_systick_mailbox.json",
+      "tests/plans/stm32f103rct6_internal_temp_mailbox.json"
+    ],
+    "2": [
+      "tests/plans/stm32f103rct6_gpio_loopback.json",
+      "tests/plans/stm32f103rct6_exti_trigger.json",
+      "tests/plans/stm32f103rct6_adc_loopback.json",
+      "tests/plans/stm32f103rct6_spi_loopback.json",
+      "tests/plans/stm32f103rct6_iwdg.json",
+      "tests/plans/stm32f103rct6_capture_mailbox.json",
+      "tests/plans/stm32f103rct6_pwm_capture.json",
+      "tests/plans/stm32f103rct6_uart_multibyte.json",
+      "tests/plans/stm32f103rct6_uart_dma.json"
+    ],
+    "3": [
+      "tests/plans/stm32f103rct6_uart_banner.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f103rct6_pc8_pc9_probe.json",
+    "tests/plans/stm32f103rct6_minimal_runtime_mailbox.json",
+    "tests/plans/stm32f103rct6_timer_mailbox.json",
+    "tests/plans/stm32f103rct6_systick_mailbox.json",
+    "tests/plans/stm32f103rct6_internal_temp_mailbox.json",
+    "tests/plans/stm32f103rct6_gpio_loopback.json",
+    "tests/plans/stm32f103rct6_exti_trigger.json",
+    "tests/plans/stm32f103rct6_adc_loopback.json",
+    "tests/plans/stm32f103rct6_spi_loopback.json",
+    "tests/plans/stm32f103rct6_iwdg.json",
+    "tests/plans/stm32f103rct6_capture_mailbox.json",
+    "tests/plans/stm32f103rct6_pwm_capture.json",
+    "tests/plans/stm32f103rct6_uart_multibyte.json",
+    "tests/plans/stm32f103rct6_uart_dma.json",
+    "tests/plans/stm32f103rct6_uart_banner.json"
+  ]
+}

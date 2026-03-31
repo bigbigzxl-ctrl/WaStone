@@ -1,8 +1,8 @@
 id: stm32f103rct6
-name: STM32F103RCT6 Staged Candidate Bench
+name: STM32F103RCT6 Golden Bench
 mcu: stm32f103rct6
 family: stm32f1
-description: STM32F103RCT6 staged candidate DUT on current DAPLink/SWD/UART and jumper wiring
+description: STM32F103RCT6 golden DUT on the current local DAPLink/SWD/UART and jumper wiring
 
 classification:
   platform_class: mcu
@@ -31,13 +31,13 @@ mcus:
 board_configs:
   - id: esp32jtag
     path: configs/boards/stm32f103rct6.yaml
-    instrument_family: esp32jtag
+    instrument_family: none
     primary: true
   - id: stlink
     path: configs/boards/stm32f103rct6_stlink.yaml
     instrument_family: stlink
 
-lifecycle_stage: testing
+lifecycle_stage: golden
 
 build:
   type: arm_debug
@@ -45,24 +45,27 @@ build:
 flash:
   method: gdb_swd
 default_packs:
-  - packs/stm32f103rct6_staged_candidate.json
+  - packs/stm32f103rct6_golden.json
 tags:
   - stm32
   - stm32f1
   - mailbox
+  - golden
   - staged_suite
-  - candidate
 tests:
-  - packs/stm32f103rct6_staged_candidate.json
+  - packs/stm32f103rct6_golden.json
 notes:
-  canonical_pack: packs/stm32f103rct6_staged_candidate.json
+  canonical_pack: packs/stm32f103rct6_golden.json
   canonical_wiring:
     - DAPLink SWD
     - DAPLink UART <-> PA9/PA10
-    - PC7 -> LED
+    - PC8 <-> PC9
     - PB0 <-> PB1
     - PB8 <-> PB9
     - PA0 <-> PA1
     - PB15 <-> PB14
+  non_canonical_legacy_paths:
+    - PC7 visual LED path retained only as a non-gating diagnostic due board-specific hardware ambiguity
 verified:
-  status: false
+  status: true
+  date: 2026-03-31
