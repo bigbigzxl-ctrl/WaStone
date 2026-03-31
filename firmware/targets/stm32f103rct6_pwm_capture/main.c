@@ -98,8 +98,13 @@ int main(void)
         GPIOB_ODR |= (1U << 8);
         delay_us(400U);
         uint32_t state = read_pb9();
-        if (state == 1U && last_state == 0U && rise1 == 0U) {
-            rise1 = TIM2_CNT;
+        if (state == 1U && last_state == 0U) {
+            if (rise1 == 0U) {
+                rise1 = TIM2_CNT;
+            } else if (fall1 != 0U) {
+                rise2 = TIM2_CNT;
+                break;
+            }
         }
         last_state = state;
 
@@ -108,9 +113,6 @@ int main(void)
         state = read_pb9();
         if (state == 0U && last_state == 1U && rise1 != 0U && fall1 == 0U) {
             fall1 = TIM2_CNT;
-        } else if (state == 1U && last_state == 0U && fall1 != 0U) {
-            rise2 = TIM2_CNT;
-            break;
         }
         last_state = state;
     }
