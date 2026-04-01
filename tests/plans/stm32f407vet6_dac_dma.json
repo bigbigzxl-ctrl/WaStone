@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_dac_dma",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["dac", "dma", "adc", "tim6", "analog"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_dac_dma",
+    "artifact_stem": "stm32f407vet6_dac_dma",
+    "build_dir": "artifacts/build_stm32f407vet6_dac_dma"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 5.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "DMA2 Stream5 CH7 drives DAC1 (PA4) with 4-level stepped waveform (0%/33%/66%/100%). TIM6 TRGO at 1kHz triggers DAC updates. ADC1 CH4 (same PA4 pin) samples each level, verifies within ±10%. PASS: detail0=last ADC reading (~4095). No external wiring needed.",
+    "peripheral_signals": [
+      {
+        "role": "DAC_DMA_ADC_LOOPBACK",
+        "dut_signal": "PA4",
+        "direction": "bidir",
+        "notes": "PA4 = DAC1_OUT = ADC1_IN4. Analog mode. No external wire needed."
+      }
+    ]
+  }
+}
