@@ -61,6 +61,8 @@ notes:
     - PA0 <-> PA1
     - PB15 <-> PB14
     - PA9 <-> PA10
+    - PA7 <-> PA6
+    - PA5 -> P0.1
   auto_connectivity_covered:
     - PC13 -> P0.0
     - PB0 <-> PB1
@@ -69,10 +71,10 @@ notes:
     - PB15 <-> PB14
   not_auto_connectivity_covered:
     - PA9 <-> PA10 is validated by Stage2 UART loopback tests rather than a dedicated pre-stage2 probe
-    - SPI1 is deferred on this bench because the current jumper fixture does not provide a valid PA5/PA6/PA7 or remapped SPI1 partner path
+    - PA7 <-> PA6 is validated by Stage2 SPI1 loopback rather than a dedicated pre-stage2 probe
     - I2C is deferred on this bench because the current fixture has no second I2C endpoint or external slave path for PB6/PB7 or remapped PB8/PB9
 verified:
   status: true
   date: 2026-04-01
   evidence:
-    - pack_runs/2026-04-01_12-20-18_stm32f103c6t6_golden_stm32f103c6t6_bluepill_like/pack_result.json
+    - pack_runs/2026-04-01_12-41-58_stm32f103c6t6_golden_stm32f103c6t6_bluepill_like/pack_result.json

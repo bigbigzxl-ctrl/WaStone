@@ -4,7 +4,7 @@
 **Board:** `stm32f103c6t6_bluepill_like`
 **Pack:** `packs/stm32f103c6t6_golden.json`
 **Instrument:** `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
-**Status:** final canonical full-pack rerun completed `23/23 PASS`
+**Status:** final canonical full-pack rerun completed `24/24 PASS`
 
 ## Summary
 
@@ -31,6 +31,8 @@ tests on real hardware.
 - `PA0 <-> PA1`
 - `PB15 <-> PB14`
 - `PA9 <-> PA10`
+- `PA7 <-> PA6`
+- `PA5 -> P0.1`
 - common ground to probe ground
 
 ## Evidence
@@ -47,6 +49,7 @@ Representative run artifacts from that rerun:
 - `runs/2026-04-01_12-21-35_stm32f103c6t6_bluepill_like_stm32f103c6_adc_vref_mailbox`
 - `runs/2026-04-01_12-24-12_stm32f103c6t6_bluepill_like_stm32f103c6_exti_trigger`
 - `runs/2026-04-01_12-26-48_stm32f103c6t6_bluepill_like_stm32f103c6_tim3_pwm_pb0_pb1_mailbox`
+- `runs/2026-04-01_12-36-11_stm32f103c6t6_bluepill_like_stm32f103c6_spi1_loopback_mailbox`
 - `runs/2026-04-01_12-27-23_stm32f103c6t6_bluepill_like_stm32f103c6_uart_dma`
 
 Earlier targeted live runs used to stabilize the suite before the final rerun:
@@ -81,6 +84,7 @@ Validated on real hardware in the final canonical rerun:
 - `stm32f103c6_capture_mailbox`
 - `stm32f103c6_pwm_capture`
 - `stm32f103c6_tim3_pwm_pb0_pb1_mailbox`
+- `stm32f103c6_spi1_loopback_mailbox`
 - `stm32f103c6_uart_loopback_mailbox`
 - `stm32f103c6_uart_multibyte`
 - `stm32f103c6_uart_dma`
@@ -122,8 +126,6 @@ wiring-vs-firmware instead of guessing from richer tests.
 
 Not in the canonical suite yet:
 
-- SPI1 loopback because the current bench contract does not expose the
-  required `PA5/PA6/PA7` jumper path, nor the remapped `PB3/PB4/PB5` path
 - hardware I2C because the current bench has no valid second I2C endpoint or
   external slave path for `PB6/PB7` or remapped `PB8/PB9`
 - any host-external UART proof beyond the board-local `PA9 <-> PA10` loopback
@@ -149,6 +151,6 @@ The correct conclusion is:
 
 - canonical pack: complete
 - live validation: complete
-- final canonical full-pack rerun: `23/23 PASS`
+- final canonical full-pack rerun: `24/24 PASS`
 - DUT manifest verified state: promoted
 - reusable skill capture: completed

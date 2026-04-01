@@ -56,6 +56,10 @@ board:
       to: PB14
     - from: PA9
       to: PA10
+    - from: PA7
+      to: PA6
+    - from: PA5
+      to: P0.1
     - from: PC13
       to: P0.0
     - from: PC13

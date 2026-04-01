@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_spi1_loopback_mailbox",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["spi1", "spi", "loopback"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_spi1_loopback_mailbox",
+    "artifact_stem": "stm32f103c6_spi1_loopback_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_spi1_loopback_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 3.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "SPI1 master loopback on the same MCU. Requires PA7/MOSI -> PA6/MISO. Optional PA5/SCK -> ESP32JTAG P0.1 for scope/debug only. PASS when six transmitted bytes are echoed exactly.",
+    "peripheral_signals": [
+      {
+        "role": "SPI1_SCK",
+        "dut_signal": "PA5",
+        "direction": "output",
+        "notes": "Optional PA5 -> P0.1 observation path."
+      },
+      {
+        "role": "SPI1_MISO",
+        "dut_signal": "PA6",
+        "direction": "input",
+        "notes": "Wire PA7 -> PA6."
+      },
+      {
+        "role": "SPI1_MOSI",
+        "dut_signal": "PA7",
+        "direction": "output",
+        "notes": "Wire PA7 -> PA6."
+      }
+    ]
+  }
+}

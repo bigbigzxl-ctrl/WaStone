@@ -11,7 +11,7 @@
 
 Suite name: `stm32f103c6t6_golden`
 Pack: `packs/stm32f103c6t6_golden.json`
-Result: **23 / 23 PASS** on the canonical ESP32JTAG bench
+Result: **24 / 24 PASS** on the canonical ESP32JTAG bench
 
 | # | Experiment | Test Plan | Verification |
 |---|-----------|-----------|--------------|
@@ -35,9 +35,10 @@ Result: **23 / 23 PASS** on the canonical ESP32JTAG bench
 | 18 | Capture | stm32f103c6_capture_mailbox | mailbox PASS |
 | 19 | PWM capture | stm32f103c6_pwm_capture | mailbox PASS |
 | 20 | TIM3 hardware PWM | stm32f103c6_tim3_pwm_pb0_pb1_mailbox | mailbox PASS |
-| 21 | UART loopback | stm32f103c6_uart_loopback_mailbox | mailbox PASS |
-| 22 | UART multibyte | stm32f103c6_uart_multibyte | mailbox PASS |
-| 23 | UART DMA | stm32f103c6_uart_dma | mailbox PASS |
+| 21 | SPI1 loopback | stm32f103c6_spi1_loopback_mailbox | mailbox PASS |
+| 22 | UART loopback | stm32f103c6_uart_loopback_mailbox | mailbox PASS |
+| 23 | UART multibyte | stm32f103c6_uart_multibyte | mailbox PASS |
+| 24 | UART DMA | stm32f103c6_uart_dma | mailbox PASS |
 
 ---
 
@@ -53,6 +54,8 @@ Result: **23 / 23 PASS** on the canonical ESP32JTAG bench
 | PA0 | PA1 | ADC / EXTI |
 | PB15 | PB14 | digital connectivity |
 | PA9 | PA10 | UART local loopback |
+| PA7 | PA6 | SPI1 MOSI to MISO loopback |
+| PA5 | P0.1 | optional SPI1 SCK observation |
 | GND | probe GND | Common ground |
 | RESET | NC | Not connected |
 
@@ -66,8 +69,8 @@ Instrument: `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
   `STM32F103C8T6` assumptions blindly.
 - Live identity on this board reports `DBGMCU_IDCODE low bits = 0x412`, which
   is the correct low-density class for `STM32F103C6T6`.
-- `STM32F103C6T6` exposes only one SPI. SPI1 and I2C remain intentionally
-  deferred from the canonical suite because the current bench has no valid
-  partner wiring for those peripherals.
+- `STM32F103C6T6` exposes only one SPI. `SPI1` is now covered with
+  `PA7 -> PA6`; `I2C` remains deferred because the current bench has no valid
+  partner wiring for it.
 - The exact live closeout is recorded in
   `docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md`.

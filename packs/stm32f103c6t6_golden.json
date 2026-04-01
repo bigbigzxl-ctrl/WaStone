@@ -1,6 +1,6 @@
 {
   "name": "stm32f103c6t6_golden",
-  "description": "STM32F103C6T6 canonical staged golden suite on the ESP32JTAG STM32 bench. Stage0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage1 covers timer, SysTick, internal temperature, system identity, reset flags, sleep/wake via WFI, internal VREFINT, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, hardware PWM, and UART loopback tests. SPI1 and I2C are deferred because the current bench wiring does not provide a valid partner path for those peripherals.",
+  "description": "STM32F103C6T6 canonical staged golden suite on the ESP32JTAG STM32 bench. Stage0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage1 covers timer, SysTick, internal temperature, system identity, reset flags, sleep/wake via WFI, internal VREFINT, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, hardware PWM, SPI1, and UART loopback tests. I2C is still deferred because the current bench wiring does not provide a valid partner path for that peripheral.",
   "board": "stm32f103c6t6_bluepill_like",
   "status": "golden",
   "pre_stage2_connectivity": [
@@ -31,6 +31,7 @@
       "tests/plans/stm32f103c6_capture_mailbox.json",
       "tests/plans/stm32f103c6_pwm_capture.json",
       "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
+      "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
       "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
       "tests/plans/stm32f103c6_uart_multibyte.json",
       "tests/plans/stm32f103c6_uart_dma.json"
@@ -57,6 +58,7 @@
     "tests/plans/stm32f103c6_capture_mailbox.json",
     "tests/plans/stm32f103c6_pwm_capture.json",
     "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
+    "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
     "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
     "tests/plans/stm32f103c6_uart_multibyte.json",
     "tests/plans/stm32f103c6_uart_dma.json"

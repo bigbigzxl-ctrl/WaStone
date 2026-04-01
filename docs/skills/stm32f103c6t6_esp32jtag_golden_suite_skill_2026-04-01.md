@@ -52,6 +52,8 @@ Fixture shape:
    - `PB0/PB1`: also the valid hardware timer-channel expansion path via
      `TIM3_CH3 -> PB0`
    - `PA0/PA1`: ADC loopback and EXTI
+   - `PA7/PA6`: SPI1 MOSI-to-MISO loopback
+   - `PA5/P0.1`: optional SPI1 clock observation only
    - `PA9/PA10`: UART loopback
    - `PC13/P0.0`: LED-net observation only
 
@@ -83,7 +85,6 @@ Representative all-pass pack run:
    docs/examples before spending more time on local guesses.
 7. For this current bench, defer rather than fake coverage:
 
-   - SPI1 needs `PA5/PA6/PA7` or remapped `PB3/PB4/PB5`
    - I2C needs a real slave/partner path on `PB6/PB7` or remapped `PB8/PB9`
 
 ## Lessons To Keep
