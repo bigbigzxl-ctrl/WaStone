@@ -83,9 +83,35 @@ run_index.record_success(board_id, test_name, exp_id)
 
 ---
 
-### 规则 5 — 报告必须包含 CE Audit
+### 规则 5 — GDB 命令黄金序列不得修改
 
-每次任务结束的报告/总结必须包含：
+STM32/BMDA 已验证的 GDB 命令序列：
+```
+monitor a
+attach {target_id}
+load
+attach {target_id}
+detach
+```
+此序列对所有 STM32 系列有效，已经过多次验证。**除非有明确的技术必要性，否则禁止修改 `gdb_launch_cmds`。**
+
+---
+
+### 规则 6 — 目标板 Freeze 的诊断顺序
+
+当出现 attach 失败 / SWD 死亡 / GDB 无响应时：
+1. **不得修改 GDB 命令** — 命令不是问题所在
+2. **先跑已知 PASS 的测试**（如 `stm32f407vet6_timer_mailbox`）
+3. 若已知测试 PASS → 当前固件是根因（HardFault/LOCKUP、IWDG 循环重置等）
+4. 若已知测试也失败 → 才考虑：
+   - ESP32JTAG 软重启：`POST https://<ip>/set_credentials`（原参数不变）
+   - 目标板硬复位：BOOT+RESET
+
+---
+
+### 规则 7 — 报告必须包含 CE Audit
+
+每次任务结束的报告/总结必须包含（规则编号已更新为7）：
 
 ```
 ## Civilization Engine Usage Audit
