@@ -1194,5 +1194,285 @@
         "last_raw": "[stm32f407vet6] stm32f407vet6_rtc: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
       }
     }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pc13_blinky_visual": {
+    "exp_id": "7a63ce6b-984b-439b-ac6b-bb7f61d463fd",
+    "success_count": 10,
+    "failure_count": 0,
+    "last_seen": 1775061727.9549704,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pc13_led_probe": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1775051628.5882738,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_signal": {
+        "exp_id": "9a8a3d42-91a4-48fe-9510-72f370955ce5",
+        "count": 2,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_led_probe: failed — stages: preflight, build, load, run — failure: check_signal — verify failed"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pc13_fast_probe": {
+    "exp_id": "c461704e-2f2b-4e71-a1a2-9580219dc919",
+    "success_count": 1,
+    "failure_count": 2,
+    "last_seen": 1775054302.0903785,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_signal": {
+        "exp_id": "25306c25-1371-451a-bf08-456de0932662",
+        "count": 2,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_fast_probe: failed — stages: preflight, build, load, run — failure: check_signal — verify failed"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_timer_mailbox": {
+    "exp_id": "27c8a7b5-b221-4c2a-80ea-7ecdb93e4c54",
+    "success_count": 7,
+    "failure_count": 2,
+    "last_seen": 1775061752.3883007,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "66dd3016-624e-4614-98c5-9ad590bcd604",
+        "count": 2,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_timer_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_minimal_runtime_mailbox": {
+    "exp_id": "4a254444-6ba2-4599-8ecf-3de28457bcbc",
+    "success_count": 7,
+    "failure_count": 0,
+    "last_seen": 1775061738.787529,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pb0_pb1_probe": {
+    "exp_id": "487850c6-8449-4c6a-aa96-392e84cc5f8c",
+    "success_count": 7,
+    "failure_count": 0,
+    "last_seen": 1775061848.5499754,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|unknown": {
+    "exp_id": "e250301a-49a9-4e3f-b90e-944a1d2451bb",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775054157.6208627,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_systick_mailbox": {
+    "exp_id": "72703222-d7c6-430b-b55f-a84f8db10636",
+    "success_count": 5,
+    "failure_count": 0,
+    "last_seen": 1775061764.8845534,
+    "confidence": 0.9,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_internal_temp_mailbox": {
+    "exp_id": "637af39d-f722-4a18-a92c-3b7227332754",
+    "success_count": 5,
+    "failure_count": 0,
+    "last_seen": 1775061778.1757958,
+    "confidence": 0.9,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_iwdg": {
+    "exp_id": "0978e4f6-f505-41f8-a70c-98a1bd392ee1",
+    "success_count": 5,
+    "failure_count": 0,
+    "last_seen": 1775061836.7199862,
+    "confidence": 0.9,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pb8_pb9_probe": {
+    "exp_id": "7e253c37-c9f5-417c-93f7-0ba11ab468fb",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1775061916.9992085,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pa0_pa1_adc_probe": {
+    "exp_id": "7a7fcc56-abd0-44f0-8e19-016736a26b65",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1775061928.8934581,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pb15_pb14_probe": {
+    "exp_id": "0e96c475-3398-4f4a-b447-5b1e15221869",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1775061941.721136,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_gpio_loopback": {
+    "exp_id": "e230dbaf-6ced-44e1-b45d-50deb5ab75b3",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1775061979.470957,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_exti_trigger": {
+    "exp_id": "93fd32e6-34cf-4fcb-b6f9-28653a59dd6a",
+    "success_count": 5,
+    "failure_count": 1,
+    "last_seen": 1775062048.3391461,
+    "confidence": 0.9,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "c2b650e3-d078-45c2-b8cb-485864d25611",
+        "count": 1,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_exti_trigger: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_adc_loopback": {
+    "exp_id": "bda057ff-bf70-44fb-ab3b-5f764132e4c0",
+    "success_count": 5,
+    "failure_count": 0,
+    "last_seen": 1775062117.1086729,
+    "confidence": 0.9,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_spi_loopback": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1775055007.397978,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "f924bf2c-5f71-4c1c-bbf8-d61e3c7d80eb",
+        "count": 2,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_spi_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_capture_mailbox": {
+    "exp_id": "dd61bff8-b78c-4e35-818f-d8e612f3c4b5",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1775062130.339029,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_pwm_capture": {
+    "exp_id": "527f7679-7aec-4fef-9309-fd9a3079ea2c",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1775062142.941535,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_uart_loopback_mailbox": {
+    "exp_id": "a8902fcc-7795-4749-9624-298457553e67",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1775062177.461246,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_uart_multibyte": {
+    "exp_id": "49c3ce71-fe6d-4101-a9c2-6f042c933b15",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1775062199.2256646,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_uart_dma": {
+    "exp_id": "5aa9b083-c3a5-4e71-9535-087bdf988890",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1775062215.5729327,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_reset_cause_mailbox": {
+    "exp_id": "53d57238-9f75-459e-9c82-fd2446d86109",
+    "success_count": 4,
+    "failure_count": 1,
+    "last_seen": 1775061800.1477244,
+    "confidence": 0.8,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "5811bd9a-948d-4022-928a-67616b6ae915",
+        "count": 1,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_reset_cause_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_system_identity_mailbox": {
+    "exp_id": "1cda669d-0df5-4f28-b11f-c797c0a01737",
+    "success_count": 4,
+    "failure_count": 1,
+    "last_seen": 1775061788.6275551,
+    "confidence": 0.8,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "6db36f81-8b13-492c-aaac-36743da8665b",
+        "count": 1,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_system_identity_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_sleep_wfi_mailbox": {
+    "exp_id": "09b96aed-b578-43f1-b711-af2b7ccbb699",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1775061811.7672682,
+    "confidence": 0.7,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_adc_vref_mailbox": {
+    "exp_id": "3c58e615-9ce6-4276-ad17-a056bf0eca4b",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1775061822.9262784,
+    "confidence": 0.7,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_tim4_pwm_pb8_pb9_mailbox": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1775060216.2521608,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "022cf533-d0e5-4954-a105-2b71f2e6c665",
+        "count": 2,
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_tim4_pwm_pb8_pb9_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_tim3_pwm_pb0_pb1_mailbox": {
+    "exp_id": "d428ddb9-5555-4487-a50d-3c711564bd85",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1775062157.3854759,
+    "confidence": 0.7,
+    "known_failures": {}
+  },
+  "stm32f103c6t6_bluepill_like|stm32f103c6_spi1_loopback_mailbox": {
+    "exp_id": "d37757b5-904e-47ae-a5ea-162310b0f572",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775062168.6079886,
+    "confidence": 0.6,
+    "known_failures": {}
   }
 }
