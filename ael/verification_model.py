@@ -382,11 +382,45 @@ class VerificationWorker:
     stop_after_failure: bool = False
     log_fn: VerificationLogger | None = None
     resource_keys: List[str] = field(default_factory=list)
+    # Shared mutable set across workers in the same suite.  When a worker
+    # detects failure_kind=transport_error it adds its probe resource keys
+    # here; subsequent workers that share the same probe key skip execution
+    # immediately instead of waiting 30 s for the preflight to time out.
+    transport_abort_keys: Any = field(default=None)  # Set[str] | None
 
     def run(self) -> VerificationWorkerResult:
         iterations: List[Dict[str, Any]] = []
 
         with resource_locks.claim(self.resource_keys, on_wait=self._log_wait):
+            # Abort immediately if a prior worker on the same probe already
+            # detected a transport_error (probe offline / unreachable).
+            if self.transport_abort_keys is not None:
+                probe_keys = {k for k in self.resource_keys if k.startswith("probe")}
+                if probe_keys & self.transport_abort_keys:
+                    self._log(f"[SKIP] {self.task.name} — probe transport_error abort (probe offline)")
+                    return VerificationWorkerResult(
+                        name=self.task.name,
+                        board=self.task.board,
+                        requested_iterations=self.iteration_limit,
+                        completed_iterations=0,
+                        pass_count=0,
+                        fail_count=1,
+                        ok=False,
+                        results=[{
+                            "name": self.task.name,
+                            "board": self.task.board,
+                            "action": self.task.action,
+                            "iteration": 0,
+                            "code": 1,
+                            "ok": False,
+                            "elapsed_s": 0.0,
+                            "result": {"ok": False, "failure_kind": "transport_error",
+                                       "error_summary": "skipped — probe transport_error abort"},
+                        }],
+                        resource_keys=list(self.resource_keys),
+                        resource_summary=summarize_resource_keys(self.resource_keys),
+                    )
+
             for iteration in range(1, self.iteration_limit + 1):
                 label = self.task.name if self.iteration_limit == 1 else f"{self.task.name} iteration {iteration}"
                 self._log(f"[START] {label}")
@@ -413,6 +447,11 @@ class VerificationWorker:
                     reason = _failure_summary(result)
                     if reason:
                         self._log(f"[FAIL] {label} {reason}")
+                    # Signal remaining workers on the same probe to skip.
+                    fk = result.get("failure_kind", "") if isinstance(result, dict) else ""
+                    if fk == "transport_error" and self.transport_abort_keys is not None:
+                        probe_keys = {k for k in self.resource_keys if k.startswith("probe")}
+                        self.transport_abort_keys.update(probe_keys)
                     if self.stop_after_failure:
                         break
 

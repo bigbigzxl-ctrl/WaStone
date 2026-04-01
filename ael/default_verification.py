@@ -851,6 +851,15 @@ def _run_single(repo_root: Path, step: Dict[str, Any], output_mode: str) -> Tupl
             for key, value in details.items():
                 if value not in (None, "", {}, []):
                     out[key] = value
+            # Extract failure_kind from artifacts/result.json so callers can
+            # detect transport_error and abort remaining tests on the same probe.
+            try:
+                artifacts_result = json.loads((Path(payload.artifacts_dir) / "result.json").read_text(encoding="utf-8"))
+                fk = str(artifacts_result.get("failure_kind") or "").strip()
+                if fk:
+                    out["failure_kind"] = fk
+            except Exception:
+                pass
             instrument_condition = _infer_instrument_condition(out)
             if instrument_condition and "instrument_condition" not in out:
                 out["instrument_condition"] = instrument_condition
@@ -932,6 +941,7 @@ def _worker_for_task(
     max_iterations: int,
     stop_after_failure: bool,
     log_lock: threading.Lock,
+    transport_abort_keys: set | None = None,
 ) -> VerificationWorker:
     return VerificationWorker(
         task=task,
@@ -942,6 +952,7 @@ def _worker_for_task(
         stop_after_failure=stop_after_failure,
         log_fn=lambda message: _log_line(log_lock, message),
         resource_keys=_task_resource_keys(repo_root, task),
+        transport_abort_keys=transport_abort_keys,
     )
 
 
@@ -1062,9 +1073,10 @@ def _run_parallel_suite_once(
     workers: List[Dict[str, Any]] = []
     _log_line(log_lock, f"default_verification: selected DUT tests: {', '.join(task.name for task in suite.tasks)}")
 
+    transport_abort_keys: set = set()
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(suite.tasks))) as executor:
         futures = [
-            executor.submit(_worker_for_task(repo_root, task, output_mode, 1, False, log_lock).run)
+            executor.submit(_worker_for_task(repo_root, task, output_mode, 1, False, log_lock, transport_abort_keys).run)
             for task in suite.tasks
         ]
         for future in concurrent.futures.as_completed(futures):
