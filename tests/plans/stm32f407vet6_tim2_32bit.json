@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_tim2_32bit",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["timer", "tim2", "cpu"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_tim2_32bit",
+    "artifact_stem": "stm32f407vet6_tim2_32bit",
+    "build_dir": "artifacts/build_stm32f407vet6_tim2_32bit"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 10.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "TIM2 32-bit counter verification. ARR=0xFFFFFFFF, PSC=15 (1MHz tick). Verifies counter increments and exceeds 0xFFFF (proving 32-bit range). PASS: detail0=counter value when it crossed 0xFFFF. No wiring required.",
+    "peripheral_signals": []
+  }
+}
