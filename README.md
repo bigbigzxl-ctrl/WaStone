@@ -113,6 +113,35 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### STM32F407VET6 — Deepest Cortex-M4 Golden Suite: 21/21 PASS via ESP32JTAG (2026-04-01)
+
+AEL completed the most comprehensive STM32 bare-metal golden suite to date: **21 tests across 20 peripherals** on a custom `STM32F407VET6` board, validated end-to-end via `ESP32JTAG` over WiFi (BMDA/SWD).
+
+**What was covered:**
+
+| Stage | Tests | Peripherals |
+|-------|-------|-------------|
+| 0 | timer_mailbox | TIM3 IRQ, mailbox health |
+| 1 | gpio, uart, spi | GPIO loopback, USART2, SPI2 |
+| 2 | adc_temp, exti, adc_loopback | ADC1 (internal temp + external), EXTI |
+| 3 (14 tests) | i2c, pwm_capture, dma_m2m, crc, rng, dac_adc, fpu, rtc, uart_dma, spi_dma, can, tim2, flash, dac_dma | I2C master↔slave, TIM4 PWM+capture, DMA2 M2M, CRC unit, RNG (PLL48CLK), DAC1→ADC1, FPU (7 sub-tests), RTC+LSI, DMA1 UART/SPI, CAN1 internal loopback, TIM2 32-bit, Flash sector erase/write, DMA2 circular DAC waveform + ADC verify |
+
+**Key engineering findings recorded to Civilization Engine:**
+
+- **`3f13ca66`** — ARM Cortex-M bare-metal **must** define `HardFault_Handler` with `SYSRESETREQ` (`AIRCR=0x05FA0004`). Without it: HardFault → Cortex-M LOCKUP → SWD cannot halt → all subsequent pack tests fail. Applies to **all** Cortex-M MCUs (STM32, RP2040, NXP, SAM) loaded via any JTAG/SWD tool.
+- **DMA2 required for M2M** on F407 — DMA1 cannot do memory-to-memory transfers.
+- **RNG needs PLL48CLK = 48 MHz** — configure `PLLM=16 / PLLN=192 / PLLQ=4` from 16 MHz HSI.
+- **CAN internal loopback** (`BTR.LBKM=1`) — no external transceiver needed; must configure ≥1 RX filter or FIFO stays empty.
+
+**Canonical result:**
+
+- DUT: `stm32f407vet6` (custom board, 512 KB Flash, Cortex-M4 @ 16 MHz HSI)
+- Pack: [`packs/stm32f407vet6_golden.json`](packs/stm32f407vet6_golden.json)
+- Report: [`reports/stm32f407vet6_golden_suite_report.md`](reports/stm32f407vet6_golden_suite_report.md)
+- CE golden run: `0e8931af-d3b4-4de5-bb1a-7e7047c75fc3`
+
+---
+
 ### STM32 + DAPLink Milestone — AEL Brings Up CMSIS-DAP on Linux and Completes `STM32F103RCT6` Golden Suite (2026-03-31)
 
 AEL now supports a practical `DAPLink` / `CMSIS-DAP` workflow for STM32 development on Linux, and that path has already been carried through to a completed golden suite on a real `STM32F103RCT6` target.
