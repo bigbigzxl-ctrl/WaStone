@@ -117,7 +117,7 @@
 ## Civilization Engine Reference
 
 - Golden run record: `0e8931af-d3b4-4de5-bb1a-7e7047c75fc3`
-- HardFault pattern: `ef195d1e`
+- HardFault pattern: `3f13ca66` (ARM Cortex-M universal — upgraded from STM32-only ef195d1e)
 - I2C SWRST pattern: `db885cac`
 - TIM PSC EGR pattern: `27de4499`
 - BMDA flash pattern: `77469dc5`
