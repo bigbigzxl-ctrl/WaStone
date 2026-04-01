@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_uart_dma",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["uart", "dma", "usart"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_uart_dma",
+    "artifact_stem": "stm32f407vet6_uart_dma",
+    "build_dir": "artifacts/build_stm32f407vet6_uart_dma"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 5.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "USART2 DMA loopback on PD5(TX)↔PD6(RX). TX via DMA1 Stream6 CH4, RX via DMA1 Stream5 CH4. Sends 8 bytes, verifies match. PASS: detail0=8. Reuses existing UART loopback wire.",
+    "peripheral_signals": [
+      {
+        "role": "UART_TX",
+        "dut_signal": "PD5",
+        "direction": "out",
+        "notes": "USART2_TX AF7, looped to PD6"
+      },
+      {
+        "role": "UART_RX",
+        "dut_signal": "PD6",
+        "direction": "in",
+        "notes": "USART2_RX AF7, looped from PD5"
+      }
+    ]
+  }
+}
