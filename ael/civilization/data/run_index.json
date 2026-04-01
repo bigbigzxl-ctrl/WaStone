@@ -3631,10 +3631,10 @@
   },
   "stm32f407vet6|unknown": {
     "exp_id": "78683bb8-87cb-4b0a-ae52-da5dc350b642",
-    "success_count": 2,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1775007657.8190866,
-    "confidence": 0.6,
+    "last_seen": 1775008586.415437,
+    "confidence": 0.7,
     "known_failures": {}
   }
 }

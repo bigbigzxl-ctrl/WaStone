@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_pwm_capture",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "timer",
+    "pwm",
+    "input_capture",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_pwm_capture",
+    "artifact_stem": "stm32f407vet6_pwm_capture",
+    "build_dir": "artifacts/build_stm32f407vet6_pwm_capture"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "TIM4 loopback: CH3 output (PB8, AF2) generates 1kHz 50% PWM; CH4 input capture (PB9, AF2) measures period. PSC=15→1MHz tick, ARR=999→1kHz. PASS if 10 consecutive captures in [900,1100]µs. detail0=last measured period (should be ~1000). Wire required: PB8 ↔ PB9.",
+    "peripheral_signals": [
+      {
+        "role": "PWM_OUT",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "TIM4_CH3 AF2, push-pull. 1kHz 50% PWM. Wire: PB8 ↔ PB9."
+      },
+      {
+        "role": "PWM_CAP",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "TIM4_CH4 AF2, input capture on rising edge. Wire: PB8 ↔ PB9."
+      }
+    ]
+  }
+}
