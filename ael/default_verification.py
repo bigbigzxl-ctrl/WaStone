@@ -1064,6 +1064,30 @@ def _print_worker_totals(lock: threading.Lock, workers: List[Dict[str, Any]]) ->
     _print_schema_advisory_summary(lock, _summarize_schema_advisories(results))
 
 
+def _print_suite_timing_table(
+    group_results: List[Dict[str, Any]],
+    run_label: str = "",
+) -> None:
+    """Print a timing table for all suites in a run."""
+    if not group_results:
+        return
+    label = f"[SUITE TIMING{' — ' + run_label if run_label else ''}]"
+    print(label)
+    total_tests = 0
+    for g in group_results:
+        name = str(g.get("name") or "?")
+        elapsed = g.get("elapsed_s")
+        n_tests = len(g.get("selected_dut_tests") or g.get("results") or [])
+        total_tests += n_tests
+        ok_mark = "PASS" if g.get("ok") else "FAIL"
+        if elapsed is not None:
+            mins, secs = divmod(int(elapsed), 60)
+            time_str = f"{mins}m {secs:02d}s" if mins else f"{secs}s"
+            print(f"  {name}: {time_str} ({n_tests} tests) [{ok_mark}]")
+        else:
+            print(f"  {name}: - ({n_tests} tests) [{ok_mark}]")
+
+
 def _run_parallel_suite_once(
     repo_root: Path,
     suite: VerificationSuite,
@@ -1074,6 +1098,7 @@ def _run_parallel_suite_once(
     _log_line(log_lock, f"default_verification: selected DUT tests: {', '.join(task.name for task in suite.tasks)}")
 
     transport_abort_keys: set = set()
+    t0 = time.time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(suite.tasks))) as executor:
         futures = [
             executor.submit(_worker_for_task(repo_root, task, output_mode, 1, False, log_lock, transport_abort_keys).run)
@@ -1081,8 +1106,10 @@ def _run_parallel_suite_once(
         ]
         for future in concurrent.futures.as_completed(futures):
             workers.append(future.result().to_dict())
+    elapsed_s = round(time.time() - t0, 1)
 
     _print_worker_totals(log_lock, workers)
+    _log_line(log_lock, f"[TIMING] {suite.name}: {elapsed_s:.0f}s ({len(suite.tasks)} tests)")
     optional_names = {task.name for task in suite.tasks if task.config.get("optional")}
     results = [item for worker in workers for item in worker.get("results", [])]
     failed = next((item for item in results if not bool(item.get("ok", False)) and item.get("name") not in optional_names), None)
@@ -1097,6 +1124,7 @@ def _run_parallel_suite_once(
         "optional_steps": sorted(optional_names),
         "workers": workers,
         "results": results,
+        "elapsed_s": elapsed_s,
         "schema_advisory_summary": _summarize_schema_advisories(results),
     }
 
@@ -1113,6 +1141,7 @@ def _run_serial_suite_once(
     results: List[Dict[str, Any]] = []
     print(f"default_verification: selected DUT tests: {', '.join(task.name for task in suite.tasks)}")
 
+    t0 = time.time()
     for task in suite.tasks:
         optional = bool(task.config.get("optional", False))
         code, result = _run_step_action(repo_root, task.step(), output_mode)
@@ -1126,6 +1155,8 @@ def _run_serial_suite_once(
                 last_code = code
                 if stop_on_fail:
                     break
+    elapsed_s = round(time.time() - t0, 1)
+    print(f"[TIMING] {suite.name}: {elapsed_s:.0f}s ({len(suite.tasks)} tests)")
 
     payload = {
         "ok": overall_ok,
@@ -1134,6 +1165,7 @@ def _run_serial_suite_once(
         "execution_policy": {"kind": suite.execution_policy.get("kind", "serial"), "iterations_per_worker": 1},
         "selected_dut_tests": [task.name for task in suite.tasks],
         "results": results,
+        "elapsed_s": elapsed_s,
         "schema_advisory_summary": _summarize_schema_advisories(results),
     }
     _print_schema_warning_overview(payload["schema_advisory_summary"])
@@ -1171,6 +1203,7 @@ def _run_sequence_groups_once(
             "name": str(group.get("suite_name") or f"group_{idx:02d}"),
             "ok": code == 0,
             "code": int(code),
+            "elapsed_s": payload.get("elapsed_s"),
             "execution_policy": payload.get("execution_policy", {"kind": policy_kind or "parallel"}),
             "selected_dut_tests": payload.get("selected_dut_tests", []),
             "results": payload.get("results", []),
@@ -1188,6 +1221,7 @@ def _run_sequence_groups_once(
 
     summary = _summarize_schema_advisories(results)
     _print_schema_warning_overview(summary)
+    _print_suite_timing_table(group_results)
     return (0 if overall_ok else last_code or 1), {
         "ok": overall_ok,
         "mode": "sequence",
@@ -1326,6 +1360,10 @@ def run_until_fail(
             "payload": payload,
         }
         runs.append(run_record)
+        _print_suite_timing_table(
+            payload.get("groups") or [],
+            run_label=f"Run {idx}/{max_runs}",
+        )
         if code != 0:
             summary = _failure_summary(payload, code)
             print(
