@@ -4,6 +4,11 @@
 **板子：** STM32F407 Discovery（onboard ST-Link）
 **参考：** VET6 Golden Suite (`packs/stm32f407vet6_golden.json`) — 21/21 PASS 2026-04-01
 
+> **接线原则：VGT6 的接线方式将尽量与 VET6 相同。**
+> 这样 VET6 已有的 test firmware 和 test plan 可以直接复用于 VGT6，无需修改接线相关逻辑。
+> 在新 session 开始前，请先按照 VET6 bench wiring（见 `reports/stm32f407vet6_golden_suite_report.md`
+> Bench Wiring 章节）在 VGT6 板上布好相同的线，然后再跑测试。
+
 ---
 
 ## 当前状态
