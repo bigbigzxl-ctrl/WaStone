@@ -1319,14 +1319,14 @@ class _SerialResetRecoveryAdapter:
 
 
 class _ProbeSoftResetRecoveryAdapter:
-    """Restart BMDA on ESP32JTAG by toggling disableUsbDapCom via /set_credentials.
-    Toggling the flag causes the BMDA GDB daemon to stop and restart, clearing
-    any stuck session without rebooting the full ESP32 device.
-    Then polls GDB port until it opens before returning ok=True."""
+    """Restart the ESP32JTAG probe by toggling pbcfg via /set_credentials.
+    Changing pbcfg saves NVS and triggers an ESP32 restart, which brings BMDA
+    back up fresh — clearing any stuck GDB session.  The original pbcfg value
+    is restored with a second toggle after the first restart completes.
+    The GDB port typically re-opens within 4–6 s of each restart."""
 
-    _TOGGLE_WAIT_S = 12   # wait between disable and re-enable for BMDA to terminate
     _POLL_INTERVAL_S = 2
-    _MAX_WAIT_S = 45
+    _MAX_WAIT_S = 30   # per-phase poll budget (each restart takes ~4s in practice)
 
     def execute(self, action, plan, ctx):
         import socket as _socket
@@ -1352,46 +1352,63 @@ class _ProbeSoftResetRecoveryAdapter:
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        print(f"Recovery: probe.soft.reset — restarting BMDA on {ip} via disableUsbDapCom toggle")
+        # Read current pbcfg so we can restore it after the restart
+        orig_pbcfg = "0"
+        try:
+            r = _requests.get(f"{base_url}/get_credentials", auth=auth, verify=verify_ssl, timeout=5)
+            orig_pbcfg = str(r.json().get("pbcfg", "0"))
+        except Exception as exc:
+            print(f"Recovery: probe.soft.reset — could not read pbcfg (using default '0'): {exc}")
+
+        alt_pbcfg = "1" if orig_pbcfg == "0" else "0"
+
+        def _wait_for_port():
+            deadline = _time.monotonic() + self._MAX_WAIT_S
+            while _time.monotonic() < deadline:
+                _time.sleep(self._POLL_INTERVAL_S)
+                try:
+                    with _socket.create_connection((ip, gdb_port), timeout=2):
+                        return True
+                except OSError:
+                    pass
+            return False
+
+        # Phase 1: toggle to alt value → ESP32 restarts
+        print(f"Recovery: probe.soft.reset — POSTing pbcfg={alt_pbcfg} to restart probe {ip} (was {orig_pbcfg})")
         try:
             _requests.post(
                 f"{base_url}/set_credentials",
-                json={"disableUsbDapCom": False},
+                json={"pbcfg": alt_pbcfg},
                 auth=auth,
                 verify=verify_ssl,
                 timeout=8,
             )
-            print(f"Recovery: probe.soft.reset — first toggle sent, waiting {self._TOGGLE_WAIT_S}s for BMDA to stop")
         except Exception as exc:
-            print(f"Recovery: probe.soft.reset — first toggle failed (may be expected): {exc}")
+            print(f"Recovery: probe.soft.reset — POST phase-1 exception (probe may have rebooted): {exc}")
 
-        _time.sleep(self._TOGGLE_WAIT_S)
+        print(f"Recovery: probe.soft.reset — waiting for GDB port after phase-1 restart...")
+        if not _wait_for_port():
+            return {"ok": False, "error_summary": f"probe.soft.reset: GDB port {ip}:{gdb_port} did not come back after phase-1 restart"}
 
+        # Phase 2: restore original pbcfg → second restart
+        print(f"Recovery: probe.soft.reset — restoring pbcfg={orig_pbcfg}, probe will restart again")
         try:
             _requests.post(
                 f"{base_url}/set_credentials",
-                json={"disableUsbDapCom": True},
+                json={"pbcfg": orig_pbcfg},
                 auth=auth,
                 verify=verify_ssl,
                 timeout=8,
             )
-            print(f"Recovery: probe.soft.reset — second toggle sent, BMDA restarting")
         except Exception as exc:
-            print(f"Recovery: probe.soft.reset — second toggle failed (may be expected): {exc}")
+            print(f"Recovery: probe.soft.reset — POST phase-2 exception (probe may have rebooted): {exc}")
 
-        print(f"Recovery: probe.soft.reset — waiting for GDB port {ip}:{gdb_port} to come back...")
-        deadline = _time.monotonic() + self._MAX_WAIT_S
-        while _time.monotonic() < deadline:
-            _time.sleep(self._POLL_INTERVAL_S)
-            try:
-                with _socket.create_connection((ip, gdb_port), timeout=2):
-                    elapsed = int(self._TOGGLE_WAIT_S + self._MAX_WAIT_S - (deadline - _time.monotonic()))
-                    print(f"Recovery: probe.soft.reset — GDB port open after ~{elapsed}s")
-                    return {"ok": True, "error_summary": ""}
-            except OSError:
-                pass
+        print(f"Recovery: probe.soft.reset — waiting for GDB port after phase-2 restore...")
+        if not _wait_for_port():
+            return {"ok": False, "error_summary": f"probe.soft.reset: GDB port {ip}:{gdb_port} did not come back after phase-2 restore"}
 
-        return {"ok": False, "error_summary": f"probe.soft.reset: GDB port {ip}:{gdb_port} did not come back within {self._MAX_WAIT_S}s"}
+        print(f"Recovery: probe.soft.reset — probe back online with pbcfg={orig_pbcfg}")
+        return {"ok": True, "error_summary": ""}
 
 
 class _NoopCheckAdapter:

@@ -182,23 +182,29 @@ class TestProbeSoftResetRecoveryAdapter:
             }
         }
 
-    def test_returns_ok_when_gdb_port_comes_back(self):
-        from ael.adapter_registry import _ProbeSoftResetRecoveryAdapter
-        import requests as req_mod
+    def _make_get_resp(self, pbcfg="0"):
+        mock_get = MagicMock()
+        mock_get.json.return_value = {"pbcfg": pbcfg}
+        return mock_get
 
-        adapter = _ProbeSoftResetRecoveryAdapter()
-
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-
-        # Simulate: POST succeeds, then port opens on first poll
+    def _make_conn_mock(self):
         conn_mock = MagicMock()
         conn_mock.__enter__ = MagicMock(return_value=conn_mock)
         conn_mock.__exit__ = MagicMock(return_value=False)
+        return conn_mock
+
+    def test_returns_ok_when_gdb_port_comes_back(self):
+        from ael.adapter_registry import _ProbeSoftResetRecoveryAdapter
+
+        adapter = _ProbeSoftResetRecoveryAdapter()
+
+        mock_post_resp = MagicMock()
+        mock_post_resp.status_code = 200
 
         with (
-            patch("requests.post", return_value=mock_resp),
-            patch("socket.create_connection", return_value=conn_mock),
+            patch("requests.get", return_value=self._make_get_resp("0")),
+            patch("requests.post", return_value=mock_post_resp),
+            patch("socket.create_connection", return_value=self._make_conn_mock()),
         ):
             result = adapter.execute(self._make_action(), {}, {})
 
@@ -206,17 +212,14 @@ class TestProbeSoftResetRecoveryAdapter:
 
     def test_returns_fail_when_port_never_comes_back(self):
         from ael.adapter_registry import _ProbeSoftResetRecoveryAdapter
-        import time as time_mod
 
         adapter = _ProbeSoftResetRecoveryAdapter()
-        adapter._TOGGLE_WAIT_S = 0  # skip toggle wait in test
         adapter._MAX_WAIT_S = 2   # shorten timeout for test
         adapter._POLL_INTERVAL_S = 0.1
 
-        mock_resp = MagicMock()
-
         with (
-            patch("requests.post", return_value=mock_resp),
+            patch("requests.get", return_value=self._make_get_resp("0")),
+            patch("requests.post", return_value=MagicMock()),
             patch("socket.create_connection", side_effect=OSError("refused")),
         ):
             result = adapter.execute(self._make_action(), {}, {})
@@ -230,13 +233,10 @@ class TestProbeSoftResetRecoveryAdapter:
 
         adapter = _ProbeSoftResetRecoveryAdapter()
 
-        conn_mock = MagicMock()
-        conn_mock.__enter__ = MagicMock(return_value=conn_mock)
-        conn_mock.__exit__ = MagicMock(return_value=False)
-
         with (
+            patch("requests.get", return_value=self._make_get_resp("0")),
             patch("requests.post", side_effect=Exception("connection reset")),
-            patch("socket.create_connection", return_value=conn_mock),
+            patch("socket.create_connection", return_value=self._make_conn_mock()),
         ):
             result = adapter.execute(self._make_action(), {}, {})
 
