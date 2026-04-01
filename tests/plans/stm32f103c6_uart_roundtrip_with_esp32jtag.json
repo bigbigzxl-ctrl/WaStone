@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "instrument_specific",
+  "name": "stm32f103c6_uart_roundtrip_with_esp32jtag",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "applies_to": [
+    "board",
+    "bare_mcu"
+  ],
+  "requires_dut_features": [
+    "programmable_via_swd",
+    "has_uart"
+  ],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": [
+    "instrument_path"
+  ],
+  "covers": [
+    "uart"
+  ],
+  "notes": "Programs the STM32F103C6T6 over ESP32JTAG SWD, then validates the idle UART banner through the ESP32JTAG Web UART bridge. For full bidirectional roundtrip, use experiments/esp32jtag/uart_roundtrip_check.py to send a line and confirm the AEL_ECHO response.",
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_uart_roundtrip",
+    "artifact_stem": "stm32f103c6_uart_roundtrip_app",
+    "build_dir": "artifacts/build_stm32f103c6_uart_roundtrip"
+  },
+  "observe_uart": {
+    "enabled": true,
+    "backend": "esp32jtag_web_uart",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_READY STM32F103C6T6 UART_BRIDGE",
+      "AEL_IDLE count="
+    ]
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "esp32jtag_stm32_golden",
+        "endpoint": "192.168.2.98:4242",
+        "required": true,
+        "notes": "Used for STM32F103C6T6 SWD flash/load."
+      },
+      {
+        "role": "uart_instrument",
+        "instrument_id": "esp32jtag_stm32_golden",
+        "endpoint": "https://192.168.2.98:443",
+        "required": true,
+        "notes": "Uses the ESP32JTAG internal Web UART bridge on Port B."
+      }
+    ],
+    "serial_console": {
+      "port": "esp32jtag_internal_web_uart",
+      "baud": 115200,
+      "required": true
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to ESP32JTAG Port B UART RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect ESP32JTAG Port B UART TX to STM32 PA10."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "STM32 PA9/USART1_TX",
+        "to": "ESP32JTAG Port B UART RX"
+      },
+      {
+        "from": "STM32 PA10/USART1_RX",
+        "to": "ESP32JTAG Port B UART TX"
+      },
+      {
+        "from": "STM32 SWDIO",
+        "to": "ESP32JTAG P3.SWDIO"
+      },
+      {
+        "from": "STM32 SWCLK",
+        "to": "ESP32JTAG P3.SWCLK"
+      },
+      {
+        "from": "GND",
+        "to": "ESP32JTAG GND"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
