@@ -119,6 +119,7 @@ run_index.record_success(board_id, test_name, exp_id)
 | **[HIGH_PRIORITY] Board swap = fastest HW vs SW failure diagnosis** | `94ac00dd` | 所有外设调试（测试在一块板失败，先换板确认是否 HW 问题）| 0.9 |
 | **[HIGH_PRIORITY] wire_scan IDR technique: drive output LOW, XOR full IDR = connected pins** | `df19dd7c` | 所有需要验证 GPIO 连通性的场景 | 0.9 |
 | **[HIGH_PRIORITY] BMDA flash+run: use `load + attach 1 + detach`, never `continue&`** | `77469dc5` | 所有 ESP32JTAG/BMDA GDB batch flash 场景 | 0.9 |
+| **[HIGH_PRIORITY] STM32 bare-metal 必须定义 HardFault_Handler + SYSRESETREQ** | `ef195d1e` | 所有 STM32 Cortex-M 裸机固件（via BMDA/ESP32JTAG）| 0.9 |
 
 ## ESP32-C5 board_family 已知陷阱
 
