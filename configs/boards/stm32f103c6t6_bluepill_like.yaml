@@ -24,18 +24,26 @@ board:
       - "attach {target_id}"
       - "load"
       - "attach {target_id}"
+      - "monitor reset run"
       - "detach"
   mailbox_verify_defaults:
     attach_monitor_cmd: "monitor swdp_scan"
     skip_attach: false
   observe_map:
     led: LED
+    sig: P0.0
   verification_views:
     led:
       pin: led
       resolved_to: LED
       description: Visual PC13 LED heartbeat on Bluepill-like board
+    signal:
+      pin: sig
+      resolved_to: P0.0
+      description: Machine-observed PC13 LED net on ESP32JTAG P0.0
   bench_connections:
+    - from: PC13
+      to: P0.0
     - from: PC13
       to: LED
     - from: GND

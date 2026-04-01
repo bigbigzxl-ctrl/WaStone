@@ -1,0 +1,25 @@
+{
+  "name": "stm32f103c6_pc13_fast_probe",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["esp32jtag"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_pc13_fast_probe",
+    "artifact_stem": "stm32f103c6_pc13_fast_probe_app",
+    "build_dir": "artifacts/build_stm32f103c6_pc13_fast_probe"
+  },
+  "pin": "sig",
+  "duration_s": 1.0,
+  "sample_rate_hz": 260000,
+  "min_freq_hz": 1000.0,
+  "max_freq_hz": 50000.0,
+  "duty_min": 0.1,
+  "duty_max": 0.9,
+  "min_edges": 20,
+  "max_edges": 20000,
+  "bench_setup": {
+    "notes": "Temporary high-frequency machine probe for the PC13 LED net using PC13 -> ESP32JTAG P0.0. This is for electrical confirmation, not a human-visible blink check."
+  }
+}
