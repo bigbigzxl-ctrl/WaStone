@@ -4,7 +4,7 @@
   "board": "stm32f407vet6",
   "bench_profile": "stm32f407vet6__default",
   "status": "golden",
-  "verified_date": "2026-03-31",
+  "verified_date": "2026-04-01",
   "stages": {
     "0": [
       "tests/plans/stm32f407vet6_timer_mailbox.json"
