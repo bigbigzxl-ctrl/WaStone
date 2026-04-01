@@ -13,15 +13,17 @@ board:
     reset_strategy: connect_under_reset
     post_load_settle_s: 5.0
     target_id: 1
+    allowed_strategies:
+      - "normal"
     gdb_launch_cmds:
       - "file {firmware}"
-      - "monitor swdp_scan"
+      - "monitor a"
       - "attach {target_id}"
       - "load"
       - "attach {target_id}"
       - "detach"
   mailbox_verify_defaults:
-    attach_monitor_cmd: "monitor swdp_scan"
+    attach_monitor_cmd: "monitor a"
     halt_before_read: true
     skip_attach: false
   default_wiring:

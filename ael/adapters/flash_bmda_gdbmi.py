@@ -627,6 +627,10 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
         # If a custom reset strategy is set, only include it as attempt 2.
         strategies[1]["name"] = reset_strategy
 
+    allowed_strategies = flash_cfg.get("allowed_strategies", None)
+    if isinstance(allowed_strategies, list) and allowed_strategies:
+        strategies = [s for s in strategies if s["name"] in allowed_strategies]
+
     emit("Flash: BMDA via GDB (resilience ladder)")
     ok = False
     strategy_used = ""
@@ -667,7 +671,18 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
                 out = (res.stdout or "") + (res.stderr or "")
                 out_l = out.lower()
                 noticed_keyword = _contains_rejected_output(out, notice_output_keywords)
-                attempt_ok = res.returncode == 0 and "failed" not in out_l
+                # Check for actual load failures, not benign scanner messages like
+                # "JTAG device scan failed!" which appear when JTAG scan is tried
+                # before SWD on probes that only support SWD (e.g. ESP32JTAG).
+                _LOAD_FAIL_KEYWORDS = [
+                    "load failed",
+                    "attaching to remote target failed",
+                    "auto scan failed",
+                    "swd scan found no devices",
+                ]
+                attempt_ok = res.returncode == 0 and not any(
+                    k in out_l for k in _LOAD_FAIL_KEYWORDS
+                )
                 attempts.append(
                     {
                         "attempt": idx,

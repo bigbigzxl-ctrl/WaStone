@@ -59,6 +59,16 @@ static void delay(uint32_t count)
     }
 }
 
+/* HardFault_Handler: force SYSRESETREQ instead of LOCKUP.
+ * After GDB `load`, CPU may resume from old halt PC → HardFault.
+ * Without this handler, Cortex-M4 enters LOCKUP (SWD cannot halt). */
+void HardFault_Handler(void)
+{
+    /* SCB->AIRCR: VECTKEY=0x05FA, SYSRESETREQ=bit2 */
+    *((volatile uint32_t *)0xE000ED0CU) = 0x05FA0004U;
+    while (1) {}
+}
+
 volatile uint32_t exti9_count = 0;
 volatile uint32_t test_passed = 0;
 
