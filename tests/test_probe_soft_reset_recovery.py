@@ -209,6 +209,7 @@ class TestProbeSoftResetRecoveryAdapter:
         import time as time_mod
 
         adapter = _ProbeSoftResetRecoveryAdapter()
+        adapter._TOGGLE_WAIT_S = 0  # skip toggle wait in test
         adapter._MAX_WAIT_S = 2   # shorten timeout for test
         adapter._POLL_INTERVAL_S = 0.1
 

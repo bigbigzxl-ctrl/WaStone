@@ -1319,10 +1319,12 @@ class _SerialResetRecoveryAdapter:
 
 
 class _ProbeSoftResetRecoveryAdapter:
-    """POST /set_credentials to trigger esp_restart() on the ESP32JTAG probe,
-    then wait for the GDB port to come back up before returning ok=True.
-    Works for any probe that supports the ESP32JTAG web API."""
+    """Restart BMDA on ESP32JTAG by toggling disableUsbDapCom via /set_credentials.
+    Toggling the flag causes the BMDA GDB daemon to stop and restart, clearing
+    any stuck session without rebooting the full ESP32 device.
+    Then polls GDB port until it opens before returning ok=True."""
 
+    _TOGGLE_WAIT_S = 12   # wait between disable and re-enable for BMDA to terminate
     _POLL_INTERVAL_S = 2
     _MAX_WAIT_S = 45
 
@@ -1340,7 +1342,6 @@ class _ProbeSoftResetRecoveryAdapter:
         user = str(params.get("web_user", "admin"))
         password = str(params.get("web_pass", "admin"))
         verify_ssl = bool(params.get("web_verify_ssl", False))
-        pbcfg = str(params.get("pbcfg", "0"))
 
         if not ip:
             return {"ok": False, "error_summary": "probe.soft.reset: no IP in params"}
@@ -1351,18 +1352,32 @@ class _ProbeSoftResetRecoveryAdapter:
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        print(f"Recovery: probe.soft.reset — POST {base_url}/set_credentials to restart probe {ip}")
+        print(f"Recovery: probe.soft.reset — restarting BMDA on {ip} via disableUsbDapCom toggle")
         try:
             _requests.post(
                 f"{base_url}/set_credentials",
-                json={"pbcfg": pbcfg},
+                json={"disableUsbDapCom": False},
                 auth=auth,
                 verify=verify_ssl,
                 timeout=8,
             )
+            print(f"Recovery: probe.soft.reset — first toggle sent, waiting {self._TOGGLE_WAIT_S}s for BMDA to stop")
         except Exception as exc:
-            # Probe may reboot before sending response — that's expected
-            print(f"Recovery: probe.soft.reset — POST returned (probe may have rebooted): {exc}")
+            print(f"Recovery: probe.soft.reset — first toggle failed (may be expected): {exc}")
+
+        _time.sleep(self._TOGGLE_WAIT_S)
+
+        try:
+            _requests.post(
+                f"{base_url}/set_credentials",
+                json={"disableUsbDapCom": True},
+                auth=auth,
+                verify=verify_ssl,
+                timeout=8,
+            )
+            print(f"Recovery: probe.soft.reset — second toggle sent, BMDA restarting")
+        except Exception as exc:
+            print(f"Recovery: probe.soft.reset — second toggle failed (may be expected): {exc}")
 
         print(f"Recovery: probe.soft.reset — waiting for GDB port {ip}:{gdb_port} to come back...")
         deadline = _time.monotonic() + self._MAX_WAIT_S
@@ -1370,7 +1385,7 @@ class _ProbeSoftResetRecoveryAdapter:
             _time.sleep(self._POLL_INTERVAL_S)
             try:
                 with _socket.create_connection((ip, gdb_port), timeout=2):
-                    elapsed = int(self._MAX_WAIT_S - (deadline - _time.monotonic()))
+                    elapsed = int(self._TOGGLE_WAIT_S + self._MAX_WAIT_S - (deadline - _time.monotonic()))
                     print(f"Recovery: probe.soft.reset — GDB port open after ~{elapsed}s")
                     return {"ok": True, "error_summary": ""}
             except OSError:
