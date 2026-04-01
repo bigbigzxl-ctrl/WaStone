@@ -15,13 +15,13 @@ board:
     target_id: 1
     gdb_launch_cmds:
       - "file {firmware}"
-      - "monitor a"
+      - "monitor swdp_scan"
       - "attach {target_id}"
       - "load"
       - "attach {target_id}"
       - "detach"
   mailbox_verify_defaults:
-    attach_monitor_cmd: "monitor a"
+    attach_monitor_cmd: "monitor swdp_scan"
     halt_before_read: true
     skip_attach: false
   default_wiring:
