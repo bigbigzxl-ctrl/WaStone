@@ -895,10 +895,10 @@
   },
   "stm32f407vet6|unknown": {
     "exp_id": "e698f95c-177f-4873-ab6b-5f24964cdb0b",
-    "success_count": 2,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1775030152.6725576,
-    "confidence": 0.6,
+    "last_seen": 1775030620.3113241,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "stm32f407vet6|stm32f407vet6_uart_dma": {
@@ -914,6 +914,14 @@
     "success_count": 1,
     "failure_count": 0,
     "last_seen": 1775030186.6773632,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407vet6|stm32f407vet6_can_loopback": {
+    "exp_id": "8f310ad2-9a55-4206-841f-7d8a24a8e9bb",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775030656.3401442,
     "confidence": 0.5,
     "known_failures": {}
   }

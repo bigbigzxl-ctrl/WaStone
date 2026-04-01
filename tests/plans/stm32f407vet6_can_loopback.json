@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_can_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["can", "cpu"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_can_loopback",
+    "artifact_stem": "stm32f407vet6_can_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_can_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 5.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "CAN1 internal loopback (LBKM=1). PB8=RX, PB9=TX, AF9. 500kbps from 16MHz HSI. Transmits 8-byte stdid=0x123 frame, receives in FIFO0 via internal loopback, verifies data. No external wiring required.",
+    "peripheral_signals": []
+  }
+}
