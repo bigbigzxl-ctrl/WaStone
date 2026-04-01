@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_systick_mailbox",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage1"],
+  "covers": ["systick", "timer", "interrupts"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_systick_mailbox",
+    "artifact_stem": "stm32f103c6_systick_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_systick_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "SysTick interrupt test at 1 kHz from 8 MHz HSI. PASS after 100 ticks. No external wiring required.",
+    "peripheral_signals": []
+  }
+}

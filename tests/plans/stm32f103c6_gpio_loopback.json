@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_gpio_loopback",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["gpio"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_gpio_loopback",
+    "artifact_stem": "stm32f103c6_gpio_loopback_app",
+    "build_dir": "artifacts/build_stm32f103c6_gpio_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "GPIO loopback: PB0 (output push-pull) drives high/low, PB1 (input floating) reads back. 10 cycles required for PASS. FAIL: error_code=0x01 (high fail), 0x02 (low fail).",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_OUT",
+        "dut_signal": "PB0",
+        "direction": "output",
+        "notes": "GPIO output push-pull. Wire: PB0 -> PB1."
+      },
+      {
+        "role": "GPIO_IN",
+        "dut_signal": "PB1",
+        "direction": "input",
+        "notes": "GPIO input floating. Wire: PB0 -> PB1."
+      }
+    ]
+  }
+}

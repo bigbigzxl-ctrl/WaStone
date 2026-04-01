@@ -1,0 +1,74 @@
+id: stm32f103c6t6
+name: STM32F103C6T6 Golden Bench
+mcu: stm32f103c6t6
+family: stm32f1
+description: STM32F103C6T6 bluepill-like golden DUT on the ESP32JTAG STM32 bench
+
+classification:
+  platform_class: mcu
+  vendor: st
+  family: stm32
+  series: stm32f1
+  line: stm32f103
+  part_number: stm32f103c6t6
+
+board:
+  vendor: Generic
+  form_factor: bluepill
+
+mcus:
+  - id: main
+    mcu: stm32f103c6t6
+    family: stm32f1
+    role: dut
+    clock_hz: 8000000
+    build:
+      type: arm_debug
+      project_dir: firmware/targets/stm32f103c6_gpio_no_external_capture
+    flash:
+      method: gdb_swd
+
+board_configs:
+  - id: esp32jtag
+    path: configs/boards/stm32f103c6t6_bluepill_like.yaml
+    instrument_family: esp32jtag
+    primary: true
+
+lifecycle_stage: golden
+
+build:
+  type: arm_debug
+  project_dir: firmware/targets/stm32f103c6_gpio_no_external_capture
+flash:
+  method: gdb_swd
+default_packs:
+  - packs/stm32f103c6t6_golden.json
+tags:
+  - stm32
+  - stm32f1
+  - bluepill
+  - golden
+  - staged_suite
+tests:
+  - packs/stm32f103c6t6_golden.json
+notes:
+  canonical_pack: packs/stm32f103c6t6_golden.json
+  canonical_wiring:
+    - ESP32JTAG SWD
+    - PC13 -> P0.0
+    - PB0 <-> PB1
+    - PB8 <-> PB9
+    - PA0 <-> PA1
+    - PB15 <-> PB14
+    - PA9 <-> PA10
+  auto_connectivity_covered:
+    - PC13 -> P0.0
+    - PB0 <-> PB1
+    - PB8 <-> PB9
+    - PA0 <-> PA1
+    - PB15 <-> PB14
+  not_auto_connectivity_covered:
+    - PA9 <-> PA10 is validated by Stage2 UART loopback tests rather than a dedicated pre-stage2 probe
+    - SPI is deferred on this bench because STM32F103C6 exposes only SPI1 while the current jumper fixture does not provide PA5 <-> PA6
+verified:
+  status: false

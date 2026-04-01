@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_exti_trigger",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["exti"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_exti_trigger",
+    "artifact_stem": "stm32f103c6_exti_trigger_app",
+    "build_dir": "artifacts/build_stm32f103c6_exti_trigger"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 60.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "EXTI trigger: PA0 (output) drives repeated rising edges, PA1 -> EXTI1. PASS after firmware observes 10 rising-edge pending events through EXTI_PR; FAIL if 10 events are not observed within the bounded pulse window. detail0 = detected edge count. AFIO_EXTICR1[7:4]=0x0 keeps the default PA1 route to EXTI1; PA1 is configured as input pull-down for a deterministic idle low.",
+    "peripheral_signals": [
+      {
+        "role": "EXTI_DRIVER",
+        "dut_signal": "PA0",
+        "direction": "output",
+        "notes": "GPIO output push-pull. Wire: PA0 -> PA1."
+      },
+      {
+        "role": "EXTI_INPUT",
+        "dut_signal": "PA1",
+        "direction": "input",
+        "notes": "EXTI1 input, pull-down. Firmware validates the EXTI pending bit rather than NVIC ISR delivery. Wire: PA0 -> PA1."
+      }
+    ]
+  }
+}

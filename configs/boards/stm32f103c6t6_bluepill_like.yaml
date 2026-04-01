@@ -1,12 +1,16 @@
 board:
   name: STM32F103C6T6 Bluepill-like
   target: stm32f103c6t6
-  instrument_instance: esp32jtag_blackpill_192_168_2_106
+  instrument_instance: esp32jtag_stm32_golden
   clock_hz: 8000000
   kind: bare_mcu
   features:
     - programmable_via_swd
     - has_gpio
+    - has_adc
+    - has_uart
+    - has_spi
+    - has_timer
   build:
     type: arm_debug
     project_dir: firmware/targets/stm32f103c6_gpio_no_external_capture
@@ -42,6 +46,16 @@ board:
       resolved_to: P0.0
       description: Machine-observed PC13 LED net on ESP32JTAG P0.0
   bench_connections:
+    - from: PB0
+      to: PB1
+    - from: PB8
+      to: PB9
+    - from: PA0
+      to: PA1
+    - from: PB15
+      to: PB14
+    - from: PA9
+      to: PA10
     - from: PC13
       to: P0.0
     - from: PC13
@@ -53,7 +67,7 @@ board:
   default_wiring:
     swd: "P3"
     reset: "NC"
-    verify: "NC"
+    verify: "P0.0"
   power_and_boot:
     reset_strategy: connect_under_reset
     boot_mode_default: normal

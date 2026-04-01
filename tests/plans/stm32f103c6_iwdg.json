@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_iwdg",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage2"],
+  "covers": ["iwdg", "lsi", "watchdog"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_iwdg",
+    "artifact_stem": "stm32f103c6_iwdg_app",
+    "build_dir": "artifacts/build_stm32f103c6_iwdg"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 6.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "IWDG feed test using LSI. PASS after watchdog starts and firmware continues servicing it. No external wiring required.",
+    "peripheral_signals": []
+  }
+}

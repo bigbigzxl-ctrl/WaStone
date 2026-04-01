@@ -20,7 +20,7 @@
   },
   "signal_checks": [],
   "mailbox_verify": {
-    "addr": "0x20004C00",
+    "addr": "0x20002400",
     "settle_s": 1.0
   },
   "bench_setup": {

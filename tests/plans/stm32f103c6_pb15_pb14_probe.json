@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_pb15_pb14_probe",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "diagnostic", "connectivity"],
+  "covers": ["gpio", "wiring", "pre_stage2_connectivity"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_pb15_pb14_probe",
+    "artifact_stem": "stm32f103c6_pb15_pb14_probe_app",
+    "build_dir": "artifacts/build_stm32f103c6_pb15_pb14_probe"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 4.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "Pre-Stage2 digital connectivity probe for PB15 -> PB14. The probe only proves the wire is present and that both logic levels cross correctly; richer SPI behavior remains a Stage 2 concern.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_PROBE_DRIVER",
+        "dut_signal": "PB15",
+        "direction": "output",
+        "notes": "Wire PB15 -> PB14."
+      },
+      {
+        "role": "GPIO_PROBE_INPUT",
+        "dut_signal": "PB14",
+        "direction": "input",
+        "notes": "Wire PB15 -> PB14."
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "stm32f103c6t6_golden",
+  "description": "STM32F103C6T6 canonical staged golden suite on the ESP32JTAG STM32 bench. Stage0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage1 covers timer, SysTick, internal temperature, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, PWM, and UART loopback tests. SPI is deferred because STM32F103C6 exposes only one SPI and the current bench wiring does not include the SPI1 PA5/PA6/PA7 loopback path.",
+  "board": "stm32f103c6t6_bluepill_like",
+  "status": "golden",
+  "pre_stage2_connectivity": [
+    "tests/plans/stm32f103c6_pb0_pb1_probe.json",
+    "tests/plans/stm32f103c6_pb8_pb9_probe.json",
+    "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f103c6_pb15_pb14_probe.json"
+  ],
+  "stages": {
+    "0": [
+      "tests/plans/stm32f103c6_pc13_blinky_visual.json",
+      "tests/plans/stm32f103c6_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32f103c6_timer_mailbox.json",
+      "tests/plans/stm32f103c6_systick_mailbox.json",
+      "tests/plans/stm32f103c6_internal_temp_mailbox.json",
+      "tests/plans/stm32f103c6_iwdg.json"
+    ],
+    "2": [
+      "tests/plans/stm32f103c6_gpio_loopback.json",
+      "tests/plans/stm32f103c6_exti_trigger.json",
+      "tests/plans/stm32f103c6_adc_loopback.json",
+      "tests/plans/stm32f103c6_capture_mailbox.json",
+      "tests/plans/stm32f103c6_pwm_capture.json",
+      "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
+      "tests/plans/stm32f103c6_uart_multibyte.json",
+      "tests/plans/stm32f103c6_uart_dma.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f103c6_pc13_blinky_visual.json",
+    "tests/plans/stm32f103c6_minimal_runtime_mailbox.json",
+    "tests/plans/stm32f103c6_timer_mailbox.json",
+    "tests/plans/stm32f103c6_systick_mailbox.json",
+    "tests/plans/stm32f103c6_internal_temp_mailbox.json",
+    "tests/plans/stm32f103c6_iwdg.json",
+    "tests/plans/stm32f103c6_pb0_pb1_probe.json",
+    "tests/plans/stm32f103c6_pb8_pb9_probe.json",
+    "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f103c6_pb15_pb14_probe.json",
+    "tests/plans/stm32f103c6_gpio_loopback.json",
+    "tests/plans/stm32f103c6_exti_trigger.json",
+    "tests/plans/stm32f103c6_adc_loopback.json",
+    "tests/plans/stm32f103c6_capture_mailbox.json",
+    "tests/plans/stm32f103c6_pwm_capture.json",
+    "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
+    "tests/plans/stm32f103c6_uart_multibyte.json",
+    "tests/plans/stm32f103c6_uart_dma.json"
+  ]
+}

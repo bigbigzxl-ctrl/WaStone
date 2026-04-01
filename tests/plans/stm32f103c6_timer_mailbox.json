@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_timer_mailbox",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["timer"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_timer_mailbox",
+    "artifact_stem": "stm32f103c6_timer_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_timer_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "TIM2 interrupt test: PSC=7999, ARR=99 -> 100ms/interrupt at 8MHz HSI. PASS after 10 interrupts (~1s). detail0 = interrupt count. No wiring required.",
+    "peripheral_signals": []
+  }
+}

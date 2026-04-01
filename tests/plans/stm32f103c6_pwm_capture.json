@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_pwm_capture",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["pwm", "capture", "timer"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_pwm_capture",
+    "artifact_stem": "stm32f103c6_pwm_capture_app",
+    "build_dir": "artifacts/build_stm32f103c6_pwm_capture"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "PWM capture mailbox test on the repaired PB8 -> PB9 wire. Firmware drives a software PWM waveform on PB8, samples PB9, and uses TIM2 running at 1 MHz to measure high time and period. PASS when duty and period stay in the expected windows.",
+    "peripheral_signals": [
+      {
+        "role": "PWM_SOURCE",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "GPIO output push-pull. Wire: PB8 -> PB9."
+      },
+      {
+        "role": "PWM_INPUT",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "GPIO input pull-down. Wire: PB8 -> PB9."
+      }
+    ]
+  }
+}

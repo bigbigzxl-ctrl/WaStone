@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_uart_dma",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["usart1", "dma1", "uart_dma"],
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_uart_dma",
+    "artifact_stem": "stm32f103c6_uart_dma_app",
+    "build_dir": "artifacts/build_stm32f103c6_uart_dma"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "addr": "0x20002400",
+    "settle_s": 3.0
+  },
+  "bench_setup": {
+    "notes": "USART1 + DMA1 loopback mailbox test. Requires PA9/USART1_TX -> PA10/USART1_RX. RX uses DMA1 Channel5, TX uses DMA1 Channel4 at 115200 8N1. DUT sends 8 bytes through DMA and verifies the echoed RX buffer.",
+    "peripheral_signals": [
+      {
+        "role": "UART_TX_DMA",
+        "dut_signal": "PA9",
+        "direction": "output"
+      },
+      {
+        "role": "UART_RX_DMA",
+        "dut_signal": "PA10",
+        "direction": "input"
+      }
+    ]
+  }
+}
