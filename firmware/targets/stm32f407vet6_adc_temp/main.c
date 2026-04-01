@@ -16,6 +16,13 @@
 #define AEL_MAILBOX_ADDR 0x2001FC00u
 #include "ael_mailbox.h"
 
+void HardFault_Handler(void)
+{
+    *((volatile uint32_t *)0xE000ED0Cu) = 0x05FA0004u;
+    while (1) {}
+}
+
+
 /* RCC */
 #define RCC_BASE    0x40023800U
 #define RCC_APB2ENR (*(volatile uint32_t *)(RCC_BASE + 0x44U))

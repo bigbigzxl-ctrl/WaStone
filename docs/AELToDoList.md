@@ -42,7 +42,22 @@ ESP32JTAG BMDA 固件有 bug —— 任何一次 GDB 连接失败（SWD scan 失
 
 ## Open Tasks
 
-_（暂无）_
+### TASK-001 — ESP32JTAG Web UI / CLI 直接重启按钮
+
+**Status:** [ ] 待实现
+
+**需求：**
+在 ESP32JTAG 的 Web UI 和/或 AEL CLI 上增加一个"直接重启 ESP32JTAG"的按钮或命令，
+使用户无需手动断电即可快速触发软重启。
+
+**背景：**
+当前已知软重启机制：通过 `POST https://<ip>/set_credentials`（pbcfg 参数双切换）触发 ESP32 重启。
+该机制已在 `_ProbeSoftResetRecoveryAdapter` 中用于自动恢复，但目前没有暴露给用户的直接入口。
+
+**期望行为：**
+- Web UI：在探头管理页面加一个 "Restart" / "重启" 按钮，点击后触发 pbcfg 切换重启
+- AEL CLI：新增命令（如 `ael probe restart <ip>`），直接调用同样的重启序列，并等待 GDB 端口恢复后报告成功
+- 重启完成后应显示确认信息（端口恢复时间、成功/失败）
 
 ---
 
