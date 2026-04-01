@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_tim3_pwm_pb0_pb1_mailbox",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["timer", "tim3", "pwm", "channel3"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_tim3_pwm_pb0_pb1_mailbox",
+    "artifact_stem": "stm32f103c6_tim3_pwm_pb0_pb1_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_tim3_pwm_pb0_pb1_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 4.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "Hardware timer-channel coverage on the existing PB0 -> PB1 jumper. TIM3_CH3 drives 1kHz PWM on PB0 in AF mode, PB1 receives the signal, and TIM2 free-runs at 1MHz so firmware can measure period and high time.",
+    "peripheral_signals": [
+      {
+        "role": "TIM3_PWM_OUT",
+        "dut_signal": "PB0",
+        "direction": "output",
+        "notes": "Wire PB0 -> PB1."
+      },
+      {
+        "role": "PWM_OBSERVE_IN",
+        "dut_signal": "PB1",
+        "direction": "input",
+        "notes": "Wire PB0 -> PB1."
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_system_identity_mailbox",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["cpuid", "dbgmcu_idcode", "flash_size", "uid", "rcc"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_system_identity_mailbox",
+    "artifact_stem": "stm32f103c6_system_identity_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_system_identity_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 3.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "No-wire system identity self-check. Firmware reads SCB CPUID, DBGMCU_IDCODE, embedded flash-size register, 96-bit UID, and RCC clock status. PASS when the core identifies as Cortex-M3 STM32F1 medium-density, flash size is sane for C6/C8-class parts, UID is non-zero, and HSI is ready.",
+    "peripheral_signals": []
+  }
+}

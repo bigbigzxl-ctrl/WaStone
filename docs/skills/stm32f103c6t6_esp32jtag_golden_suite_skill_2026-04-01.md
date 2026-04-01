@@ -27,12 +27,16 @@ Fixture shape:
    `STM32F103C6T6` exposes only one SPI. If the bench loopback is on
    `PB13/PB14/PB15`, that is not a valid canonical SPI path for this MCU.
 
-3. If copied `C6` tests depend on interrupts, verify the startup vectors first.
+3. Expect low-density identification on this board.
+
+   Live identity for this board is `DBGMCU_IDCODE low bits = 0x412`.
+
+4. If copied `C6` tests depend on interrupts, verify the startup vectors first.
 
    A truncated vector table will break timer, SysTick, and EXTI tests in ways
    that look like firmware logic bugs.
 
-4. Keep `pre_stage2_connectivity`.
+5. Keep `pre_stage2_connectivity`.
 
    Run the dedicated jumper probes before trusting the richer Stage 2 tests:
 
@@ -41,10 +45,12 @@ Fixture shape:
    - `PA0/PA1`
    - `PB15/PB14`
 
-5. Reuse the canonical net roles.
+6. Reuse the canonical net roles.
 
    - `PB0/PB1`: simple GPIO loopback
-   - `PB8/PB9`: capture and PWM timing
+   - `PB8/PB9`: software-driven capture and PWM timing
+   - `PB0/PB1`: also the valid hardware timer-channel expansion path via
+     `TIM3_CH3 -> PB0`
    - `PA0/PA1`: ADC loopback and EXTI
    - `PA9/PA10`: UART loopback
    - `PC13/P0.0`: LED-net observation only
@@ -75,6 +81,10 @@ Representative all-pass pack run:
    issues.
 6. If a test exceeds the bounded repair window, compare it against official ST
    docs/examples before spending more time on local guesses.
+7. For this current bench, defer rather than fake coverage:
+
+   - SPI1 needs `PA5/PA6/PA7` or remapped `PB3/PB4/PB5`
+   - I2C needs a real slave/partner path on `PB6/PB7` or remapped `PB8/PB9`
 
 ## Lessons To Keep
 

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_adc_vref_mailbox",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["adc", "vrefint"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_adc_vref_mailbox",
+    "artifact_stem": "stm32f103c6_adc_vref_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_adc_vref_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 3.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "No-wire ADC self-test. ADC1 samples internal VREFINT on channel 17 with TSVREFE enabled. PASS requires a stable average in a broad plausible range for VDDA near 3.3V.",
+    "peripheral_signals": []
+  }
+}

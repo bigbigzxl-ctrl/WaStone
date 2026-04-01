@@ -4,7 +4,7 @@
 **Board:** `stm32f103c6t6_bluepill_like`
 **Pack:** `packs/stm32f103c6t6_golden.json`
 **Instrument:** `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
-**Status:** final canonical full-pack rerun completed `18/18 PASS`
+**Status:** final canonical full-pack rerun completed `23/23 PASS`
 
 ## Summary
 
@@ -37,16 +37,17 @@ tests on real hardware.
 
 Final all-pass pack run:
 
-- `pack_runs/2026-04-01_11-11-47_stm32f103c6t6_golden_stm32f103c6t6_bluepill_like`
+- `pack_runs/2026-04-01_12-20-18_stm32f103c6t6_golden_stm32f103c6t6_bluepill_like`
 
 Representative run artifacts from that rerun:
 
 - `runs/2026-04-01_11-11-47_stm32f103c6t6_bluepill_like_stm32f103c6_pc13_blinky_visual`
-- `runs/2026-04-01_11-12-03_stm32f103c6t6_bluepill_like_stm32f103c6_timer_mailbox`
-- `runs/2026-04-01_11-15-07_stm32f103c6t6_bluepill_like_stm32f103c6_exti_trigger`
-- `runs/2026-04-01_11-17-21_stm32f103c6t6_bluepill_like_stm32f103c6_capture_mailbox`
-- `runs/2026-04-01_11-17-33_stm32f103c6t6_bluepill_like_stm32f103c6_pwm_capture`
-- `runs/2026-04-01_11-18-10_stm32f103c6t6_bluepill_like_stm32f103c6_uart_dma`
+- `runs/2026-04-01_12-21-08_stm32f103c6t6_bluepill_like_stm32f103c6_system_identity_mailbox`
+- `runs/2026-04-01_12-21-26_stm32f103c6t6_bluepill_like_stm32f103c6_sleep_wfi_mailbox`
+- `runs/2026-04-01_12-21-35_stm32f103c6t6_bluepill_like_stm32f103c6_adc_vref_mailbox`
+- `runs/2026-04-01_12-24-12_stm32f103c6t6_bluepill_like_stm32f103c6_exti_trigger`
+- `runs/2026-04-01_12-26-48_stm32f103c6t6_bluepill_like_stm32f103c6_tim3_pwm_pb0_pb1_mailbox`
+- `runs/2026-04-01_12-27-23_stm32f103c6t6_bluepill_like_stm32f103c6_uart_dma`
 
 Earlier targeted live runs used to stabilize the suite before the final rerun:
 
@@ -65,6 +66,10 @@ Validated on real hardware in the final canonical rerun:
 - `stm32f103c6_timer_mailbox`
 - `stm32f103c6_systick_mailbox`
 - `stm32f103c6_internal_temp_mailbox`
+- `stm32f103c6_system_identity_mailbox`
+- `stm32f103c6_reset_cause_mailbox`
+- `stm32f103c6_sleep_wfi_mailbox`
+- `stm32f103c6_adc_vref_mailbox`
 - `stm32f103c6_iwdg`
 - `stm32f103c6_pb0_pb1_probe`
 - `stm32f103c6_pb8_pb9_probe`
@@ -75,6 +80,7 @@ Validated on real hardware in the final canonical rerun:
 - `stm32f103c6_adc_loopback`
 - `stm32f103c6_capture_mailbox`
 - `stm32f103c6_pwm_capture`
+- `stm32f103c6_tim3_pwm_pb0_pb1_mailbox`
 - `stm32f103c6_uart_loopback_mailbox`
 - `stm32f103c6_uart_multibyte`
 - `stm32f103c6_uart_dma`
@@ -92,13 +98,21 @@ Reference used during the bounded repair step:
 
 - ST official product page: `STM32F103C6` shows `1 x SPI`
 
-2. Copied startup code must include the real interrupt vectors.
+2. Low-density device identification changed the valid timer choice.
+
+The live board identifies as `DBGMCU_IDCODE = 0x10006412`, i.e. low-density
+`STM32F1`. A first attempt to broaden timer-channel coverage around `TIM4`
+failed for that reason. The correct hardware-timer expansion on this MCU and
+bench is `TIM3_CH3` on `PB0`, measured through the existing `PB0 <-> PB1`
+loopback.
+
+3. Copied startup code must include the real interrupt vectors.
 
 The initial copied `C6` startup only exposed a tiny vector table. Interrupt-
 driven tests such as timer and SysTick did not become reliable until the shared
 `stm32f103c6` startup was fixed to include the needed vectors.
 
-3. Pre-Stage2 connectivity is worth keeping.
+4. Pre-Stage2 connectivity is worth keeping.
 
 The dedicated probe layer for `PB0/PB1`, `PB8/PB9`, `PA0/PA1`, and `PB15/PB14`
 made the Stage 2 loopback and timing failures much easier to classify as
@@ -108,8 +122,10 @@ wiring-vs-firmware instead of guessing from richer tests.
 
 Not in the canonical suite yet:
 
-- SPI loopback on `SPI1` because the current bench contract does not expose the
-  required `PA5/PA6/PA7` jumper path
+- SPI1 loopback because the current bench contract does not expose the
+  required `PA5/PA6/PA7` jumper path, nor the remapped `PB3/PB4/PB5` path
+- hardware I2C because the current bench has no valid second I2C endpoint or
+  external slave path for `PB6/PB7` or remapped `PB8/PB9`
 - any host-external UART proof beyond the board-local `PA9 <-> PA10` loopback
 
 This is an intentional scope boundary, not a silent failure.
@@ -133,6 +149,6 @@ The correct conclusion is:
 
 - canonical pack: complete
 - live validation: complete
-- final canonical full-pack rerun: `18/18 PASS`
+- final canonical full-pack rerun: `23/23 PASS`
 - DUT manifest verified state: promoted
 - reusable skill capture: completed

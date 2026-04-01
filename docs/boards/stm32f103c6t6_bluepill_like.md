@@ -11,7 +11,7 @@
 
 Suite name: `stm32f103c6t6_golden`
 Pack: `packs/stm32f103c6t6_golden.json`
-Result: **18 / 18 PASS** on the canonical ESP32JTAG bench
+Result: **23 / 23 PASS** on the canonical ESP32JTAG bench
 
 | # | Experiment | Test Plan | Verification |
 |---|-----------|-----------|--------------|
@@ -21,18 +21,23 @@ Result: **18 / 18 PASS** on the canonical ESP32JTAG bench
 | 4 | SysTick | stm32f103c6_systick_mailbox | mailbox PASS |
 | 5 | Internal temp | stm32f103c6_internal_temp_mailbox | mailbox PASS |
 | 6 | IWDG | stm32f103c6_iwdg | mailbox PASS |
-| 7 | PB0/PB1 connectivity | stm32f103c6_pb0_pb1_probe | mailbox PASS |
-| 8 | PB8/PB9 connectivity | stm32f103c6_pb8_pb9_probe | mailbox PASS |
-| 9 | PA0/PA1 ADC connectivity | stm32f103c6_pa0_pa1_adc_probe | mailbox PASS |
-| 10 | PB15/PB14 connectivity | stm32f103c6_pb15_pb14_probe | mailbox PASS |
-| 11 | GPIO loopback | stm32f103c6_gpio_loopback | mailbox PASS |
-| 12 | EXTI | stm32f103c6_exti_trigger | mailbox PASS |
-| 13 | ADC loopback | stm32f103c6_adc_loopback | mailbox PASS |
-| 14 | Capture | stm32f103c6_capture_mailbox | mailbox PASS |
-| 15 | PWM capture | stm32f103c6_pwm_capture | mailbox PASS |
-| 16 | UART loopback | stm32f103c6_uart_loopback_mailbox | mailbox PASS |
-| 17 | UART multibyte | stm32f103c6_uart_multibyte | mailbox PASS |
-| 18 | UART DMA | stm32f103c6_uart_dma | mailbox PASS |
+| 7 | System identity | stm32f103c6_system_identity_mailbox | mailbox PASS |
+| 8 | Reset flags | stm32f103c6_reset_cause_mailbox | mailbox PASS |
+| 9 | Sleep / wake | stm32f103c6_sleep_wfi_mailbox | mailbox PASS |
+| 10 | Internal VREFINT | stm32f103c6_adc_vref_mailbox | mailbox PASS |
+| 11 | PB0/PB1 connectivity | stm32f103c6_pb0_pb1_probe | mailbox PASS |
+| 12 | PB8/PB9 connectivity | stm32f103c6_pb8_pb9_probe | mailbox PASS |
+| 13 | PA0/PA1 ADC connectivity | stm32f103c6_pa0_pa1_adc_probe | mailbox PASS |
+| 14 | PB15/PB14 connectivity | stm32f103c6_pb15_pb14_probe | mailbox PASS |
+| 15 | GPIO loopback | stm32f103c6_gpio_loopback | mailbox PASS |
+| 16 | EXTI | stm32f103c6_exti_trigger | mailbox PASS |
+| 17 | ADC loopback | stm32f103c6_adc_loopback | mailbox PASS |
+| 18 | Capture | stm32f103c6_capture_mailbox | mailbox PASS |
+| 19 | PWM capture | stm32f103c6_pwm_capture | mailbox PASS |
+| 20 | TIM3 hardware PWM | stm32f103c6_tim3_pwm_pb0_pb1_mailbox | mailbox PASS |
+| 21 | UART loopback | stm32f103c6_uart_loopback_mailbox | mailbox PASS |
+| 22 | UART multibyte | stm32f103c6_uart_multibyte | mailbox PASS |
+| 23 | UART DMA | stm32f103c6_uart_dma | mailbox PASS |
 
 ---
 
@@ -59,8 +64,10 @@ Instrument: `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
 
 - This suite is validated on the exact `STM32F103C6T6` density. Do not copy
   `STM32F103C8T6` assumptions blindly.
-- `STM32F103C6T6` exposes only one SPI. A previous `SPI2` attempt on
-  `PB13/PB14/PB15` was invalid and is intentionally deferred from the canonical
-  suite.
+- Live identity on this board reports `DBGMCU_IDCODE low bits = 0x412`, which
+  is the correct low-density class for `STM32F103C6T6`.
+- `STM32F103C6T6` exposes only one SPI. SPI1 and I2C remain intentionally
+  deferred from the canonical suite because the current bench has no valid
+  partner wiring for those peripherals.
 - The exact live closeout is recorded in
   `docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md`.

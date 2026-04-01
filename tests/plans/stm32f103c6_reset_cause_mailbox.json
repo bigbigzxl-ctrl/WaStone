@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103c6_reset_cause_mailbox",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["reset_flags", "rcc_csr"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_reset_cause_mailbox",
+    "artifact_stem": "stm32f103c6_reset_cause_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103c6_reset_cause_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 3.0,
+    "addr": "0x20002400"
+  },
+  "bench_setup": {
+    "notes": "No-wire reset-flag handling check. Firmware reads RCC_CSR reset flags, requires at least one active cause bit after startup, then clears RMVF and verifies the cause bits clear back to zero.",
+    "peripheral_signals": []
+  }
+}
