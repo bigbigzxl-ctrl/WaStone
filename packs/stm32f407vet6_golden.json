@@ -1,6 +1,6 @@
 {
   "name": "stm32f407vet6_golden",
-  "description": "STM32F407VET6 custom board Golden Test Suite — 10 tests via ESP32JTAG (SWD over WiFi). MCU: STM32F407VET6 (512 KB Flash, NOT 1 MB VGT6). Stage0: timer mailbox health. Stage1: GPIO/UART/SPI loopbacks. Stage2: ADC temp, EXTI trigger, ADC loopback. Stage3: I2C loopback, PWM capture, DMA M2M. IWDG excluded (leaves board in continuous-reset state, breaks SWD).",
+  "description": "STM32F407VET6 custom board Golden Test Suite — 11 tests via ESP32JTAG (SWD over WiFi). MCU: STM32F407VET6 (512 KB Flash, NOT 1 MB VGT6). Stage0: timer mailbox health. Stage1: GPIO/UART/SPI loopbacks. Stage2: ADC temp, EXTI trigger, ADC loopback. Stage3: I2C loopback, PWM capture, DMA M2M, CRC. IWDG excluded.",
   "board": "stm32f407vet6",
   "bench_profile": "stm32f407vet6__default",
   "status": "golden",
@@ -22,7 +22,8 @@
     "3": [
       "tests/plans/stm32f407vet6_i2c_loopback.json",
       "tests/plans/stm32f407vet6_pwm_capture.json",
-      "tests/plans/stm32f407vet6_dma_m2m.json"
+      "tests/plans/stm32f407vet6_dma_m2m.json",
+      "tests/plans/stm32f407vet6_crc.json"
     ]
   },
   "tests": [
@@ -35,7 +36,8 @@
     "tests/plans/stm32f407vet6_adc_loopback.json",
     "tests/plans/stm32f407vet6_i2c_loopback.json",
     "tests/plans/stm32f407vet6_pwm_capture.json",
-    "tests/plans/stm32f407vet6_dma_m2m.json"
+    "tests/plans/stm32f407vet6_dma_m2m.json",
+    "tests/plans/stm32f407vet6_crc.json"
   ],
   "deferred": [
     {
