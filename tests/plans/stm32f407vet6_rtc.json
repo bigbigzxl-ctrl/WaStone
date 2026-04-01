@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_rtc",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["rtc", "lsi", "cpu"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_rtc",
+    "artifact_stem": "stm32f407vet6_rtc",
+    "build_dir": "artifacts/build_stm32f407vet6_rtc"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 8.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "RTC with LSI internal oscillator. Enables LSI (~32kHz), selects as RTC clock, configures PREDIV_A=127/PREDIV_S=249 for 1Hz tick. Polls TR seconds field for increment within 3.5s window. PASS if second increments. detail0=loop_count. No wiring required.",
+    "peripheral_signals": []
+  }
+}

@@ -1,24 +1,10 @@
 {
-  "stm32f407vet6|stm32f407vet6_fpu": {
-    "exp_id": "b300d6bf-7217-4bd9-8e79-6d692e149fff",
+  "stm32f407vet6|stm32f407vet6_rtc": {
+    "exp_id": "011ca457-8d3c-4efd-91a9-6cb13a8d8425",
     "success_count": 1,
     "failure_count": 0,
-    "last_seen": 1775010294.0700178,
+    "last_seen": 1775010481.8571544,
     "confidence": 0.5,
     "known_failures": {}
-  },
-  "stm32h750vbt6|stm32h750_lptim": {
-    "exp_id": null,
-    "success_count": 0,
-    "failure_count": 1,
-    "last_seen": 1775010294.1345036,
-    "confidence": 0.5,
-    "known_failures": {
-      "preflight": {
-        "exp_id": "57c0498a-9977-4415-b797-15b78081619f",
-        "count": 1,
-        "last_raw": "[stm32h750vbt6] stm32h750_lptim: failed — stages: build, load, run, check — failure: preflight — preflight failed"
-      }
-    }
   }
 }
