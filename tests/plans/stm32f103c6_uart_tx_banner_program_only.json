@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "program_only",
+  "name": "stm32f103c6_uart_tx_banner_program_only",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["esp32jtag"],
+  "labels": ["uart", "tx_only", "banner", "manual_check"],
+  "covers": ["usart1", "uart_tx"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103c6_uart_tx_banner",
+    "artifact_stem": "stm32f103c6_uart_tx_banner_app",
+    "build_dir": "artifacts/build_stm32f103c6_uart_tx_banner"
+  },
+  "bench_setup": {
+    "notes": "Programs a one-way USART1 TX banner/heartbeat image for manual ESP32JTAG web-terminal inspection. Required wiring: STM32 PA9/USART1_TX -> ESP32JTAG P1.2/UART_RX plus common ground. Disconnect PA9<->PA10 loopback before using this image."
+  }
+}
