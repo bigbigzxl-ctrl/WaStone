@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_dac_adc",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["dac", "adc", "analog"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_dac_adc",
+    "artifact_stem": "stm32f407vet6_dac_adc",
+    "build_dir": "artifacts/build_stm32f407vet6_dac_adc"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 5.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "DAC1→ADC1 single-pin self-loopback on PA4. DAC1_OUT and ADC1_IN4 share the same physical pin — no external wire needed. Tests 4 levels: 0%, 33%, 66%, 100% of 3.3V. ADC reading must be within ±10% of DAC value. detail0=last ADC reading (~4095 at 100%).",
+    "peripheral_signals": [
+      {
+        "role": "DAC_ADC_LOOPBACK",
+        "dut_signal": "PA4",
+        "direction": "bidir",
+        "notes": "PA4 = DAC1_OUT = ADC1_IN4. Analog mode. No external wire needed."
+      }
+    ]
+  }
+}

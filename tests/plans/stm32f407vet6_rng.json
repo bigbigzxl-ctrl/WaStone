@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_rng",
+  "board": "stm32f407vet6",
+  "supported_instruments": ["esp32jtag"],
+  "requires": {"mailbox": true, "datacapture": false},
+  "labels": ["mailbox"],
+  "covers": ["rng", "pll"],
+  "preflight": {"enabled": false},
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_rng",
+    "artifact_stem": "stm32f407vet6_rng",
+    "build_dir": "artifacts/build_stm32f407vet6_rng"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {"settle_s": 5.0, "addr": "0x2001FC00", "skip_attach": false},
+  "bench_setup": {
+    "notes": "STM32F407 hardware RNG test (F407-unique peripheral). Enables PLL48CLK=48MHz (PLLM=16,PLLN=192,PLLQ=4). Collects 32 random words. PASS if: no SEIS/CEIS error, no value repeated >4 times. detail0=distinct value count (should be ~32). No wiring required.",
+    "peripheral_signals": []
+  }
+}
