@@ -1792,7 +1792,7 @@ def run_pipeline(
         },
         "preflight": {"checks": [{"type": "probe.health", "args": {}}], "policy": {"fail_fast": True}},
         "steps": plan_steps,
-        "recovery_policy": {"enabled": True, "allowed_actions": ["reset.serial"], "retries": {"build": 1, "run": 2, "check": 2}},
+        "recovery_policy": {"enabled": True, "allowed_actions": ["reset.serial", "probe.soft.reset"], "retries": {"build": 1, "run": 2, "check": 2}},
         "report": {"emit": ["*.log", "*.json", "artifacts/*"]},
     }
     if timeout_s is not None:
