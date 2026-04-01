@@ -71,4 +71,7 @@ notes:
     - PA9 <-> PA10 is validated by Stage2 UART loopback tests rather than a dedicated pre-stage2 probe
     - SPI is deferred on this bench because STM32F103C6 exposes only SPI1 while the current jumper fixture does not provide PA5 <-> PA6
 verified:
-  status: false
+  status: true
+  date: 2026-04-01
+  evidence:
+    - pack_runs/2026-04-01_11-11-47_stm32f103c6t6_golden_stm32f103c6t6_bluepill_like/pack_result.json
