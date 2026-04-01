@@ -1088,6 +1088,44 @@ def _print_suite_timing_table(
             print(f"  {name}: - ({n_tests} tests) [{ok_mark}]")
 
 
+def _board_timing_from_workers(workers: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """Aggregate per-board timing from worker dicts.
+
+    Same-board workers run serially (resource lock), so their elapsed_s values
+    sum to the board's wall-clock suite time.
+    """
+    board_timing: Dict[str, Dict[str, Any]] = {}
+    for worker in workers:
+        board = str(worker.get("board") or "unknown")
+        worker_elapsed = sum(float(r.get("elapsed_s", 0)) for r in worker.get("results", []))
+        worker_ok = bool(worker.get("ok", False))
+        entry = board_timing.setdefault(board, {"elapsed_s": 0.0, "tests": 0, "ok": True})
+        entry["elapsed_s"] = round(entry["elapsed_s"] + worker_elapsed, 1)
+        entry["tests"] += 1
+        if not worker_ok:
+            entry["ok"] = False
+    return board_timing
+
+
+def _print_board_timing_table(
+    board_timing: Dict[str, Dict[str, Any]],
+    wall_elapsed_s: float,
+    run_label: str = "",
+) -> None:
+    label = f"[SUITE TIMING{' — ' + run_label if run_label else ''}]"
+    print(label)
+    for board in sorted(board_timing):
+        info = board_timing[board]
+        elapsed = info["elapsed_s"]
+        mins, secs = divmod(int(elapsed), 60)
+        time_str = f"{mins}m {secs:02d}s" if mins else f"{secs}s"
+        ok_mark = "PASS" if info["ok"] else "FAIL"
+        print(f"  {board}: {time_str} ({info['tests']} tests) [{ok_mark}]")
+    w_mins, w_secs = divmod(int(wall_elapsed_s), 60)
+    wall_str = f"{w_mins}m {w_secs:02d}s" if w_mins else f"{w_secs}s"
+    print(f"  [wall clock: {wall_str}]")
+
+
 def _run_parallel_suite_once(
     repo_root: Path,
     suite: VerificationSuite,
@@ -1109,7 +1147,8 @@ def _run_parallel_suite_once(
     elapsed_s = round(time.time() - t0, 1)
 
     _print_worker_totals(log_lock, workers)
-    _log_line(log_lock, f"[TIMING] {suite.name}: {elapsed_s:.0f}s ({len(suite.tasks)} tests)")
+    board_timing = _board_timing_from_workers(workers)
+    _print_board_timing_table(board_timing, elapsed_s)
     optional_names = {task.name for task in suite.tasks if task.config.get("optional")}
     results = [item for worker in workers for item in worker.get("results", [])]
     failed = next((item for item in results if not bool(item.get("ok", False)) and item.get("name") not in optional_names), None)
@@ -1125,6 +1164,7 @@ def _run_parallel_suite_once(
         "workers": workers,
         "results": results,
         "elapsed_s": elapsed_s,
+        "board_timing": board_timing,
         "schema_advisory_summary": _summarize_schema_advisories(results),
     }
 
@@ -1360,10 +1400,18 @@ def run_until_fail(
             "payload": payload,
         }
         runs.append(run_record)
-        _print_suite_timing_table(
-            payload.get("groups") or [],
-            run_label=f"Run {idx}/{max_runs}",
-        )
+        board_timing = payload.get("board_timing")
+        if isinstance(board_timing, dict) and board_timing:
+            _print_board_timing_table(
+                board_timing,
+                wall_elapsed_s=float(payload.get("elapsed_s") or 0),
+                run_label=f"Run {idx}/{max_runs}",
+            )
+        else:
+            _print_suite_timing_table(
+                payload.get("groups") or [],
+                run_label=f"Run {idx}/{max_runs}",
+            )
         if code != 0:
             summary = _failure_summary(payload, code)
             print(
