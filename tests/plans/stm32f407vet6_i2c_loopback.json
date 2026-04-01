@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f407vet6_i2c_loopback",
+  "board": "stm32f407vet6",
+  "supported_instruments": [
+    "esp32jtag"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "i2c",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f407vet6_i2c_loopback",
+    "artifact_stem": "stm32f407vet6_i2c_loopback",
+    "build_dir": "artifacts/build_stm32f407vet6_i2c_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2001FC00",
+    "skip_attach": false
+  },
+  "bench_setup": {
+    "notes": "I2C loopback: I2C1 master (PB6=SCL, PB7=SDA) connected to I2C2 slave (PB10=SCL, PB11=SDA) via 2 wires. Internal pull-ups used (~40kΩ). Master writes {0xA1,0xB2,0xC3,0xD4} to slave addr 0x42, then reads back. PASS if 4/4 bytes match. Continuous retry loop.",
+    "peripheral_signals": [
+      {
+        "role": "I2C1_SCL",
+        "dut_signal": "PB6",
+        "direction": "output",
+        "notes": "I2C1 SCL, AF4, open-drain with internal pull-up. Wire: PB6 ↔ PB10."
+      },
+      {
+        "role": "I2C1_SDA",
+        "dut_signal": "PB7",
+        "direction": "bidir",
+        "notes": "I2C1 SDA, AF4, open-drain with internal pull-up. Wire: PB7 ↔ PB11."
+      },
+      {
+        "role": "I2C2_SCL",
+        "dut_signal": "PB10",
+        "direction": "input",
+        "notes": "I2C2 SCL slave, AF4, open-drain with internal pull-up. Wire: PB6 ↔ PB10."
+      },
+      {
+        "role": "I2C2_SDA",
+        "dut_signal": "PB11",
+        "direction": "bidir",
+        "notes": "I2C2 SDA slave, AF4, open-drain with internal pull-up. Wire: PB7 ↔ PB11."
+      }
+    ]
+  }
+}
