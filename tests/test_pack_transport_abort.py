@@ -46,8 +46,9 @@ class TestPreflightRunFailureKind:
         assert ok is False
         assert info.get("failure_kind") == "transport_error"
 
-    def test_busy_or_stuck_does_not_set_failure_kind(self):
-        """probe_busy_or_stuck means the instrument IS reachable; don't abort pack."""
+    def test_busy_or_stuck_sets_instrument_not_ready_not_transport_error(self):
+        """probe_busy_or_stuck sets instrument_not_ready (triggers recovery), NOT
+        transport_error (which would abort the pack). Pack abort must NOT fire."""
         from ael.adapters import preflight
 
         probe_cfg = self._make_probe_cfg()
@@ -61,7 +62,8 @@ class TestPreflightRunFailureKind:
             ok, info = preflight.run(probe_cfg)
 
         assert ok is False
-        assert "failure_kind" not in info
+        assert info.get("failure_kind") == "instrument_not_ready"
+        assert info.get("failure_kind") != "transport_error"
 
     def test_monitor_ok_no_failure_kind(self):
         """Successful preflight must not include failure_kind."""

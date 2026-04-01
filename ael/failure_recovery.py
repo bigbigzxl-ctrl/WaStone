@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 RECOVERY_ACTION_RESET_SERIAL = "reset.serial"
 RECOVERY_ACTION_CONTROL_RESET_SERIAL = "control.reset.serial"
+RECOVERY_ACTION_PROBE_SOFT_RESET = "probe.soft.reset"
 
 
 FAILURE_VERIFICATION_MISS = "verification_miss"

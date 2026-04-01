@@ -227,6 +227,26 @@ class _PreflightAdapter:
             fk = (info or {}).get("failure_kind")
             if fk:
                 result["failure_kind"] = fk
+            if fk == failure_recovery.FAILURE_INSTRUMENT_NOT_READY:
+                port_cfg = (info or {}).get("port_config") or {}
+                result["recovery_hint"] = failure_recovery.make_recovery_hint(
+                    kind=failure_recovery.FAILURE_INSTRUMENT_NOT_READY,
+                    recoverable=True,
+                    preferred_action=failure_recovery.RECOVERY_ACTION_PROBE_SOFT_RESET,
+                    reason="probe GDB monitor busy or stuck; soft-reset probe to clear session",
+                    scope="step",
+                    retry=True,
+                    params={
+                        "ip": probe_cfg.get("ip"),
+                        "gdb_port": probe_cfg.get("gdb_port", 4242),
+                        "web_scheme": probe_cfg.get("web_scheme", "https"),
+                        "web_port": int(probe_cfg.get("web_port", 443)),
+                        "web_user": probe_cfg.get("web_user", "admin"),
+                        "web_pass": probe_cfg.get("web_pass", "admin"),
+                        "web_verify_ssl": bool(probe_cfg.get("web_verify_ssl", False)),
+                        "pbcfg": port_cfg.get("pbcfg", "0"),
+                    },
+                )
             return result
         return {"ok": True, "result": info or {}}
 
@@ -1298,6 +1318,67 @@ class _SerialResetRecoveryAdapter:
         return out
 
 
+class _ProbeSoftResetRecoveryAdapter:
+    """POST /set_credentials to trigger esp_restart() on the ESP32JTAG probe,
+    then wait for the GDB port to come back up before returning ok=True.
+    Works for any probe that supports the ESP32JTAG web API."""
+
+    _POLL_INTERVAL_S = 2
+    _MAX_WAIT_S = 45
+
+    def execute(self, action, plan, ctx):
+        import socket as _socket
+        import time as _time
+        import requests as _requests
+        from requests.auth import HTTPBasicAuth as _HTTPBasicAuth
+
+        params = action.get("params", {}) if isinstance(action, dict) and isinstance(action.get("params"), dict) else {}
+        ip = str(params.get("ip") or "")
+        gdb_port = int(params.get("gdb_port", 4242))
+        scheme = str(params.get("web_scheme", "https"))
+        web_port = int(params.get("web_port", 443))
+        user = str(params.get("web_user", "admin"))
+        password = str(params.get("web_pass", "admin"))
+        verify_ssl = bool(params.get("web_verify_ssl", False))
+        pbcfg = str(params.get("pbcfg", "0"))
+
+        if not ip:
+            return {"ok": False, "error_summary": "probe.soft.reset: no IP in params"}
+
+        base_url = f"{scheme}://{ip}:{web_port}"
+        auth = _HTTPBasicAuth(user, password)
+        if not verify_ssl:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        print(f"Recovery: probe.soft.reset — POST {base_url}/set_credentials to restart probe {ip}")
+        try:
+            _requests.post(
+                f"{base_url}/set_credentials",
+                json={"pbcfg": pbcfg},
+                auth=auth,
+                verify=verify_ssl,
+                timeout=8,
+            )
+        except Exception as exc:
+            # Probe may reboot before sending response — that's expected
+            print(f"Recovery: probe.soft.reset — POST returned (probe may have rebooted): {exc}")
+
+        print(f"Recovery: probe.soft.reset — waiting for GDB port {ip}:{gdb_port} to come back...")
+        deadline = _time.monotonic() + self._MAX_WAIT_S
+        while _time.monotonic() < deadline:
+            _time.sleep(self._POLL_INTERVAL_S)
+            try:
+                with _socket.create_connection((ip, gdb_port), timeout=2):
+                    elapsed = int(self._MAX_WAIT_S - (deadline - _time.monotonic()))
+                    print(f"Recovery: probe.soft.reset — GDB port open after ~{elapsed}s")
+                    return {"ok": True, "error_summary": ""}
+            except OSError:
+                pass
+
+        return {"ok": False, "error_summary": f"probe.soft.reset: GDB port {ip}:{gdb_port} did not come back within {self._MAX_WAIT_S}s"}
+
+
 class _NoopCheckAdapter:
     def execute(self, step, plan, ctx):
         inputs = step.get("inputs", {}) if isinstance(step, dict) else {}
@@ -1384,6 +1465,7 @@ class AdapterRegistry:
         self._recovery = {
             "reset.serial": _SerialResetRecoveryAdapter(),
             "control.reset.serial": _SerialResetRecoveryAdapter(),
+            "probe.soft.reset": _ProbeSoftResetRecoveryAdapter(),
         }
 
     def get(self, step_type: str):

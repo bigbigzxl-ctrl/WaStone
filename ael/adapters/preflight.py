@@ -436,6 +436,8 @@ def run(probe_cfg):
     }
     if not ok_mon and mon_failure_kind == "probe_transport_unhealthy":
         info["failure_kind"] = "transport_error"
+    elif not ok_mon and mon_failure_kind == "probe_busy_or_stuck":
+        info["failure_kind"] = "instrument_not_ready"
 
     # ICMP/TCP checks can transiently fail while the probe is still stabilizing.
     # If monitor + capture checks pass, treat ping/tcp as advisory.
