@@ -1989,7 +1989,7 @@ def test_parallel_suite_waits_for_other_workers_after_one_failure(tmp_path):
         ],
     }
 
-    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock):
+    def fake_worker(repo_root, task, output_mode, max_iterations, stop_after_failure, log_lock, transport_abort_keys=None):
         def _run():
             if task.name == "rp2040_gpio_signature":
                 time.sleep(0.01)
@@ -3185,4 +3185,107 @@ def test_print_actionable_hints_silent_when_all_pass(tmp_path, capsys):
 
     out = capsys.readouterr().out
     assert "ACTION REQUIRED" not in out
-    assert out.strip() == ""
+
+
+# ---------------------------------------------------------------------------
+# transport_error abort: VerificationWorker + _run_single failure_kind
+# ---------------------------------------------------------------------------
+
+def test_run_single_extracts_failure_kind_from_artifacts_result_json(tmp_path):
+    """_run_single must include failure_kind in the returned dict when
+    artifacts/result.json contains it (e.g. transport_error from preflight)."""
+    artifacts_dir = tmp_path / "artifacts"
+    artifacts_dir.mkdir(parents=True)
+    (artifacts_dir / "result.json").write_text(
+        json.dumps({"ok": False, "failure_kind": "transport_error", "failed_step": "preflight"}),
+        encoding="utf-8",
+    )
+    (artifacts_dir / "verify_result.json").write_text("{}", encoding="utf-8")
+    test_path = tmp_path / "stm32h750_blinky.json"
+    test_path.write_text('{"name":"stm32h750_blinky"}', encoding="utf-8")
+    step = {"board": "stm32h750vbt6", "test": str(test_path)}
+    run_paths = SimpleNamespace(artifacts_dir=artifacts_dir)
+
+    with patch("ael.default_verification.instrument_provision.ensure_meter_reachable"), \
+         patch("ael.default_verification.run_pipeline", return_value=(1, run_paths)):
+        code, result = default_verification._run_single(tmp_path, step, "normal")
+
+    assert code == 1
+    assert result["ok"] is False
+    assert result.get("failure_kind") == "transport_error"
+
+
+def test_worker_skips_when_probe_in_transport_abort_keys():
+    """When a probe key is already in transport_abort_keys, the worker must
+    return immediately with failure_kind=transport_error without calling runner."""
+    calls = []
+
+    def runner(*_args):
+        calls.append(1)
+        return 0, {"ok": True}
+
+    abort_keys = {"probe:192.168.2.111:4242"}
+    worker = VerificationWorker(
+        task=VerificationTask(name="stm32h750_rng", board="stm32h750vbt6"),
+        repo_root=REPO_ROOT,
+        output_mode="normal",
+        runner=runner,
+        resource_keys=["dut:stm32h750vbt6", "probe:192.168.2.111:4242"],
+        transport_abort_keys=abort_keys,
+    )
+
+    result = worker.run()
+
+    assert calls == [], "runner must not be called when probe is in abort keys"
+    assert result.ok is False
+    assert len(result.results) == 1
+    assert result.results[0]["result"]["failure_kind"] == "transport_error"
+    assert "abort" in result.results[0]["result"]["error_summary"]
+
+
+def test_worker_adds_probe_to_abort_keys_on_transport_error():
+    """After a run fails with failure_kind=transport_error, the worker must
+    add its probe resource keys to transport_abort_keys."""
+    abort_keys: set = set()
+
+    def runner(*_args):
+        return 1, {"ok": False, "failure_kind": "transport_error", "error_summary": "preflight failed"}
+
+    worker = VerificationWorker(
+        task=VerificationTask(name="stm32h750_blinky_visual", board="stm32h750vbt6"),
+        repo_root=REPO_ROOT,
+        output_mode="normal",
+        runner=runner,
+        resource_keys=["dut:stm32h750vbt6", "probe:192.168.2.62:4242"],
+        transport_abort_keys=abort_keys,
+    )
+
+    result = worker.run()
+
+    assert result.ok is False
+    assert "probe:192.168.2.62:4242" in abort_keys, \
+        "probe key must be added to abort_keys after transport_error"
+
+
+def test_worker_does_not_add_to_abort_keys_on_non_transport_failure():
+    """A normal test failure (not transport_error) must NOT populate
+    transport_abort_keys — only probe-offline failures should abort the suite."""
+    abort_keys: set = set()
+
+    def runner(*_args):
+        return 1, {"ok": False, "failure_kind": "verification_mismatch", "error_summary": "signal mismatch"}
+
+    worker = VerificationWorker(
+        task=VerificationTask(name="stm32h750_gpio_loopback", board="stm32h750vbt6"),
+        repo_root=REPO_ROOT,
+        output_mode="normal",
+        runner=runner,
+        resource_keys=["dut:stm32h750vbt6", "probe:192.168.2.62:4242"],
+        transport_abort_keys=abort_keys,
+    )
+
+    result = worker.run()
+
+    assert result.ok is False
+    assert len(abort_keys) == 0, \
+        "abort_keys must stay empty for non-transport failures"
