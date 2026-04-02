@@ -82,6 +82,22 @@ Final closeout:
 
 This document explains how we got there and what mattered.
 
+### 6. Run the opt-in UART roundtrip variant when needed
+
+If you also wire the ESP32JTAG UART transmit path into the STM32:
+
+- `STM32 PA9 -> ESP32JTAG UART RX`
+- `ESP32JTAG UART TX -> STM32 PA10`
+
+then you can run the extended pack:
+
+```bash
+PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c6t6_golden_with_uart_roundtrip.json --board stm32f103c6t6_bluepill_like --stop-on-fail
+```
+
+Use this only when you explicitly want cross-instrument UART proof through the
+ESP32JTAG web UART bridge. The normal canonical pack remains the default suite.
+
 ## Purpose
 
 This tutorial records the real bring-up path for a Blue Pill-like

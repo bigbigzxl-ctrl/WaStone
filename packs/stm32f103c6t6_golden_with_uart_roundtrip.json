@@ -1,0 +1,68 @@
+{
+  "name": "stm32f103c6t6_golden_with_uart_roundtrip",
+  "description": "Opt-in STM32F103C6T6 extended golden suite on the ESP32JTAG STM32 bench. This pack keeps the canonical 24-test staged golden suite intact and adds one extra cross-instrument UART roundtrip proof through the ESP32JTAG Port B web UART bridge. Use it only when the extra UART wiring is present: STM32 PA9 to ESP32JTAG UART RX, ESP32JTAG UART TX to STM32 PA10, plus common ground. It also requires ESP32JTAG firmware with the UART pin fix at or after commit 9a1610f.",
+  "board": "stm32f103c6t6_bluepill_like",
+  "status": "extended",
+  "pre_stage2_connectivity": [
+    "tests/plans/stm32f103c6_pb0_pb1_probe.json",
+    "tests/plans/stm32f103c6_pb8_pb9_probe.json",
+    "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f103c6_pb15_pb14_probe.json"
+  ],
+  "stages": {
+    "0": [
+      "tests/plans/stm32f103c6_pc13_blinky_visual.json",
+      "tests/plans/stm32f103c6_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32f103c6_timer_mailbox.json",
+      "tests/plans/stm32f103c6_systick_mailbox.json",
+      "tests/plans/stm32f103c6_internal_temp_mailbox.json",
+      "tests/plans/stm32f103c6_system_identity_mailbox.json",
+      "tests/plans/stm32f103c6_reset_cause_mailbox.json",
+      "tests/plans/stm32f103c6_sleep_wfi_mailbox.json",
+      "tests/plans/stm32f103c6_adc_vref_mailbox.json",
+      "tests/plans/stm32f103c6_iwdg.json"
+    ],
+    "2": [
+      "tests/plans/stm32f103c6_gpio_loopback.json",
+      "tests/plans/stm32f103c6_exti_trigger.json",
+      "tests/plans/stm32f103c6_adc_loopback.json",
+      "tests/plans/stm32f103c6_capture_mailbox.json",
+      "tests/plans/stm32f103c6_pwm_capture.json",
+      "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
+      "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
+      "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
+      "tests/plans/stm32f103c6_uart_multibyte.json",
+      "tests/plans/stm32f103c6_uart_dma.json",
+      "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f103c6_pc13_blinky_visual.json",
+    "tests/plans/stm32f103c6_minimal_runtime_mailbox.json",
+    "tests/plans/stm32f103c6_timer_mailbox.json",
+    "tests/plans/stm32f103c6_systick_mailbox.json",
+    "tests/plans/stm32f103c6_internal_temp_mailbox.json",
+    "tests/plans/stm32f103c6_system_identity_mailbox.json",
+    "tests/plans/stm32f103c6_reset_cause_mailbox.json",
+    "tests/plans/stm32f103c6_sleep_wfi_mailbox.json",
+    "tests/plans/stm32f103c6_adc_vref_mailbox.json",
+    "tests/plans/stm32f103c6_iwdg.json",
+    "tests/plans/stm32f103c6_pb0_pb1_probe.json",
+    "tests/plans/stm32f103c6_pb8_pb9_probe.json",
+    "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f103c6_pb15_pb14_probe.json",
+    "tests/plans/stm32f103c6_gpio_loopback.json",
+    "tests/plans/stm32f103c6_exti_trigger.json",
+    "tests/plans/stm32f103c6_adc_loopback.json",
+    "tests/plans/stm32f103c6_capture_mailbox.json",
+    "tests/plans/stm32f103c6_pwm_capture.json",
+    "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
+    "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
+    "tests/plans/stm32f103c6_uart_loopback_mailbox.json",
+    "tests/plans/stm32f103c6_uart_multibyte.json",
+    "tests/plans/stm32f103c6_uart_dma.json",
+    "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json"
+  ]
+}
