@@ -20,6 +20,9 @@ Opt-in extended suite:
 - Use this only when you also wire `ESP32JTAG UART TX -> STM32 PA10` and want
   a real cross-instrument UART request/response proof instead of the normal
   DUT-local UART tests.
+- This opt-in pack promotes the ESP32JTAG UART roundtrip proof into
+  pre-Stage2 connectivity, so the wrong UART wiring mode fails before the rest
+  of Stage 2 runs.
 
 | # | Experiment | Test Plan | Verification |
 |---|-----------|-----------|--------------|
@@ -86,5 +89,8 @@ Instrument: `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
 - In the opt-in pack, the three local UART tests are intentionally removed and
   replaced by the single ESP32JTAG roundtrip UART test because both wiring
   modes cannot be valid at the same time on `PA9/PA10`.
+- The opt-in pack runs the ESP32JTAG UART roundtrip test in pre-Stage2
+  connectivity, not at the end of Stage 2. That is intentional: the UART mode
+  mismatch should fail early, before the richer Stage 2 tests consume time.
 - The exact live closeout is recorded in
   `docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md`.

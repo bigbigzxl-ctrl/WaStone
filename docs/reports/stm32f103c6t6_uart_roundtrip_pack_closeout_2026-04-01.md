@@ -9,13 +9,14 @@
 ## Scope
 
 This closeout covers the opt-in `STM32F103C6T6` pack that replaces the
-board-local UART trio with the real cross-instrument UART roundtrip test:
+board-local UART trio with the real cross-instrument UART roundtrip test and
+promotes that UART test into pre-Stage2 connectivity:
 
 - removed from this pack:
   - `stm32f103c6_uart_loopback_mailbox`
   - `stm32f103c6_uart_multibyte`
   - `stm32f103c6_uart_dma`
-- kept in this pack:
+- promoted into `pre_stage2_connectivity` in this pack:
   - `stm32f103c6_uart_roundtrip_with_esp32jtag`
 
 The canonical golden suite remains unchanged:
@@ -44,13 +45,19 @@ Three fixes were required to make the opt-in path stable:
    Remove the three incompatible board-local UART tests from
    `packs/stm32f103c6t6_golden_with_uart_roundtrip.json`.
 
-2. Harden the ESP32JTAG web-UART observe adapter.
+2. Move the cross-instrument UART proof earlier.
+
+   The working `stm32f103c6_uart_roundtrip_with_esp32jtag` test now runs in
+   `pre_stage2_connectivity` so the wrong UART mode fails before the richer
+   Stage 2 loopback and timing tests run.
+
+3. Harden the ESP32JTAG web-UART observe adapter.
 
    The web terminal path can emit websocket frames that are not safe to treat
    as always-valid UTF-8 text. The adapter now captures raw bytes safely
    instead of failing on decode.
 
-3. Relax the roundtrip plan's readiness assertion.
+4. Relax the roundtrip plan's readiness assertion.
 
    The one-shot `AEL_READY ...` boot banner is not a stable requirement under
    the generic runner timing because the post-flash settle can miss it. The
@@ -72,11 +79,16 @@ Adapter hardening proof:
 
 - `runs/2026-04-01_21-13-11_stm32f103c6t6_bluepill_like_stm32f103c6_uart_roundtrip_with_esp32jtag`
 
-Corrected opt-in pack stage rerun:
+Corrected opt-in pack stage rerun with the UART roundtrip check promoted into
+pre-Stage2:
 
 - `pack_runs/2026-04-01_21-14-21_stm32f103c6t6_golden_with_uart_roundtrip_stm32f103c6t6_bluepill_like`
 
-Final cross-instrument UART pass inside that pack run:
+Representative early UART gate pass with the promoted ordering:
+
+- `runs/2026-04-01_21-35-21_stm32f103c6t6_bluepill_like_stm32f103c6_uart_roundtrip_with_esp32jtag`
+
+Earlier cross-instrument UART pass used during stabilization:
 
 - `runs/2026-04-01_21-22-28_stm32f103c6t6_bluepill_like_stm32f103c6_uart_roundtrip_with_esp32jtag`
 
@@ -107,6 +119,7 @@ The right model is:
 - keep `packs/stm32f103c6t6_golden.json` as the stable canonical suite
 - keep `packs/stm32f103c6t6_golden_with_uart_roundtrip.json` as an opt-in
   wiring-mode variant
+- fail the UART wiring mode in `pre_stage2_connectivity`, not late in Stage 2
 - never mix the local UART trio and the ESP32JTAG roundtrip test in the same
   active wiring mode
 

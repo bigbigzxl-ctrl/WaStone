@@ -1,13 +1,14 @@
 {
   "name": "stm32f103c6t6_golden_with_uart_roundtrip",
-  "description": "Opt-in STM32F103C6T6 extended golden suite on the ESP32JTAG STM32 bench for the cross-instrument UART wiring mode. This pack keeps the canonical staged suite but replaces the three DUT-local UART tests with one cross-instrument UART roundtrip proof through the ESP32JTAG Port B web UART bridge. Use it only when the extra UART wiring is present: STM32 PA9 to ESP32JTAG UART RX, ESP32JTAG UART TX to STM32 PA10, plus common ground. It also requires ESP32JTAG firmware with the UART pin fix at or after commit 9a1610f.",
+  "description": "Opt-in STM32F103C6T6 extended golden suite on the ESP32JTAG STM32 bench for the cross-instrument UART wiring mode. This pack keeps the canonical staged suite but replaces the three DUT-local UART tests with one cross-instrument UART roundtrip proof through the ESP32JTAG Port B web UART bridge. That roundtrip proof is intentionally promoted into pre-Stage2 connectivity so the wrong UART wiring mode fails early instead of late in Stage 2. Use it only when the extra UART wiring is present: STM32 PA9 to ESP32JTAG UART RX, ESP32JTAG UART TX to STM32 PA10, plus common ground. It also requires ESP32JTAG firmware with the UART pin fix at or after commit 9a1610f.",
   "board": "stm32f103c6t6_bluepill_like",
   "status": "extended",
   "pre_stage2_connectivity": [
     "tests/plans/stm32f103c6_pb0_pb1_probe.json",
     "tests/plans/stm32f103c6_pb8_pb9_probe.json",
     "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
-    "tests/plans/stm32f103c6_pb15_pb14_probe.json"
+    "tests/plans/stm32f103c6_pb15_pb14_probe.json",
+    "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json"
   ],
   "stages": {
     "0": [
@@ -31,8 +32,7 @@
       "tests/plans/stm32f103c6_capture_mailbox.json",
       "tests/plans/stm32f103c6_pwm_capture.json",
       "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
-      "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
-      "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json"
+      "tests/plans/stm32f103c6_spi1_loopback_mailbox.json"
     ]
   },
   "tests": [
@@ -50,13 +50,13 @@
     "tests/plans/stm32f103c6_pb8_pb9_probe.json",
     "tests/plans/stm32f103c6_pa0_pa1_adc_probe.json",
     "tests/plans/stm32f103c6_pb15_pb14_probe.json",
+    "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json",
     "tests/plans/stm32f103c6_gpio_loopback.json",
     "tests/plans/stm32f103c6_exti_trigger.json",
     "tests/plans/stm32f103c6_adc_loopback.json",
     "tests/plans/stm32f103c6_capture_mailbox.json",
     "tests/plans/stm32f103c6_pwm_capture.json",
     "tests/plans/stm32f103c6_tim3_pwm_pb0_pb1_mailbox.json",
-    "tests/plans/stm32f103c6_spi1_loopback_mailbox.json",
-    "tests/plans/stm32f103c6_uart_roundtrip_with_esp32jtag.json"
+    "tests/plans/stm32f103c6_spi1_loopback_mailbox.json"
   ]
 }

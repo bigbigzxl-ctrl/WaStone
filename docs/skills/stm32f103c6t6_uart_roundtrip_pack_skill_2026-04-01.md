@@ -10,6 +10,12 @@ Use this skill when maintaining the opt-in
 This is the pack for the bench wiring mode where ESP32JTAG is the real UART
 peer, not just the SWD/programming instrument.
 
+The current intended shape is:
+
+- run `stm32f103c6_uart_roundtrip_with_esp32jtag` in
+  `pre_stage2_connectivity`
+- do not leave it only at the tail of Stage 2
+
 ## Core Rule
 
 Do not keep the local STM32 UART tests in the same pack when the bench is wired
@@ -28,8 +34,17 @@ Reason:
 
 - local tests assume `PA9 <-> PA10`
 - roundtrip mode uses:
-  - `PA9 -> ESP32JTAG UART RX`
-  - `ESP32JTAG UART TX -> PA10`
+- `PA9 -> ESP32JTAG UART RX`
+- `ESP32JTAG UART TX -> PA10`
+
+## Ordering Rule
+
+Prefer to fail the UART wiring-mode decision before the rest of Stage 2 runs.
+
+For this pack, that means the cross-instrument UART roundtrip test belongs in
+`pre_stage2_connectivity`, even though it is richer than the simpler jumper
+probes. That is still the right tradeoff because the whole pack variant exists
+to validate a different UART wiring mode on the same STM32 pins.
 
 ## Adapter Rule
 
@@ -68,6 +83,8 @@ is not a reliable machine-required assertion for the generic pack runner.
   `pack_runs/2026-04-01_21-14-21_stm32f103c6t6_golden_with_uart_roundtrip_stm32f103c6t6_bluepill_like`
 - final roundtrip run:
   `runs/2026-04-01_21-22-28_stm32f103c6t6_bluepill_like_stm32f103c6_uart_roundtrip_with_esp32jtag`
+- promoted pre-stage2 ordering run:
+  `runs/2026-04-01_21-35-21_stm32f103c6t6_bluepill_like_stm32f103c6_uart_roundtrip_with_esp32jtag`
 
 ## Keep
 
