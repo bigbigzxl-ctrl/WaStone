@@ -96,7 +96,9 @@ PYTHONPATH=. python3 -m ael pack --pack packs/stm32f103c6t6_golden_with_uart_rou
 ```
 
 Use this only when you explicitly want cross-instrument UART proof through the
-ESP32JTAG web UART bridge. The normal canonical pack remains the default suite.
+ESP32JTAG web UART bridge. In this wiring mode the pack swaps out the three
+local `PA9 <-> PA10` UART tests and replaces them with the ESP32JTAG roundtrip
+UART test. The normal canonical pack remains the default suite.
 
 ## Purpose
 

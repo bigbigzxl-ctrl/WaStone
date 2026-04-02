@@ -18,7 +18,7 @@ Opt-in extended suite:
 - Suite name: `stm32f103c6t6_golden_with_uart_roundtrip`
 - Pack: `packs/stm32f103c6t6_golden_with_uart_roundtrip.json`
 - Use this only when you also wire `ESP32JTAG UART TX -> STM32 PA10` and want
-  a real cross-instrument UART request/response proof in addition to the normal
+  a real cross-instrument UART request/response proof instead of the normal
   DUT-local UART tests.
 
 | # | Experiment | Test Plan | Verification |
@@ -83,5 +83,8 @@ Instrument: `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
 - The canonical suite stays the default. The new extended pack is opt-in
   because it depends on extra bench UART wiring and the ESP32JTAG UART bridge
   firmware state.
+- In the opt-in pack, the three local UART tests are intentionally removed and
+  replaced by the single ESP32JTAG roundtrip UART test because both wiring
+  modes cannot be valid at the same time on `PA9/PA10`.
 - The exact live closeout is recorded in
   `docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md`.
