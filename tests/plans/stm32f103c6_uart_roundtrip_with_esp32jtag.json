@@ -24,7 +24,7 @@
   "covers": [
     "uart"
   ],
-  "notes": "Programs the STM32F103C6T6 over ESP32JTAG SWD, then validates the idle UART banner through the ESP32JTAG Web UART bridge. For full bidirectional roundtrip, use experiments/esp32jtag/uart_roundtrip_check.py to send a line and confirm the AEL_ECHO response.",
+  "notes": "Programs the STM32F103C6T6 over ESP32JTAG SWD, then validates the stable idle UART banner through the ESP32JTAG Web UART bridge. The one-shot AEL_READY boot banner is intentionally not required here because the generic runner's post-flash settle window can miss it. For full bidirectional roundtrip, use experiments/esp32jtag/uart_roundtrip_check.py to send a line and confirm the AEL_ECHO response.",
   "build": {
     "project_dir": "firmware/targets/stm32f103c6_uart_roundtrip",
     "artifact_stem": "stm32f103c6_uart_roundtrip_app",
@@ -37,7 +37,6 @@
     "profile": "stm32",
     "duration_s": 6,
     "expect_patterns": [
-      "AEL_READY STM32F103C6T6 UART_BRIDGE",
       "AEL_IDLE count="
     ]
   },
