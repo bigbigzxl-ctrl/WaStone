@@ -406,6 +406,7 @@ def _normalize_esp32jtag_ws_url(endpoint):
 def _capture_via_esp32jtag_web_uart(endpoint, duration_s, start_delay_s):
     try:
         import websocket  # type: ignore
+        from websocket import ABNF  # type: ignore
     except Exception as exc:  # pragma: no cover
         return None, f"websocket-client unavailable: {exc}"
 
@@ -420,6 +421,7 @@ def _capture_via_esp32jtag_web_uart(endpoint, duration_s, start_delay_s):
             ws_url,
             timeout=5.0,
             sslopt={"cert_reqs": ssl.CERT_NONE},
+            skip_utf8_validation=True,
         )
         ws.settimeout(0.2)
         if start_delay_s > 0:
@@ -427,12 +429,16 @@ def _capture_via_esp32jtag_web_uart(endpoint, duration_s, start_delay_s):
         deadline = time.time() + max(0.0, duration_s)
         while time.time() < deadline:
             try:
-                chunk = ws.recv()
+                opcode, chunk = ws.recv_data()
             except websocket.WebSocketTimeoutException:
+                continue
+            except UnicodeDecodeError:
                 continue
             if chunk is None:
                 continue
-            if isinstance(chunk, str):
+            if opcode == ABNF.OPCODE_TEXT and isinstance(chunk, bytes):
+                data.extend(chunk.decode("utf-8", errors="replace").encode("utf-8"))
+            elif isinstance(chunk, str):
                 data.extend(chunk.encode("utf-8", errors="replace"))
             else:
                 data.extend(chunk)

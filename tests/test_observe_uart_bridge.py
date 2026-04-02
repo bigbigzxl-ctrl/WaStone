@@ -1,4 +1,5 @@
 import unittest
+import types
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from unittest.mock import patch
@@ -7,6 +8,44 @@ from ael.adapters import observe_uart_log
 
 
 class TestObserveUartBridge(unittest.TestCase):
+    def test_capture_via_esp32jtag_web_uart_tolerates_invalid_text_frame_bytes(self):
+        class FakeTimeout(Exception):
+            pass
+
+        class FakeWs:
+            def __init__(self):
+                self.calls = 0
+
+            def settimeout(self, _timeout):
+                return None
+
+            def recv_data(self):
+                self.calls += 1
+                if self.calls == 1:
+                    return (1, b"\x81AEL_READY STM32F103C6T6 UART_BRIDGE\r\n")
+                raise FakeTimeout()
+
+            def close(self):
+                return None
+
+        fake_ws = FakeWs()
+        fake_mod = types.SimpleNamespace(
+            ABNF=types.SimpleNamespace(OPCODE_TEXT=1),
+            WebSocketTimeoutException=FakeTimeout,
+            create_connection=lambda *args, **kwargs: fake_ws,
+        )
+
+        with patch.dict("sys.modules", {"websocket": fake_mod}):
+            data, err = observe_uart_log._capture_via_esp32jtag_web_uart(
+                "https://192.168.2.98:443",
+                0.01,
+                0.0,
+            )
+
+        self.assertIsNone(err)
+        self.assertIsNotNone(data)
+        self.assertIn(b"AEL_READY STM32F103C6T6 UART_BRIDGE", data)
+
     def test_run_uses_bridge_endpoint_when_present(self):
         with TemporaryDirectory() as td:
             raw_log = Path(td) / "uart.log"
