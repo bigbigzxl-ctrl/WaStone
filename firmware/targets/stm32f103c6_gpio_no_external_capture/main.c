@@ -28,8 +28,8 @@ int main(void)
     while (1) {
         /* Bluepill-style LED is typically active-low on PC13. */
         GPIOC_BSRR = (1u << (13u + 16u));
-        delay_cycles(125000u);
+        delay_cycles(500000u);
         GPIOC_BSRR = GPIOC_LED_MASK;
-        delay_cycles(125000u);
+        delay_cycles(500000u);
     }
 }
