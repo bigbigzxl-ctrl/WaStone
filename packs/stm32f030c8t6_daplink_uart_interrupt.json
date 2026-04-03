@@ -1,0 +1,10 @@
+{
+  "name": "stm32f030c8t6_daplink_uart_interrupt",
+  "description": "Validated STM32F030C8T6 side-pack for USART1 RXNE interrupt-driven UART on the DAPLink bridge. Covers interrupt-driven host RX and bidirectional echo on PA9/PA10.",
+  "board": "stm32f030c8t6_daplink_uart",
+  "status": "candidate",
+  "tests": [
+    "tests/plans/stm32f030c8t6_uart_rx_irq_probe.json",
+    "tests/plans/stm32f030c8t6_uart_echo_irq.json"
+  ]
+}

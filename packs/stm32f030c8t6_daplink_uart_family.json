@@ -1,0 +1,15 @@
+{
+  "name": "stm32f030c8t6_daplink_uart_family",
+  "description": "Validated STM32F030C8T6 DAPLink UART family pack covering observed TX, host-driven polling RX/echo, and interrupt-driven RX/echo on USART1 PA9/PA10.",
+  "board": "stm32f030c8t6_daplink_uart",
+  "status": "candidate",
+  "tests": [
+    "tests/plans/stm32f030c8t6_uart_tx_probe.json",
+    "tests/plans/stm32f030c8t6_uart_multibyte_observed.json",
+    "tests/plans/stm32f030c8t6_uart_banner.json",
+    "tests/plans/stm32f030c8t6_uart_rx_probe.json",
+    "tests/plans/stm32f030c8t6_uart_echo.json",
+    "tests/plans/stm32f030c8t6_uart_rx_irq_probe.json",
+    "tests/plans/stm32f030c8t6_uart_echo_irq.json"
+  ]
+}
