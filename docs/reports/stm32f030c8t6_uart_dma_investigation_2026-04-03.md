@@ -54,6 +54,63 @@ may depend on `SYSCFG CFGR1` remap bits, not only on the default channel table.
 
 ## What Was Tried
 
+### 0. TX-only host-observed narrowing pass
+
+After the initial mixed mailbox / DMA investigation, the work was narrowed again
+to the exact bench path the user requested:
+
+- keep the DAPLink UART wiring
+- ignore DUT RX for the first pass
+- debug only `USART1 TX DMA`
+- let DAPLink RX observe the output
+
+To make that practical, `firmware/targets/stm32f030c8t6_uart_dma_observed/main.c`
+was turned into a TX-only diagnostic firmware that:
+
+- uses ordinary polling UART for diagnostic text
+- tries four TX DMA variants in sequence
+- repeats the results forever on the DAPLink UART bridge
+
+The four variants are:
+
+- `DMA_CH2`
+- `DMA_CH2_KICK`
+- `DMA_CH4`
+- `DMA_CH4_KICK`
+
+where:
+
+- `CH2` = default official F030 mapping
+- `CH4` = `SYSCFG_CFGR1_USART1TX_DMA_RMP` remap path
+- `KICK` = software writes the first byte to `TDR` before enabling DMA for the remainder
+
+This narrowed pass answered the key isolation question:
+
+- the immediate blocker is on the TX DMA side, not the RX side
+
+Representative diagnostic run:
+
+- `runs/2026-04-03_15-38-42_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_observed`
+
+Observed repeated UART diagnostics:
+
+- `DMA_CH2 code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000000`
+- `DMA_CH2_KICK code=0000D402 dma_isr=00000000 cndtr=00000025 ccr=00000091 usart_isr=006000D0 cfgr1=00000000`
+- `DMA_CH4 code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000200`
+- `DMA_CH4_KICK code=0000D402 dma_isr=00000000 cndtr=00000025 ccr=00000091 usart_isr=006000D0 cfgr1=00000200`
+
+What these lines prove:
+
+- normal polling UART TX is healthy on the DAPLink bridge
+- `DMAT=1`
+- both the default and remapped TX channel variants were armed
+- `CCR.EN|DIR|MINC` were set (`0x91`)
+- `CNDTR` never decremented
+- `DMA_ISR` never raised `TCIF` or `TEIF`
+
+That means the DMA request path to `USART1 TX` still did not start in any tested
+TX-only variant.
+
 ### 1. Local loopback baseline
 
 First attempt used the canonical local UART contract:
@@ -141,6 +198,36 @@ to test the possibility that the default `Channel2` routing was not valid for
 this exact device/configuration.
 
 None of the above produced a passing DMA TX proof.
+
+6. TX-only multi-variant diagnostic repeater on the DAPLink bridge.
+
+This variant used normal UART text output to report DMA register state after
+each attempted TX path, so the DMA experiment could be debugged without relying
+on mailbox for the primary proof.
+
+This did not produce a successful TX DMA transfer, but it did produce the most
+conclusive isolation so far: TX DMA itself is the current failure point.
+
+### Startup / linker trap discovered during the narrowing pass
+
+One additional repo-local issue surfaced during this work:
+
+- if the DMA diagnostic firmware used initialized RAM data (`.data`), the board
+  could fault in `Reset_Handler` before reaching `main`
+
+Reason:
+
+- current `startup.c` copies `.data` using `uint32_t *`
+- this firmware's `.data` load address landed on an unaligned flash address
+- Cortex-M0 unaligned word access in the startup copy path triggered `HardFault`
+
+Workaround used for the current diagnostic firmware:
+
+- avoid initialized `.data`
+- keep the DMA diagnostic frame in flash (`const`) instead
+
+This is a separate startup/linker correctness issue, not the UART DMA request
+issue itself.
 
 ## Live Register Findings
 
@@ -249,3 +336,5 @@ As of this report:
 - the work is documented and restartable
 - the feature is not validated
 - the feature is not part of any current suite or pack
+- TX-only DAPLink UART diagnostics now clearly show the immediate failure is on
+  `USART1 TX DMA` request generation, before any RX-side proof would matter

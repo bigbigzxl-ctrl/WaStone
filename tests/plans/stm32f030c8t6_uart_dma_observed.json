@@ -28,7 +28,7 @@
     "profile": "stm32",
     "duration_s": 6,
     "expect_patterns": [
-      "AEL_UART_DMA A1 B2 C3 D4 55 66 77 88"
+      "AEL_UART_DMA_DIAG_BEGIN"
     ]
   },
   "bench_setup": {
