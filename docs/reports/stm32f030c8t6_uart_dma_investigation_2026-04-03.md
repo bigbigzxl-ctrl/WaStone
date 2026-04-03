@@ -135,6 +135,35 @@ So the narrowing result after checking both sides is:
 - the current blocker is not a simple "TX-only" or "RX-only" bug
 - it is the `USART1 <-> DMA` request path itself on this STM32F030C8T6 setup
 
+### 0c. DMA1 memory-to-memory control check
+
+To separate "DMA engine broken" from "USART DMA request broken", a plain DMA1
+memory-to-memory self-test was added:
+
+- `firmware/targets/stm32f030c8t6_dma_m2m/main.c`
+- `tests/plans/stm32f030c8t6_dma_m2m.json`
+
+Representative run:
+
+- `runs/2026-04-03_15-46-36_stm32f030c8t6_daplink_uart_stm32f030c8t6_dma_m2m`
+
+Result:
+
+- `PASS`
+
+What this proves:
+
+- `DMA1` clocking is fine
+- `DMA1 Channel1` can execute a real transfer
+- memory-to-memory mode works on this board
+
+Therefore the current fault domain is narrower than "DMA1 broken":
+
+- `DMA1` itself works
+- ordinary `USART1` UART also works
+- but `USART1 DMA request generation / routing` is still not functioning in the
+  current UART DMA implementations
+
 Representative diagnostic run:
 
 - `runs/2026-04-03_15-38-42_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_observed`
@@ -385,3 +414,4 @@ As of this report:
 - the feature is not part of any current suite or pack
 - TX-only DAPLink UART diagnostics now clearly show the immediate failure is on
   `USART1 <-> DMA` request generation, not on the ordinary UART wiring path
+- DMA1 memory-to-memory pass shows the DMA engine itself is healthy

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_dma_m2m",
+  "board": "stm32f030c8t6_daplink_uart",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "dma", "debug"],
+  "covers": ["dma", "memory"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_dma_m2m",
+    "artifact_stem": "stm32f030c8t6_dma_m2m_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_dma_m2m"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "DMA1 Channel1 memory-to-memory self-test on STM32F030C8T6. No UART involvement. Copies 8 words from src[] to dst[] in SRAM. PASS: detail0=8.",
+    "peripheral_signals": []
+  }
+}
