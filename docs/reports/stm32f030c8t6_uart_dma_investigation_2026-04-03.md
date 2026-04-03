@@ -88,6 +88,53 @@ This narrowed pass answered the key isolation question:
 
 - the immediate blocker is on the TX DMA side, not the RX side
 
+### 0b. RX-only host-stimulated narrowing pass
+
+After the TX-only pass still showed no DMA movement, a matching RX-only probe was
+added on the same DAPLink UART wiring:
+
+- host sends `PING_DMA_RX` over `DAPLink TX -> PA10`
+- firmware arms `DMA1 Channel3` on `USART1_RDR`
+- firmware keeps reporting readiness over ordinary UART TX on `PA9`
+
+Code and plan:
+
+- `firmware/targets/stm32f030c8t6_uart_dma_rx_observed/main.c`
+- `tests/plans/stm32f030c8t6_uart_dma_rx_observed.json`
+
+Representative run:
+
+- `runs/2026-04-03_15-42-09_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_rx_observed`
+
+Observed UART output:
+
+- repeated `AEL_UART_DMA_RX_READY`
+- no `AEL_UART_DMA_RX_OK`
+
+Live register snapshot after the failed host exchange:
+
+- `USART1_CR1 = 0x0000000D`
+- `USART1_CR3 = 0x00000040`
+- `USART1_ISR = 0x006000F8`
+- `SYSCFG_CFGR1 = 0x00000000`
+- `DMA1_ISR = 0x00000081`
+- `DMA1_CCR3 = 0x00000081`
+- `DMA1_CNDTR3 = 0x0000000B`
+
+Interpretation:
+
+- ordinary UART host-to-DUT traffic is present at the fixture level
+- DMA RX channel was armed
+- receive count did not decrease
+- no valid `Channel3` completion state was observed
+
+So the narrowing result after checking both sides is:
+
+- TX-only DMA did not start
+- RX-only DMA did not start
+- the current blocker is not a simple "TX-only" or "RX-only" bug
+- it is the `USART1 <-> DMA` request path itself on this STM32F030C8T6 setup
+
 Representative diagnostic run:
 
 - `runs/2026-04-03_15-38-42_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_observed`
@@ -337,4 +384,4 @@ As of this report:
 - the feature is not validated
 - the feature is not part of any current suite or pack
 - TX-only DAPLink UART diagnostics now clearly show the immediate failure is on
-  `USART1 TX DMA` request generation, before any RX-side proof would matter
+  `USART1 <-> DMA` request generation, not on the ordinary UART wiring path
