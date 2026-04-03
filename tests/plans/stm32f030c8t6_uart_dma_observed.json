@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_uart_dma_observed",
+  "board": "stm32f030c8t6_daplink_uart",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "uart_observed"],
+  "covers": ["usart1", "dma1", "uart_dma", "uart_tx"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_uart_dma_observed",
+    "artifact_stem": "stm32f030c8t6_uart_dma_observed_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_uart_dma_observed"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20001C00"
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_UART_DMA A1 B2 C3 D4 55 66 77 88"
+    ]
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true
+    },
+    "notes": "USART1 DMA TX proof on the DAPLink UART fixture for STM32F030C8T6. DMA1 Channel2 feeds USART1_TDR with a fixed frame over PA9 at 115200 8N1 and reports PASS through mailbox after the first complete DMA transfer.",
+    "peripheral_signals": [
+      {
+        "role": "UART_TX_DMA",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "UART_RX_DMA",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10. Present on the fixture but unused by this TX proof."
+      }
+    ]
+  }
+}
