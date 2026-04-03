@@ -12,6 +12,8 @@
 
 #define GPIOA_BASE      0x48000000u
 #define GPIOA_MODER     (*(volatile uint32_t *)(GPIOA_BASE + 0x00u))
+#define GPIOA_OSPEEDR   (*(volatile uint32_t *)(GPIOA_BASE + 0x08u))
+#define GPIOA_PUPDR     (*(volatile uint32_t *)(GPIOA_BASE + 0x0Cu))
 #define GPIOA_AFRH      (*(volatile uint32_t *)(GPIOA_BASE + 0x24u))
 
 #define USART1_BASE     0x40013800u
@@ -94,6 +96,7 @@ static struct dma_variant_result g_r_ch2_late;
 static struct dma_variant_result g_r_ch4_late;
 static struct dma_variant_result g_r_ch2_irq;
 static struct dma_variant_result g_r_ch4_irq;
+static struct dma_variant_result g_r_ch2_irq_9600;
 
 static volatile uint32_t g_irq_tcif_mask;
 static volatile uint32_t g_irq_teif_mask;
@@ -427,6 +430,10 @@ int main(void)
 
     GPIOA_MODER &= ~((0x3u << 18u) | (0x3u << 20u));
     GPIOA_MODER |= (0x2u << 18u) | (0x2u << 20u);
+    GPIOA_OSPEEDR &= ~((0x3u << 18u) | (0x3u << 20u));
+    GPIOA_OSPEEDR |= (0x3u << 18u) | (0x3u << 20u);
+    GPIOA_PUPDR &= ~((0x3u << 18u) | (0x3u << 20u));
+    GPIOA_PUPDR |= (0x1u << 18u) | (0x1u << 20u);
     GPIOA_AFRH &= ~((0xFu << 4u) | (0xFu << 8u));
     GPIOA_AFRH |= (0x1u << 4u) | (0x1u << 8u);
 
@@ -532,6 +539,29 @@ int main(void)
         }
     }
 
+    delay(120000u);
+    USART1_CR1 = 0u;
+    USART1_CR3 = 0u;
+    USART1_BRR = 833u;
+    if (uart_enable_ready() != 0u) {
+        ael_mailbox_fail(0xD409u, USART1_ISR);
+        while (1) {
+            uart_write_line("AEL_UART_DMA_DIAG_BEGIN");
+            uart_write_kv_hex("uart_9600_enable_fail", USART1_ISR);
+            uart_write_cstr("\r\n");
+            delay(240000u);
+        }
+    }
+    g_r_ch2_irq_9600 = run_irq_variant(0u);
+    if (g_r_ch2_irq_9600.code == 0u) {
+        ael_mailbox_pass();
+        while (1) {
+            uart_write_line("AEL_UART_DMA_DIAG_BEGIN");
+            report_variant("DMA_CH2_IRQ_9600", g_r_ch2_irq_9600);
+            delay(240000u);
+        }
+    }
+
     ael_mailbox_fail(0xD4FFu, 0u);
     while (1) {
         uart_write_line("AEL_UART_DMA_DIAG_BEGIN");
@@ -543,6 +573,7 @@ int main(void)
         report_variant("DMA_CH4_LATE", g_r_ch4_late);
         report_variant("DMA_CH2_IRQ", g_r_ch2_irq);
         report_variant("DMA_CH4_IRQ", g_r_ch4_irq);
+        report_variant("DMA_CH2_IRQ_9600", g_r_ch2_irq_9600);
         delay(240000u);
     }
 }

@@ -81,6 +81,7 @@ The four variants are:
 - `DMA_CH4_LATE`
 - `DMA_CH2_IRQ`
 - `DMA_CH4_IRQ`
+- `DMA_CH2_IRQ_9600`
 
 where:
 
@@ -90,6 +91,8 @@ where:
 - `LATE` = DMA channel is armed before `DMAT` is asserted
 - `IRQ` = DMA channel interrupt plus `USART1` interrupt path, aligned more closely
   with the ST example note that UART IRQ must be enabled
+- `IRQ_9600` = same IRQ path, but with `PA9/PA10` set to pull-up, high-speed,
+  and `USART1` moved to `9600 baud` to mirror the ST example more closely
 
 This narrowed pass answered the key isolation question:
 
@@ -202,6 +205,7 @@ Observed repeated UART diagnostics:
 - `DMA_CH4_LATE code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000200`
 - `DMA_CH2_IRQ code=0000D406 dma_isr=00000000 cndtr=00000026 ccr=0000009B usart_isr=00600090 cfgr1=00000000`
 - `DMA_CH4_IRQ code=0000D406 dma_isr=00000000 cndtr=00000026 ccr=0000009B usart_isr=00600090 cfgr1=00000200`
+- `DMA_CH2_IRQ_9600 code=0000D406 dma_isr=00000000 cndtr=00000026 ccr=0000009B usart_isr=00600090 cfgr1=00000000`
 
 What these lines prove:
 
@@ -213,6 +217,8 @@ What these lines prove:
 - `DMA_ISR` never raised `TCIF` or `TEIF`
 - even with DMA interrupt enable + `USART1` interrupt enabled, no shared DMA IRQ
   ever fired (`0xD406`)
+- matching the ST example's `9600 baud` and GPIO pull-up/high-speed style did
+  not change the result
 
 That means the DMA request path to `USART1 TX` still did not start in any tested
 TX-only variant.
@@ -376,6 +382,39 @@ TX path.
 
 This still produced no DMA interrupt and no receive count change.
 
+9. ST-style minimal HAL TX-only proof.
+
+To separate "our bare-metal sequence is wrong" from "DMA TX cannot work on this
+fixture", a one-off minimal HAL proof was built in `/tmp/stm32f030_hal_dma_tx_probe`
+using:
+
+- ST official `stm32f0xx-hal-driver`
+- ST official `cmsis-device-f0`
+- `USART1`
+- `DMA1 Channel2`
+- `9600 baud`
+- `PA9 -> DAPLink RX`
+
+Observed host UART output:
+
+- `AEL_HAL_UART_DMA_BEGIN`
+- `AEL_HAL_UART_DMA_TX`
+- `AEL_HAL_UART_DMA_OK`
+
+Live debugger state after completion:
+
+- `g_tx_done = 1`
+- `g_tx_error = 0`
+- `hdma_tx.Instance->CNDTR = 0`
+- `USART1->ISR = 0x6000D0`
+
+What this proves:
+
+- `USART1 TX DMA` does work on this exact MCU and fixture
+- DAPLink UART RX does observe the DMA-emitted frame
+- the remaining bug is in the repo's bare-metal UART DMA implementation, not in
+  the hardware path and not in ST's supported configuration model
+
 ### Startup / linker trap discovered during the narrowing pass
 
 One additional repo-local issue surfaced during this work:
@@ -440,6 +479,9 @@ The current evidence points to one of these unresolved causes:
    `Channel2` and `Channel4` variants still do not match the true request path
    for this device.
 
+4. The bare-metal sequence still differs from the working ST HAL path in at
+   least one material way, even though the broad outline appears similar.
+
 What the evidence does **not** support:
 
 - generic UART wiring failure
@@ -448,6 +490,7 @@ What the evidence does **not** support:
 - missing DMA engine clock or DMA controller failure
 - "only TX is broken" as the sole explanation
 - "only RX is broken" as the sole explanation
+- "STM32F030C8T6 cannot do USART1 TX DMA on this bench"
 
 Those paths were already proven independently by:
 
@@ -455,6 +498,7 @@ Those paths were already proven independently by:
 - `stm32f030c8t6_uart_multibyte_observed`
 - `stm32f030c8t6_uart_banner`
 - `stm32f030c8t6_dma_m2m`
+- one-off `/tmp/stm32f030_hal_dma_tx_probe` HAL proof
 
 ## Why This Is Deferred
 
@@ -500,6 +544,11 @@ That fallback would answer an important question quickly:
 - “is the problem our register sequence, or is there a deeper bench/device
   mismatch?”
 
+That fallback has now been exercised, and the answer is:
+
+- the deeper bench/device path is valid
+- the remaining problem is our bare-metal sequence
+
 ## Bottom Line
 
 As of this report:
@@ -511,3 +560,6 @@ As of this report:
 - TX-only DAPLink UART diagnostics now clearly show the immediate failure is on
   `USART1 <-> DMA` request generation, not on the ordinary UART wiring path
 - DMA1 memory-to-memory pass shows the DMA engine itself is healthy
+- a one-off ST HAL TX-only proof now shows that `USART1 TX DMA` does work on
+  this exact bench, so the unresolved issue is narrowed to the repo's
+  bare-metal implementation
