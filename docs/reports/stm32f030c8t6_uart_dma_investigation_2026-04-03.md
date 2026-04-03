@@ -77,12 +77,19 @@ The four variants are:
 - `DMA_CH2_KICK`
 - `DMA_CH4`
 - `DMA_CH4_KICK`
+- `DMA_CH2_LATE`
+- `DMA_CH4_LATE`
+- `DMA_CH2_IRQ`
+- `DMA_CH4_IRQ`
 
 where:
 
 - `CH2` = default official F030 mapping
 - `CH4` = `SYSCFG_CFGR1_USART1TX_DMA_RMP` remap path
 - `KICK` = software writes the first byte to `TDR` before enabling DMA for the remainder
+- `LATE` = DMA channel is armed before `DMAT` is asserted
+- `IRQ` = DMA channel interrupt plus `USART1` interrupt path, aligned more closely
+  with the ST example note that UART IRQ must be enabled
 
 This narrowed pass answered the key isolation question:
 
@@ -101,6 +108,23 @@ Code and plan:
 
 - `firmware/targets/stm32f030c8t6_uart_dma_rx_observed/main.c`
 - `tests/plans/stm32f030c8t6_uart_dma_rx_observed.json`
+
+The RX narrowing pass was later expanded with these variants:
+
+- `DMA_RX_CH3`
+- `DMA_RX_CH5`
+- `DMA_RX_CH3_LATE`
+- `DMA_RX_CH5_LATE`
+- `DMA_RX_CH3_IRQ`
+- `DMA_RX_CH5_IRQ`
+
+where:
+
+- `CH3` = default official F030 RX mapping
+- `CH5` = `SYSCFG_CFGR1_USART1RX_DMA_RMP` remap path
+- `LATE` = DMA channel is armed before `DMAR` is asserted
+- `IRQ` = DMA channel interrupt path enabled to test whether RX completion only
+  becomes visible when the shared DMA IRQ is active
 
 Representative run:
 
@@ -174,6 +198,10 @@ Observed repeated UART diagnostics:
 - `DMA_CH2_KICK code=0000D402 dma_isr=00000000 cndtr=00000025 ccr=00000091 usart_isr=006000D0 cfgr1=00000000`
 - `DMA_CH4 code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000200`
 - `DMA_CH4_KICK code=0000D402 dma_isr=00000000 cndtr=00000025 ccr=00000091 usart_isr=006000D0 cfgr1=00000200`
+- `DMA_CH2_LATE code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000000`
+- `DMA_CH4_LATE code=0000D402 dma_isr=00000000 cndtr=00000026 ccr=00000091 usart_isr=00600090 cfgr1=00000200`
+- `DMA_CH2_IRQ code=0000D406 dma_isr=00000000 cndtr=00000026 ccr=0000009B usart_isr=00600090 cfgr1=00000000`
+- `DMA_CH4_IRQ code=0000D406 dma_isr=00000000 cndtr=00000026 ccr=0000009B usart_isr=00600090 cfgr1=00000200`
 
 What these lines prove:
 
@@ -183,9 +211,55 @@ What these lines prove:
 - `CCR.EN|DIR|MINC` were set (`0x91`)
 - `CNDTR` never decremented
 - `DMA_ISR` never raised `TCIF` or `TEIF`
+- even with DMA interrupt enable + `USART1` interrupt enabled, no shared DMA IRQ
+  ever fired (`0xD406`)
 
 That means the DMA request path to `USART1 TX` still did not start in any tested
 TX-only variant.
+
+Representative manual proof run for the IRQ-enabled TX variants:
+
+- manual flash of `firmware/targets/stm32f030c8t6_uart_dma_observed/build/stm32f030c8t6_uart_dma_observed_app.elf`
+- serial capture in `/tmp/stm32f030_uart_dma_irq_diag.log`
+
+This manual path was needed because the current AEL runner selected
+`board.build.project_dir = firmware/targets/stm32f030c8t6` instead of the
+test-local `build.project_dir`, causing a false `PASS` on the base blink target.
+That runner issue is separate from the UART DMA problem.
+
+### 0d. RX-only remap + IRQ narrowing pass
+
+After TX IRQ still showed no DMA activity, the RX observed target was expanded
+to cover:
+
+- default `Channel3`
+- remapped `Channel5`
+- late `DMAR`
+- DMA interrupt enabled on both channel groups
+
+Representative manual proof run:
+
+- manual flash of `artifacts/build_stm32f030c8t6_uart_dma_rx_observed/stm32f030c8t6_uart_dma_rx_observed_app.elf`
+- serial capture in `/tmp/stm32f030_uart_dma_rx_irq_diag.log`
+
+Representative observed lines:
+
+- `DMA_RX_CH3 code=0000D513 dma_isr=00000000 cndtr=0000000B ccr=00000081 usart_isr=006000D0 cfgr1=00000000`
+- `DMA_RX_CH5 code=0000D513 dma_isr=00000000 cndtr=0000000B ccr=00000081 usart_isr=006000F8 cfgr1=00000400`
+- `DMA_RX_CH3_LATE code=0000D513 dma_isr=00000000 cndtr=0000000B ccr=00000081 usart_isr=006000F0 cfgr1=00000000`
+- `DMA_RX_CH5_LATE code=0000D513 dma_isr=00000000 cndtr=0000000B ccr=00000081 usart_isr=006000F8 cfgr1=00000400`
+- `DMA_RX_CH3_IRQ code=0000D517 dma_isr=00000000 cndtr=0000000B ccr=0000008B usart_isr=006000F0 cfgr1=00000000`
+- `DMA_RX_CH5_IRQ code=0000D517 dma_isr=00000000 cndtr=0000000B ccr=0000008B usart_isr=006000F0 cfgr1=00000400`
+
+What these lines add:
+
+- RX remap to `Channel5` also does not start
+- late `DMAR` assertion does not start RX DMA either
+- enabling DMA channel interrupts does not produce a DMA interrupt
+- `DMA_ISR` remains `0`
+- `CNDTR` remains unchanged at `0x0B`
+
+So the "maybe RX only needs IRQ/remap timing" hypothesis is also eliminated.
 
 ### 1. Local loopback baseline
 
@@ -284,6 +358,24 @@ on mailbox for the primary proof.
 This did not produce a successful TX DMA transfer, but it did produce the most
 conclusive isolation so far: TX DMA itself is the current failure point.
 
+7. IRQ-enabled TX completion path.
+
+- enabled `DMA_CCR_TCIE | DMA_CCR_TEIE`
+- enabled the shared DMA NVIC line
+- enabled `USART1_IRQn`
+- after DMA TC, switched to `USART1 TCIE` completion handling
+
+This still produced no DMA interrupt at all on either the default or remapped
+TX path.
+
+8. RX remap + IRQ completion path.
+
+- tested both `Channel3` and remapped `Channel5`
+- tested both early and late `DMAR` assertion
+- enabled shared DMA NVIC lines for RX completion
+
+This still produced no DMA interrupt and no receive count change.
+
 ### Startup / linker trap discovered during the narrowing pass
 
 One additional repo-local issue surfaced during this work:
@@ -353,12 +445,16 @@ What the evidence does **not** support:
 - generic UART wiring failure
 - generic DAPLink UART failure
 - generic `USART1` enable failure
+- missing DMA engine clock or DMA controller failure
+- "only TX is broken" as the sole explanation
+- "only RX is broken" as the sole explanation
 
 Those paths were already proven independently by:
 
 - `stm32f030c8t6_uart_tx_probe`
 - `stm32f030c8t6_uart_multibyte_observed`
 - `stm32f030c8t6_uart_banner`
+- `stm32f030c8t6_dma_m2m`
 
 ## Why This Is Deferred
 
