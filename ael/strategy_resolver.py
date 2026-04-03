@@ -666,6 +666,7 @@ def build_mailbox_verify_step(
         "inputs": {
             "probe_ip":   probe_ip,
             "probe_port": probe_port,
+            "gdb_cmd":          str(probe.get("gdb_cmd") or "arm-none-eabi-gdb"),
             "target_id":        int(merged.get("target_id", 1)),
             "addr":             str(merged.get("addr", "0x20007F00")),
             "settle_s":         float(merged.get("settle_s", 0.0)),

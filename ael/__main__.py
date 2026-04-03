@@ -350,8 +350,6 @@ def main():
     inventory_connection_diff.add_argument("--format", choices=["json", "text"], default="json")
     inventory_audit = inventory_sub.add_parser("audit-test-schema")
     inventory_audit.add_argument("--format", choices=["json", "text"], default="json")
-    inventory_audit = inventory_sub.add_parser("audit-test-schema")
-    inventory_audit.add_argument("--format", choices=["json", "text"], default="json")
 
     connection_p = sub.add_parser("connection")
     connection_sub = connection_p.add_subparsers(dest="connection_cmd", required=True)
@@ -826,13 +824,6 @@ def main():
             else:
                 print(json.dumps(payload, indent=2, sort_keys=True))
             sys.exit(0 if payload.get("ok") else 1)
-        if args.inventory_cmd == "audit-test-schema":
-            payload = build_test_plan_schema_report(Path(repo_root))
-            if args.format == "text":
-                print(render_test_plan_schema_report_text(payload), end="")
-            else:
-                print(json.dumps(payload, indent=2, sort_keys=True))
-            sys.exit(0)
         if args.inventory_cmd == "audit-test-schema":
             payload = build_test_plan_schema_report(Path(repo_root))
             if args.format == "text":

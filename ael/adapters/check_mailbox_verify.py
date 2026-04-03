@@ -42,6 +42,7 @@ def _gdb_read_mailbox(
     endpoint: str,
     target_id: int,
     addr: int,
+    gdb_cmd: str = "arm-none-eabi-gdb",
     skip_attach: bool = False,
     halt_before_read: bool = False,
     attach_monitor_cmd: str = "monitor swdp_scan",
@@ -67,7 +68,7 @@ def _gdb_read_mailbox(
         disconnect_cmd,
         "quit",
     ]
-    args = ["arm-none-eabi-gdb", "--batch"] + [
+    args = [gdb_cmd, "--batch"] + [
         item for cmd in cmds for item in ("-ex", cmd)
     ]
 
@@ -119,6 +120,7 @@ def _execute_detail0_increment(
     addr: int,
     endpoint: str,
     target_id: int,
+    gdb_cmd: str,
     out_json: str | None,
     skip_attach: bool,
     halt_before_read: bool,
@@ -128,6 +130,7 @@ def _execute_detail0_increment(
     increment_wait_s = float(inputs.get("increment_wait_s", 2.0))
 
     raw1 = _gdb_read_mailbox(endpoint, target_id, addr,
+                             gdb_cmd=gdb_cmd,
                              skip_attach=skip_attach,
                              halt_before_read=halt_before_read,
                              attach_monitor_cmd=attach_monitor_cmd)
@@ -145,6 +148,7 @@ def _execute_detail0_increment(
     time.sleep(increment_wait_s)
 
     raw2 = _gdb_read_mailbox(endpoint, target_id, addr,
+                             gdb_cmd=gdb_cmd,
                              skip_attach=skip_attach,
                              halt_before_read=halt_before_read,
                              attach_monitor_cmd=attach_monitor_cmd)
@@ -190,6 +194,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
     inputs    = step.get("inputs", {}) if isinstance(step, dict) else {}
     probe_ip  = inputs.get("probe_ip", "")
     probe_port = int(inputs.get("probe_port", 4242))
+    gdb_cmd = str(inputs.get("gdb_cmd") or "arm-none-eabi-gdb")
     target_id = int(inputs.get("target_id", 1))
     addr_str    = inputs.get("addr", "0x20007F00")
     settle_s    = float(inputs.get("settle_s", 0.0))
@@ -210,7 +215,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
 
     if check_mode == "detail0_increment":
         return _execute_detail0_increment(
-            inputs, addr_str, addr, endpoint, target_id, out_json,
+            inputs, addr_str, addr, endpoint, target_id, gdb_cmd, out_json,
             skip_attach, halt_before_read, attach_monitor_cmd,
         )
 
@@ -218,6 +223,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
         endpoint,
         target_id,
         addr,
+        gdb_cmd=gdb_cmd,
         skip_attach=skip_attach,
         halt_before_read=halt_before_read,
         attach_monitor_cmd=attach_monitor_cmd,
