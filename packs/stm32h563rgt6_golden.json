@@ -29,6 +29,10 @@
         "tests/plans/stm32h563rgt6_fdcan_mailbox.json",
         "tests/plans/stm32h563rgt6_rtc_mailbox.json",
         "tests/plans/stm32h563rgt6_pka_mailbox.json",
-        "tests/plans/stm32h563rgt6_lpuart_mailbox.json"
+        "tests/plans/stm32h563rgt6_lpuart_mailbox.json",
+        "tests/plans/stm32h563rgt6_crs_mailbox.json",
+        "tests/plans/stm32h563rgt6_tamp_mailbox.json",
+        "tests/plans/stm32h563rgt6_flash_optsr_mailbox.json",
+        "tests/plans/stm32h563rgt6_ramcfg_mailbox.json"
     ]
 }
