@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_stop_rtc_alarm_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["low_power_stop", "rtc_alarm"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_stop_rtc_alarm_mailbox",
+    "artifact_stem": "stm32f030c8t6_stop_rtc_alarm_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_stop_rtc_alarm_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": { "settle_s": 8.0, "addr": "0x20001C00" },
+  "bench_setup": {
+    "notes": "No wiring required. Configures RTC on LSI, sets Alarm A to +2 s, enters STOP mode, and expects wake via RTC EXTI17.",
+    "peripheral_signals": []
+  }
+}
