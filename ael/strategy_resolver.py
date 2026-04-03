@@ -491,6 +491,43 @@ def build_uart_step(effective: Dict[str, Any] | Any, board_cfg: Dict[str, Any] |
     return step
 
 
+def build_host_uart_step(
+    effective: Dict[str, Any] | Any,
+    board_cfg: Dict[str, Any] | Any,
+    output_mode: str,
+    observe_uart_log: str,
+    uart_json: str,
+    observe_uart_step_log: str,
+):
+    board_cfg = _as_board_dict(board_cfg)
+    host_uart_cfg = {}
+    if isinstance(effective, dict):
+        host_uart_cfg = effective.get("host_uart_exchange", {}) or {}
+    if not (isinstance(host_uart_cfg, dict) and host_uart_cfg.get("enabled")):
+        return None
+    host_uart_cfg = dict(host_uart_cfg)
+    bench_setup = resolve_bench_setup(effective)
+    if isinstance(bench_setup, dict):
+        serial_console = bench_setup.get("serial_console")
+        if isinstance(serial_console, dict):
+            serial_port = str(serial_console.get("port") or "").strip()
+            if serial_port and not str(host_uart_cfg.get("port") or "").strip():
+                host_uart_cfg["port"] = serial_port
+            if host_uart_cfg.get("baud") is None and serial_console.get("baud") is not None:
+                host_uart_cfg["baud"] = serial_console.get("baud")
+    return {
+        "name": "check_uart_roundtrip",
+        "type": "check.uart_roundtrip",
+        "inputs": {
+            "host_uart_cfg": host_uart_cfg,
+            "raw_log_path": observe_uart_log,
+            "out_json": uart_json,
+            "output_mode": output_mode,
+            "log_path": observe_uart_step_log,
+        },
+    }
+
+
 def build_verify_step(test_raw: Dict[str, Any] | Any, board_cfg: Dict[str, Any] | Any, probe_cfg: Dict[str, Any] | Any, wiring_cfg: Dict[str, Any] | Any, artifacts_dir: Path, observe_log: str, output_mode: str, measure_path: str):
     board_cfg = _as_board_dict(board_cfg)
     if is_meter_digital_verify_test(test_raw, board_cfg):

@@ -1748,6 +1748,17 @@ def run_pipeline(
     if uart_step is not None:
         plan_steps.append(uart_step)
 
+    host_uart_step = strategy_resolver.build_host_uart_step(
+        effective=effective,
+        board_cfg=board_cfg,
+        output_mode=output_mode,
+        observe_uart_log=str(run_paths.observe_uart_log),
+        uart_json=str(run_paths.uart_observe),
+        observe_uart_step_log=str(run_paths.observe_uart_step_log),
+    )
+    if host_uart_step is not None:
+        plan_steps.append(host_uart_step)
+
     verify_step = strategy_resolver.build_verify_step(
         test_raw=test_raw,
         board_cfg=board_cfg,

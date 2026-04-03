@@ -574,6 +574,198 @@ class _UartCheckAdapter:
         return {"ok": True, "result": uart_result, "facts": uart_facts, "evidence": [evidence_item]}
 
 
+class _HostUartRoundtripAdapter:
+    def execute(self, step, plan, ctx):
+        inputs = step.get("inputs", {}) if isinstance(step, dict) else {}
+        cfg = dict(inputs.get("host_uart_cfg", {}))
+        raw_log_path = inputs.get("raw_log_path")
+        out_json = inputs.get("out_json")
+        output_mode = inputs.get("output_mode", "normal")
+        log_path = inputs.get("log_path")
+        if not raw_log_path or not out_json:
+            return {"ok": False, "error_summary": "uart roundtrip output paths missing"}
+
+        def _run_roundtrip():
+            try:
+                import serial  # type: ignore
+            except Exception as exc:
+                return {
+                    "ok": False,
+                    "bytes": 0,
+                    "lines": 0,
+                    "port": str(cfg.get("port") or ""),
+                    "baud": int(cfg.get("baud") or 115200),
+                    "matched": {"ready": {}, "expect": {}},
+                    "missing_ready": list(cfg.get("ready_patterns") or []),
+                    "missing_expect": list(cfg.get("expect_patterns") or []),
+                    "error_summary": f"pyserial is required: {exc}",
+                }
+
+            port = str(cfg.get("port") or "").strip()
+            baud = int(cfg.get("baud") or 115200)
+            ready_patterns = [str(x) for x in (cfg.get("ready_patterns") or []) if str(x)]
+            expect_patterns = [str(x) for x in (cfg.get("expect_patterns") or []) if str(x)]
+            tx_payload = str(cfg.get("tx") or "")
+            if bool(cfg.get("append_newline", False)):
+                tx_payload += "\r\n"
+            startup_wait_s = float(cfg.get("startup_wait_s") or 3.0)
+            ready_timeout_s = float(cfg.get("ready_timeout_s") or 6.0)
+            response_timeout_s = float(cfg.get("response_timeout_s") or 4.0)
+            drain_s = float(cfg.get("drain_s") or 0.15)
+
+            if not port:
+                return {
+                    "ok": False,
+                    "bytes": 0,
+                    "lines": 0,
+                    "port": "",
+                    "baud": baud,
+                    "matched": {"ready": {}, "expect": {}},
+                    "missing_ready": ready_patterns,
+                    "missing_expect": expect_patterns,
+                    "error_summary": "host_uart_exchange.port missing",
+                }
+
+            open_deadline = time.time() + max(0.0, startup_wait_s)
+            ser = None
+            last_exc = None
+            while time.time() <= open_deadline:
+                try:
+                    ser = serial.Serial(port, baudrate=baud, timeout=0.1, rtscts=False, dsrdtr=False)
+                    break
+                except Exception as exc:
+                    last_exc = exc
+                    time.sleep(0.2)
+            if ser is None:
+                return {
+                    "ok": False,
+                    "bytes": 0,
+                    "lines": 0,
+                    "port": port,
+                    "baud": baud,
+                    "matched": {"ready": {}, "expect": {}},
+                    "missing_ready": ready_patterns,
+                    "missing_expect": expect_patterns,
+                    "error_summary": f"unable to open UART port: {last_exc}",
+                }
+
+            capture = bytearray()
+
+            def _read_until(patterns, timeout_s):
+                matched = {}
+                text = capture.decode("utf-8", errors="replace")
+                deadline = time.time() + max(0.0, timeout_s)
+                while time.time() < deadline:
+                    chunk = ser.read(4096)
+                    if chunk:
+                        capture.extend(chunk)
+                        text += chunk.decode("utf-8", errors="replace")
+                        for pattern in patterns:
+                            if pattern in text:
+                                matched[pattern] = 1
+                        if patterns and all(pattern in text for pattern in patterns):
+                            return matched, text
+                    else:
+                        time.sleep(0.01)
+                return matched, text
+
+            try:
+                try:
+                    ser.dtr = False
+                except Exception:
+                    pass
+
+                ready_matched, ready_text = _read_until(ready_patterns, ready_timeout_s)
+                missing_ready = [pattern for pattern in ready_patterns if pattern not in ready_text]
+                if missing_ready:
+                    Path(raw_log_path).write_text(ready_text, encoding="utf-8")
+                    return {
+                        "ok": False,
+                        "bytes": len(capture),
+                        "lines": len(ready_text.splitlines()),
+                        "port": port,
+                        "baud": baud,
+                        "matched": {"ready": ready_matched, "expect": {}},
+                        "missing_ready": missing_ready,
+                        "missing_expect": expect_patterns,
+                        "raw_log_path": raw_log_path,
+                        "error_summary": "expected UART ready patterns missing",
+                    }
+
+                if drain_s > 0:
+                    end = time.time() + drain_s
+                    while time.time() < end:
+                        chunk = ser.read(4096)
+                        if not chunk:
+                            time.sleep(0.01)
+                            continue
+                        capture.extend(chunk)
+
+                if tx_payload:
+                    ser.write(tx_payload.encode("utf-8"))
+                    ser.flush()
+
+                expect_matched, expect_text = _read_until(expect_patterns, response_timeout_s)
+                missing_expect = [pattern for pattern in expect_patterns if pattern not in expect_text]
+                Path(raw_log_path).write_text(expect_text, encoding="utf-8")
+                return {
+                    "ok": len(missing_expect) == 0,
+                    "bytes": len(capture),
+                    "lines": len(expect_text.splitlines()),
+                    "port": port,
+                    "baud": baud,
+                    "matched": {"ready": ready_matched, "expect": expect_matched},
+                    "missing_ready": [],
+                    "missing_expect": missing_expect,
+                    "raw_log_path": raw_log_path,
+                    "error_summary": "" if len(missing_expect) == 0 else "expected UART response patterns missing",
+                }
+            finally:
+                try:
+                    ser.close()
+                except Exception:
+                    pass
+
+        if log_path:
+            with _tee_output(log_path, output_mode):
+                uart_result = _run_roundtrip()
+        else:
+            uart_result = _run_roundtrip()
+        _write_json(out_json, uart_result)
+
+        ok = bool(uart_result.get("ok", False))
+        summary = "" if ok else str(uart_result.get("error_summary") or "uart roundtrip failed")
+        evidence_item = ael_evidence.make_item(
+            kind="uart.verify",
+            source="check.uart_roundtrip",
+            ok=ok,
+            summary="UART host exchange passed" if ok else summary,
+            facts={
+                "ok": ok,
+                "bytes": int(uart_result.get("bytes") or 0),
+                "lines": int(uart_result.get("lines") or 0),
+                "port": uart_result.get("port"),
+                "baud": uart_result.get("baud"),
+                "matched_ready": ((uart_result.get("matched") or {}).get("ready") if isinstance(uart_result.get("matched"), dict) else {}),
+                "matched_expect": ((uart_result.get("matched") or {}).get("expect") if isinstance(uart_result.get("matched"), dict) else {}),
+                "missing_ready": uart_result.get("missing_ready", []),
+                "missing_expect": uart_result.get("missing_expect", []),
+            },
+            artifacts={"uart_observe_json": out_json, "uart_raw_log": raw_log_path},
+        )
+        if not ok:
+            return {
+                "ok": False,
+                "error_summary": summary,
+                "failure_kind": failure_recovery.FAILURE_VERIFICATION_MISS,
+                "failure_class": "uart_expected_patterns_missing",
+                "verify_substage": "uart.verify",
+                "result": uart_result,
+                "evidence": [evidence_item],
+            }
+        return {"ok": True, "result": uart_result, "evidence": [evidence_item]}
+
+
 class _InstrumentSelftestAdapter:
     def __init__(self, backend_registry: _InstrumentBackendRegistry):
         self._backend_registry = backend_registry
@@ -1479,6 +1671,7 @@ class AdapterRegistry:
             "load.idf_esptool": _LoadAdapter("idf_esptool"),
             "load.gdbmi": _LoadAdapter("gdbmi"),
             "check.uart_log": _UartCheckAdapter(),
+            "check.uart_roundtrip": _HostUartRoundtripAdapter(),
             "check.instrument_signature": _InstrumentSignatureAdapter(self._instrument_backends),
             "check.signal_verify": _SignalVerifyAdapter(),
             "check.instrument_selftest": _InstrumentSelftestAdapter(self._instrument_backends),

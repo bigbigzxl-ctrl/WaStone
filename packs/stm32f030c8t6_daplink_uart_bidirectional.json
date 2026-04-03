@@ -1,0 +1,13 @@
+{
+  "name": "stm32f030c8t6_daplink_uart_bidirectional",
+  "description": "Validated STM32F030C8T6 side-pack for the DAPLink-hosted USART1 path. Covers host-observed TX plus host-driven RX/echo on PA9/PA10.",
+  "board": "stm32f030c8t6_daplink_uart",
+  "status": "candidate",
+  "tests": [
+    "tests/plans/stm32f030c8t6_uart_tx_probe.json",
+    "tests/plans/stm32f030c8t6_uart_multibyte_observed.json",
+    "tests/plans/stm32f030c8t6_uart_banner.json",
+    "tests/plans/stm32f030c8t6_uart_rx_probe.json",
+    "tests/plans/stm32f030c8t6_uart_echo.json"
+  ]
+}

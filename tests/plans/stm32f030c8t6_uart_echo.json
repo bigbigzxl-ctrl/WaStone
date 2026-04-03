@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_uart_echo",
+  "board": "stm32f030c8t6_daplink_uart",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "instrument_path"],
+  "covers": ["uart", "stim"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_uart_echo",
+    "artifact_stem": "stm32f030c8t6_uart_echo_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_uart_echo"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20001C00"
+  },
+  "host_uart_exchange": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "ready_patterns": ["AEL_ECHO_READY"],
+    "tx": "PING_ECHO_42\r\n",
+    "expect_patterns": ["AEL_ECHO:PING_ECHO_42"],
+    "startup_wait_s": 3.0,
+    "ready_timeout_s": 6.0,
+    "response_timeout_s": 4.0
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true
+    },
+    "notes": "Bidirectional UART echo proof on the DAPLink bridge. The host sends a line through DAPLink TX to PA10/USART1_RX and DUT replies on PA9/USART1_TX with AEL_ECHO:<payload>.",
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10."
+      }
+    ]
+  }
+}
