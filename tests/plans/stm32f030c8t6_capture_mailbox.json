@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_capture_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["timer", "capture"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_capture_mailbox",
+    "artifact_stem": "stm32f030c8t6_capture_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_capture_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "Square-wave capture measurement on PB8 -> PB9. PASS when the measured period is inside the expected window.",
+    "peripheral_signals": [
+      {
+        "role": "CAPTURE_DRIVER",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "Wire PB8 -> PB9."
+      },
+      {
+        "role": "CAPTURE_INPUT",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "Wire PB8 -> PB9."
+      }
+    ]
+  }
+}

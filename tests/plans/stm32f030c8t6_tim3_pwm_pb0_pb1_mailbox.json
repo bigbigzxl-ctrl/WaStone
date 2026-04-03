@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["timer", "pwm"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox",
+    "artifact_stem": "stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "TIM3_CH3 hardware PWM on PB0 observed through PB0 -> PB1 loopback. PASS when both high and low phases are seen at the expected counter windows.",
+    "peripheral_signals": [
+      {
+        "role": "TIM3_CH3_PWM",
+        "dut_signal": "PB0",
+        "direction": "output",
+        "notes": "Wire PB0 -> PB1."
+      },
+      {
+        "role": "PWM_OBSERVE",
+        "dut_signal": "PB1",
+        "direction": "input",
+        "notes": "Wire PB0 -> PB1."
+      }
+    ]
+  }
+}

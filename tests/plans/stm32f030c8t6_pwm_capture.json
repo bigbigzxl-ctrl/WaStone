@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_pwm_capture",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["timer", "pwm"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_pwm_capture",
+    "artifact_stem": "stm32f030c8t6_pwm_capture_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_pwm_capture"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "Software PWM measurement on PB8 -> PB9. PASS when period and high time stay inside the expected windows.",
+    "peripheral_signals": [
+      {
+        "role": "PWM_DRIVER",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "Wire PB8 -> PB9."
+      },
+      {
+        "role": "PWM_INPUT",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "Wire PB8 -> PB9."
+      }
+    ]
+  }
+}
