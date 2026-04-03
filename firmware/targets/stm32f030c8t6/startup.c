@@ -11,6 +11,7 @@ extern uint32_t _ebss;
 
 void Reset_Handler(void);
 void Default_Handler(void);
+void SysTick_Handler(void) __attribute__((weak, alias("Default_Handler")));
 
 __attribute__((section(".isr_vector")))
 void (*const vector_table[])(void) = {
@@ -29,7 +30,7 @@ void (*const vector_table[])(void) = {
     Default_Handler,
     0,
     Default_Handler,
-    Default_Handler,
+    SysTick_Handler,
 };
 
 void Reset_Handler(void) {

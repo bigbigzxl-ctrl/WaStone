@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "program_only",
+  "name": "stm32f030c8t6_pc13_blinky_visual",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "labels": ["minimal", "visual", "blinky"],
+  "covers": ["gpio", "board_health"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6",
+    "artifact_stem": "stm32f030_app",
+    "build_dir": "artifacts/build_stm32f030_app"
+  },
+  "bench_setup": {
+    "notes": "Minimal visual-only baseline. Flashes the reference PC13 blinky for the STM32F030C8T6 bluepill-like board. Success requires visible blinking on the onboard LED."
+  }
+}

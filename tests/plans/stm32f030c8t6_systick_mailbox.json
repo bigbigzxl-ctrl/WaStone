@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_systick_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "stage1"],
+  "covers": ["systick", "timer"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_systick_mailbox",
+    "artifact_stem": "stm32f030c8t6_systick_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_systick_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": { "settle_s": 5.0, "addr": "0x20001C00" },
+  "bench_setup": {
+    "notes": "SysTick polling test at 1 kHz from 8 MHz HSI. PASS after 100 ticks.",
+    "peripheral_signals": []
+  }
+}

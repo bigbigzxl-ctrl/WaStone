@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_sleep_wfi_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["sleep", "wfi", "wakeup", "systick"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_sleep_wfi_mailbox",
+    "artifact_stem": "stm32f030c8t6_sleep_wfi_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_sleep_wfi_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": { "settle_s": 3.0, "addr": "0x20001C00" },
+  "bench_setup": {
+    "notes": "No-wire low-power sanity check. Firmware enters Sleep mode with WFI and wakes on 1ms SysTick interrupts. PASS after 50 sleep/wake cycles.",
+    "peripheral_signals": []
+  }
+}

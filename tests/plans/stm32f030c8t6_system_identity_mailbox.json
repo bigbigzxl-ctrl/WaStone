@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_system_identity_mailbox",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "portable", "selfcheck"],
+  "covers": ["cpuid", "dbgmcu_idcode", "flash_size", "uid", "rcc"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_system_identity_mailbox",
+    "artifact_stem": "stm32f030c8t6_system_identity_mailbox_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_system_identity_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": { "settle_s": 3.0, "addr": "0x20001C00" },
+  "bench_setup": {
+    "notes": "No-wire system identity self-check for STM32F030C8T6. Checks Cortex-M0 CPUID, STM32F0 DBGMCU_IDCODE, flash-size register, non-zero UID, and HSI clock readiness.",
+    "peripheral_signals": []
+  }
+}
