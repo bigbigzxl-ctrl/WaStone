@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_pb8_pb9_probe",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "diagnostic", "connectivity"],
+  "covers": ["gpio", "wiring", "pre_stage2_connectivity"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_pb8_pb9_probe",
+    "artifact_stem": "stm32f030c8t6_pb8_pb9_probe_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_pb8_pb9_probe"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 4.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "Pre-Stage2 GPIO/timer-path connectivity probe for PB8 -> PB9 on STM32F030C8T6. PB8 drives repeated high/low states and PB9 must track them before capture and PWM tests run.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_PROBE_DRIVER",
+        "dut_signal": "PB8",
+        "direction": "output",
+        "notes": "Wire PB8 -> PB9."
+      },
+      {
+        "role": "GPIO_PROBE_INPUT",
+        "dut_signal": "PB9",
+        "direction": "input",
+        "notes": "Wire PB8 -> PB9."
+      }
+    ]
+  }
+}

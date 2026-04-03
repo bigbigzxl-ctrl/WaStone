@@ -1,0 +1,20 @@
+{
+  "name": "stm32f030c8t6_pre_stage2_connectivity",
+  "description": "STM32F030C8T6 pre-Stage2 connectivity pack on local DAPLink/SWD with local jumper wiring. Confirms PA0<->PA1, PB0<->PB1, PB8<->PB9, and local PA9<->PA10 UART loopback before Stage 2 peripheral tests are added. DAPLink UART-observed tests move to a later separate pack.",
+  "board": "stm32f030c8t6_daplink",
+  "status": "candidate",
+  "pre_stage2_connectivity": [
+    "tests/plans/stm32f030c8t6_pb0_pb1_probe.json",
+    "tests/plans/stm32f030c8t6_pb8_pb9_probe.json",
+    "tests/plans/stm32f030c8t6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f030c8t6_pa7_pa6_spi_probe.json",
+    "tests/plans/stm32f030c8t6_uart_loopback_probe.json"
+  ],
+  "tests": [
+    "tests/plans/stm32f030c8t6_pb0_pb1_probe.json",
+    "tests/plans/stm32f030c8t6_pb8_pb9_probe.json",
+    "tests/plans/stm32f030c8t6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f030c8t6_pa7_pa6_spi_probe.json",
+    "tests/plans/stm32f030c8t6_uart_loopback_probe.json"
+  ]
+}
