@@ -1,6 +1,6 @@
 {
   "name": "stm32f030c8t6_golden",
-  "description": "STM32F030C8T6 canonical staged golden suite on the local DAPLink bench. Stage 0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage 1 covers timer, SysTick, internal temperature, system identity, reset flags, sleep/wake via WFI, internal VREFINT, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, hardware PWM, SPI1, and UART loopback tests. UART DMA is intentionally deferred from the canonical pack until it is independently stabilized on this exact MCU and bench contract.",
+  "description": "STM32F030C8T6 canonical staged golden suite on the local DAPLink bench. Stage 0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage 1 covers timer, SysTick, internal temperature, system identity, reset flags, CRC, sleep/wake via WFI, deeper STOP wake via RTC Alarm A, internal VREFINT, flash erase/program/readback, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, hardware PWM, SPI1, and UART loopback tests. UART DMA is intentionally deferred from the canonical pack until it is independently stabilized on this exact MCU and bench contract.",
   "board": "stm32f030c8t6_daplink",
   "status": "golden",
   "pre_stage2_connectivity": [
@@ -21,8 +21,11 @@
       "tests/plans/stm32f030c8t6_internal_temp_mailbox.json",
       "tests/plans/stm32f030c8t6_system_identity_mailbox.json",
       "tests/plans/stm32f030c8t6_reset_cause_mailbox.json",
+      "tests/plans/stm32f030c8t6_crc_mailbox.json",
       "tests/plans/stm32f030c8t6_sleep_wfi_mailbox.json",
+      "tests/plans/stm32f030c8t6_stop_rtc_alarm_mailbox.json",
       "tests/plans/stm32f030c8t6_adc_vref_mailbox.json",
+      "tests/plans/stm32f030c8t6_flash_rw_mailbox.json",
       "tests/plans/stm32f030c8t6_iwdg.json"
     ],
     "2": [
@@ -45,8 +48,11 @@
     "tests/plans/stm32f030c8t6_internal_temp_mailbox.json",
     "tests/plans/stm32f030c8t6_system_identity_mailbox.json",
     "tests/plans/stm32f030c8t6_reset_cause_mailbox.json",
+    "tests/plans/stm32f030c8t6_crc_mailbox.json",
     "tests/plans/stm32f030c8t6_sleep_wfi_mailbox.json",
+    "tests/plans/stm32f030c8t6_stop_rtc_alarm_mailbox.json",
     "tests/plans/stm32f030c8t6_adc_vref_mailbox.json",
+    "tests/plans/stm32f030c8t6_flash_rw_mailbox.json",
     "tests/plans/stm32f030c8t6_iwdg.json",
     "tests/plans/stm32f030c8t6_pb0_pb1_probe.json",
     "tests/plans/stm32f030c8t6_pb8_pb9_probe.json",
