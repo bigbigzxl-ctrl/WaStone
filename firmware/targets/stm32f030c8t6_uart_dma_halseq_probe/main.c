@@ -93,6 +93,12 @@ static void uart_write_cstr(const char *s)
     }
 }
 
+static void uart_wait_tc(void)
+{
+    while ((USART1_ISR & USART_ISR_TC) == 0u) {
+    }
+}
+
 static void uart_write_hex32(uint32_t value)
 {
     static const char hex[] = "0123456789ABCDEF";
@@ -191,6 +197,7 @@ int main(void)
     NVIC_ISER = IRQ_DMA1_CH2_3 | IRQ_USART1;
 
     uart_write_cstr("AEL_HALSEQ_BEGIN\r\n");
+    uart_wait_tc();
 
     DMA1_CCR2 |= DMA_CCR_EN;
     USART1_ICR = USART_ICR_TCCF;

@@ -431,6 +431,8 @@ This probe does only one path:
 - clear `TCF`
 - assert `DMAT`
 - on DMA TC, disable `DMAT` and switch to `USART1 TCIE`
+- explicitly wait for `USART1 TC=1` after the diagnostic preamble before
+  starting DMA, to match the HAL proof's blocking transmit behavior more closely
 
 Observed host UART output:
 
@@ -440,6 +442,8 @@ Observed host UART output:
 What this adds:
 
 - a HAL-like ordering alone is not sufficient
+- waiting for the previous polling transmit to reach `TC=1` still does not make
+  bare-metal DMA start
 - even the one-shot bare-metal `Channel2 + IRQ + 9600 + clear-TCF-before-DMAT`
   path still produces no DMA activity
 - the missing ingredient is therefore deeper than simple high-level ordering
