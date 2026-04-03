@@ -648,3 +648,59 @@ What this proves:
 - the remaining unresolved problem is therefore even narrower: the repo's
   bare-metal `USART1 <-> DMA` sequence, not the hardware bench and not the ST
   HAL configuration path
+
+## Bare-Metal TX Observed Breakthrough
+
+The deferred bare-metal TX-side observed target is now passing again:
+
+- [main.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_observed/main.c)
+- [startup.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_observed/startup.c)
+- [Makefile](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_observed/Makefile)
+- [stm32f030c8t6_uart_dma_observed.json](/home/ali/work/ai-embedded-lab/tests/plans/stm32f030c8t6_uart_dma_observed.json)
+
+Validated run:
+
+- `2026-04-03_17-04-47_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_observed`
+
+The repaired target now proves:
+
+- bare-metal `USART1 TX DMA` on `DMA1 Channel2`
+- DAPLink host observation of the actual DMA-transmitted payload on `PA9`
+- mailbox pass only after DMA transfer complete and final UART `TC`
+
+Observed output on the host included:
+
+```text
+AEL_UART_DMA_DIAG_BEGIN
+AEL_UART_DMA_TX_BARE
+AEL_UART_DMA_OK
+```
+
+The key fix was not in the DMA request path itself. The main blocking bug was
+startup:
+
+- this target's `_etext` landed at an odd address (`0x08000729`)
+- the inherited reset code copied `.data` using `uint32_t *`
+- on Cortex-M0 that produced an unaligned access during reset and dropped into
+  `HardFault`
+
+That is why earlier runs looked like "no UART readiness" rather than a clean DMA
+failure.
+
+The concrete repair was:
+
+- add a target-local [startup.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_observed/startup.c)
+  that still calls `SystemInit()` but copies `.data` bytewise instead of
+  wordwise
+- keep using ST's `system_stm32f0xx.c`
+- simplify the target to a single `TX-only` bare-metal proof path
+- keep emitting `AEL_UART_DMA_DIAG_BEGIN` in the steady-state success loop so
+  late-attaching UART observers still see the expected readiness banner
+
+What this changes in the overall interpretation:
+
+- bare-metal `USART1 TX DMA` is now proven on this bench too
+- the original broad "bare-metal UART DMA path is broken" conclusion was too
+  wide
+- the remaining unresolved area is now narrower again: receive-side bare-metal
+  DMA and any combined TX/RX bare-metal test shape
