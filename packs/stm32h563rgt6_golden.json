@@ -38,6 +38,14 @@
         "tests/plans/stm32h563rgt6_sbs_mailbox.json",
         "tests/plans/stm32h563rgt6_i3c1_mailbox.json",
         "tests/plans/stm32h563rgt6_usb_drd_mailbox.json",
-        "tests/plans/stm32h563rgt6_wwdg_mailbox.json"
+        "tests/plans/stm32h563rgt6_wwdg_mailbox.json",
+        "tests/plans/stm32h563rgt6_dbgmcu_mailbox.json",
+        "tests/plans/stm32h563rgt6_bkpsram_mailbox.json",
+        "tests/plans/stm32h563rgt6_ucpd1_mailbox.json",
+        "tests/plans/stm32h563rgt6_cec_mailbox.json",
+        "tests/plans/stm32h563rgt6_sau_mailbox.json",
+        "tests/plans/stm32h563rgt6_flash_scratch_mailbox.json",
+        "tests/plans/stm32h563rgt6_lptim_multi_mailbox.json",
+        "tests/plans/stm32h563rgt6_tim151617_mailbox.json"
     ]
 }
