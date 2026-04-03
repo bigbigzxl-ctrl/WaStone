@@ -27,8 +27,10 @@
  *   bit1 = ALLNS  (1 = all memory is Non-Secure, SAU disabled effectively)
  *
  * FAIL codes:
- *   0xE001 — SAU_TYPE reads 0xFFFFFFFF (SAU not accessible)
- *   0xE002 — SAU_TYPE.SREGION == 0 (no regions implemented)
+ *   0xE001 — SAU_TYPE reads 0xFFFFFFFF (bus fault / register not accessible)
+ *
+ * Note: SREGION=0 is valid when TZEN=0 (SAU registers are Secure-only → RAZ from NS).
+ *       This test passes in both TZEN=0 (RAZ) and TZEN=1 (real regions) cases.
  *
  * detail0: [31:16]=SAU_CTRL[15:0], [15:0]=SAU_TYPE[7:0]
  */
@@ -55,12 +57,10 @@ int main(void)
     }
 
     uint32_t sregion = sau_type & 0xFFu;
-    if (sregion == 0u) {
-        ael_mailbox_fail(0xE002u, sau_type);
-        while (1) {}
-    }
-
     uint32_t sau_ctrl = SAU_CTRL;
+
+    /* SREGION=0 is valid (TZEN=0 → SAU Secure-only → RAZ from NS mode).
+     * Only fail if SAU_TYPE == 0xFFFFFFFF (bus not responding). */
 
     /* If SAU has regions, read region 0 info */
     uint32_t rbar = 0u, rlar = 0u;

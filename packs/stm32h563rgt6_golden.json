@@ -46,6 +46,9 @@
         "tests/plans/stm32h563rgt6_sau_mailbox.json",
         "tests/plans/stm32h563rgt6_flash_scratch_mailbox.json",
         "tests/plans/stm32h563rgt6_lptim_multi_mailbox.json",
-        "tests/plans/stm32h563rgt6_tim151617_mailbox.json"
+        "tests/plans/stm32h563rgt6_tim151617_mailbox.json",
+        "tests/plans/stm32h563rgt6_lptim2_mailbox.json",
+        "tests/plans/stm32h563rgt6_mpu_mailbox.json",
+        "tests/plans/stm32h563rgt6_dwt_mailbox.json"
     ]
 }

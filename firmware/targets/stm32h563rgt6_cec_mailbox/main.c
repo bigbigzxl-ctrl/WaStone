@@ -13,13 +13,12 @@
  *   5. Read ISR (interrupt/status)
  *
  * CEC_BASE = APB1PERIPH_BASE + 0x7000 = 0x40007000
- * RCC_APB1LENR = RCC_BASE + 0x0A4, bit28 = CECEN
+ * RCC_APB1LENR = RCC_BASE + 0x09C, bit28 = CECEN
  *
  * CEC registers:
  *   CR   +0x00: bit0=CECEN (enable), bit1=TXSOM (start of message), bit2=TXEOM
- *   CFGR +0x04: bits[6:0]=OAR (own address), bit7=LSTN (listen), bits[9:8]=SFT,
- *               bit10=RXTOL, bit11=BRESTP, bit12=BREGEN, bit13=LBPEGEN,
- *               bit14=BRDNOGEN, bit15=SFTOP
+ *   CFGR +0x04: bits[14:0]=SFT/RXTOL/BRESTP/BREGEN/LBPEGEN/BRDNOGEN/SFTOP,
+ *               bits[30:16]=OAR (own address, 15-bit), bit31=LSTN (listen)
  *   TXDR +0x08: transmit data byte
  *   RXDR +0x0C: receive data byte (read-only)
  *   ISR  +0x10: status flags
@@ -39,15 +38,15 @@
 #include "../ael_mailbox.h"
 
 #define RCC_BASE        0x44020C00u
-#define RCC_APB1LENR    (*(volatile uint32_t *)(RCC_BASE + 0x0A4u))
+#define RCC_APB1LENR    (*(volatile uint32_t *)(RCC_BASE + 0x09Cu))
 
 #define CEC_BASE        0x40007000u
 #define CEC_CR          (*(volatile uint32_t *)(CEC_BASE + 0x00u))
 #define CEC_CFGR        (*(volatile uint32_t *)(CEC_BASE + 0x04u))
 #define CEC_ISR         (*(volatile uint32_t *)(CEC_BASE + 0x10u))
 
-/* CFGR: OAR=1 (own address 0x01), LSTN=1 (listen all msgs), SFT=0 */
-#define CEC_CFGR_VAL  ((1u << 7) | (1u << 0))  /* LSTN=bit7, OAR[0]=bit0 */
+/* CFGR: OAR=1 (own address 0x01) at bits[30:16], LSTN=0 (no bus listening) */
+#define CEC_CFGR_VAL  (1u << 16)  /* OAR[0]=bit16; LSTN=0 to avoid bus activity */
 
 int main(void)
 {
@@ -64,13 +63,15 @@ int main(void)
         while (1) {}
     }
 
-    /* 3. Write CFGR (only valid when CECEN=0) */
+    /* 3. Clear any pending ISR flags (W1C) to ensure clean state before config */
+    CEC_ISR = 0xFFFFFFFFu;
+    /* Write CFGR (only valid when CECEN=0) */
     CEC_CFGR = CEC_CFGR_VAL;
     (void)CEC_CFGR;
 
-    /* 4. Read back and verify low 16 bits (upper bits reserved) */
+    /* 4. Read back and verify OAR bit (bit16) */
     cfgr = CEC_CFGR;
-    if ((cfgr & 0xFFFFu) != (CEC_CFGR_VAL & 0xFFFFu)) {
+    if ((cfgr & 0x00010000u) != (CEC_CFGR_VAL & 0x00010000u)) {
         ael_mailbox_fail(0xE002u, cfgr);
         while (1) {}
     }
@@ -78,8 +79,8 @@ int main(void)
     /* 5. Read ISR */
     uint32_t isr = CEC_ISR;
 
-    /* detail0: [31:16]=ISR[15:0], [15:0]=CFGR[15:0] */
-    AEL_MAILBOX->detail0 = ((isr & 0xFFFFu) << 16) | (cfgr & 0xFFFFu);
+    /* detail0: [31:16]=ISR[15:0], [15:0]=CFGR[31:16] (should have OAR[0]=bit0) */
+    AEL_MAILBOX->detail0 = ((isr & 0xFFFFu) << 16) | ((cfgr >> 16) & 0xFFFFu);
     ael_mailbox_pass();
     while (1) {}
     return 0;

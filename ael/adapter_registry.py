@@ -198,7 +198,7 @@ class _PreflightAdapter:
         def _run_preflight_native():
             # Connection readiness check first
             if isinstance(bench_setup, dict) and bench_setup:
-                conn_issues = check_connection_readiness(bench_setup)
+                conn_issues = check_connection_readiness(bench_setup, probe_cfg=probe_cfg)
                 blocking = [i for i in conn_issues if i.severity == "blocking"]
                 advisory = [i for i in conn_issues if i.severity == "advisory"]
                 for issue in advisory:

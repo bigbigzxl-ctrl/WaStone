@@ -48,6 +48,13 @@ SECTIONS
         _ebss = .;
     } > RAM
 
+    /* .noinit: not zero-initialized by startup code; survives SYSRESETREQ
+     * (SRAM content is preserved across system resets on STM32H563) */
+    .noinit (NOLOAD) :
+    {
+        *(.noinit*)
+    } > RAM
+
     /DISCARD/ :
     {
         *(.ARM.exidx*)

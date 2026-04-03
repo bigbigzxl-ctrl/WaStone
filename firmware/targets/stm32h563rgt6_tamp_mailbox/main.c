@@ -15,7 +15,7 @@
  * BKP1R       = TAMP_BASE + 0x104
  *
  * PWR_BASE    = 0x44020800
- * PWR_DBPCR   = PWR_BASE + 0x0C  (backup domain protection control)
+ * PWR_DBPCR   = PWR_BASE + 0x24  (backup domain protection control)
  *   bit0 = DBP (disable backup domain write protection)
  *
  * RCC_BASE    = 0x44020C00
@@ -34,7 +34,7 @@
 #define RCC_APB3ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0A8u))
 
 #define PWR_BASE        0x44020800u
-#define PWR_DBPCR       (*(volatile uint32_t *)(PWR_BASE + 0x00Cu))
+#define PWR_DBPCR       (*(volatile uint32_t *)(PWR_BASE + 0x024u))
 #define PWR_DBPCR_DBP   (1u << 0)
 
 #define TAMP_BASE       0x44007C00u

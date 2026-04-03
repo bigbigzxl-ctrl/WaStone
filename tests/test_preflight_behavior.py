@@ -96,6 +96,66 @@ class TestCheckConnectionReadiness(unittest.TestCase):
             issues = check_connection_readiness(bench_setup)
         self.assertFalse(any(i.kind == "instrument_role_unreachable" for i in issues))
 
+    def test_selected_probe_instance_role_reachability_is_skipped(self):
+        bench_setup = {
+            "instrument_roles": [
+                {
+                    "role": "control_instrument",
+                    "instrument_id": "esp32jtag_stm32_golden",
+                    "status": "provisioned",
+                    "required": True,
+                    "endpoint": "192.168.2.98:4242",
+                },
+                {
+                    "role": "uart_instrument",
+                    "instrument_id": "esp32jtag_stm32_golden",
+                    "status": "provisioned",
+                    "required": True,
+                    "endpoint": "https://192.168.2.98:443",
+                },
+            ]
+        }
+        probe_cfg = {
+            "instance_id": "esp32jtag_stm32_golden",
+            "ip": "192.168.2.98",
+            "gdb_port": 4242,
+            "web_port": 443,
+        }
+        with patch("ael.adapters.preflight._tcp_ping", return_value=False) as mock_ping:
+            issues = check_connection_readiness(bench_setup, probe_cfg=probe_cfg)
+        self.assertFalse(any(i.kind == "instrument_role_unreachable" for i in issues))
+        mock_ping.assert_not_called()
+
+    def test_selected_probe_endpoint_reachability_is_skipped_without_instance_id_match(self):
+        bench_setup = {
+            "instrument_roles": [
+                {
+                    "role": "control_instrument",
+                    "instrument_id": "legacy_alias",
+                    "status": "provisioned",
+                    "required": True,
+                    "endpoint": "192.168.2.98:4242",
+                },
+                {
+                    "role": "uart_instrument",
+                    "instrument_id": "legacy_alias",
+                    "status": "provisioned",
+                    "required": True,
+                    "endpoint": "https://192.168.2.98:443",
+                },
+            ]
+        }
+        probe_cfg = {
+            "instance_id": "esp32jtag_stm32_golden",
+            "ip": "192.168.2.98",
+            "gdb_port": 4242,
+            "web_port": 443,
+        }
+        with patch("ael.adapters.preflight._tcp_ping", return_value=False) as mock_ping:
+            issues = check_connection_readiness(bench_setup, probe_cfg=probe_cfg)
+        self.assertFalse(any(i.kind == "instrument_role_unreachable" for i in issues))
+        mock_ping.assert_not_called()
+
     def test_wiring_not_verified_is_advisory(self):
         bench_setup = {
             "dut_to_instrument": [
@@ -129,7 +189,7 @@ class TestPreflightBehavior(unittest.TestCase):
         with patch("ael.adapters.preflight._ping", return_value=False), patch(
             "ael.adapters.preflight._check_tcp", return_value=False
         ), patch(
-            "ael.adapters.preflight._monitor_targets", return_value=(True, ["M0+", "Rescue (Attach to reset)"])
+            "ael.adapters.preflight._monitor_targets", return_value=(True, ["M0+", "Rescue (Attach to reset)"], None)
         ), patch(
             "ael.adapters.preflight._la_self_test", return_value=True
         ), patch(
@@ -147,7 +207,7 @@ class TestPreflightBehavior(unittest.TestCase):
         with patch("ael.adapters.preflight._ping", return_value=True), patch(
             "ael.adapters.preflight._check_tcp", return_value=True
         ), patch(
-            "ael.adapters.preflight._monitor_targets", return_value=(False, [])
+            "ael.adapters.preflight._monitor_targets", return_value=(False, [], "probe_monitor_failed")
         ), patch(
             "ael.adapters.preflight._la_self_test", return_value=True
         ), patch(

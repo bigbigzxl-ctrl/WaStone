@@ -25,35 +25,84 @@
  *   word[2..17]: data bytes (LE packing, 4 bytes per word)
  *
  * RXGFC register:
- *   bits[3:2]  = ANFE (accept non-matching extended): 2 → Rx FIFO0
- *   bits[5:4]  = ANFS (accept non-matching standard): 2 → Rx FIFO0
+ *   bits[3:2]  = ANFE (accept non-matching extended): 0 → Rx FIFO0
+ *   bits[5:4]  = ANFS (accept non-matching standard): 0 → Rx FIFO0
  *   bits[20:16]= LSS (standard filter count): 0 (no filters)
  *   bits[27:24]= LSE (extended filter count): 0 (no filters)
+ *   ANFE/ANFS encoding: 00=FIFO0, 01=FIFO1, 10=REJECT
  *
  * TXBC register (H563): only bit24 = TFQM (0=dedicated, 1=queue)
  *   No TBSA or NDTB fields — Tx buffer location is FIXED at 0x278.
  *
- * IR register bit positions:
+ * IR register bit positions (STM32H563 M_CAN IP — differs from G4):
  *   bit0 = RF0N (Rx FIFO0 new message)
- *   bit7 = TC   (transmission complete)
+ *   bit7 = RF1L (Rx FIFO1 message lost — NOT TC!)
+ *   bit9 = TC   (transmission complete)
  *
  * Nominal bit timing for 250 kbit/s @ 64 MHz input clock:
  *   Prescaler=8, TSEG1=15, TSEG2=4, SJW=4
- *   NBTP = (SJW-1)<<25 | (TSEG2-1)<<20 | (TSEG1-1)<<8 | (prescaler-1)
- *        = 3<<25 | 3<<20 | 14<<8 | 7 = 0x06030E07
+ *   NBTP layout: NTSEG2[6:0]=bits[6:0], NTSEG1[7:0]=bits[15:8], NBRP[8:0]=bits[24:16], NSJW[6:0]=bits[31:25]
+ *   NBTP = (SJW-1)<<25 | (NBRP=prescaler-1)<<16 | (TSEG1-1)<<8 | (TSEG2-1)
+ *        = 3<<25 | 7<<16 | 14<<8 | 3 = 0x06070E03
+ *
+ * SYSRESETREQ sentinel (H563 FDCAN silicon workaround):
+ *   H563 FDCAN has a fdcan_clk domain separate from the APB register file.
+ *   RCC APB peripheral reset (APB1HRSTR bit9) resets only the APB register shadow.
+ *   The fdcan_clk domain retains CCCR.TEST=1 state from previous runs, causing:
+ *     - CCE cannot be set when TEST=1 (H563-specific silicon restriction)
+ *     - INIT cannot be cleared when TEST=1
+ *   SYSRESETREQ (SCB->AIRCR bit2) is equivalent to NRST: resets ALL clock domains.
+ *   The sentinel in .noinit RAM (not cleared by BSS zeroing) detects "already reset".
+ *   On first entry: set sentinel, issue SYSRESETREQ, wait.
+ *   On second entry (post-reset): sentinel present → skip reset, proceed normally.
+ *   Clear sentinel immediately so the next GDB attach+run also triggers the reset.
+ *
+ * fdcan_ker_ck clock source (H563-specific):
+ *   H563 FDCANSEL options (RCC_CCIPR5 bits[9:8]):
+ *     00 = HSE  (DEFAULT, not running after reset — board has no HSE crystal)
+ *     01 = PLL1_Q
+ *     10 = PLL2_Q
+ *   There is NO option for HSI or PCLK1 as fdcan_ker_ck on H563.
+ *   fdcan_ker_ck = 0 causes CCCR.INIT to never clear (fdcan_clk SM can't run).
+ *   Fix: configure PLL1_Q = 64 MHz from HSI64, select FDCANSEL=01.
+ *   PLL1 config: HSI64 input, M=4→ref=16 MHz, N=16→VCO=256 MHz, Q=4→64 MHz.
  *
  * FAIL codes:
  *   0xE001 — FDCAN stuck in INIT (CCE not granted)
  *   0xE002 — Tx timeout (TXBAR set but TC never fires)
  *   0xE003 — Rx FIFO0 empty after Tx (loopback frame not received)
  *   0xE004 — data mismatch, detail0 = received word2 (data bytes 0-3)
+ *   0xE00B — PLL1 lock timeout (RCC_CR detail)
  */
 
 #include <stdint.h>
 #include "../ael_mailbox.h"
 
+/* SYSRESETREQ sentinel — in .noinit so it survives SYSRESETREQ
+ * (SRAM content is preserved across system resets on STM32H563) */
+__attribute__((section(".noinit")))
+static volatile uint32_t sysreset_done;
+
+#define SYSRESET_MAGIC  0xBEEF1234u
+
 #define RCC_BASE        0x44020C00u
+#define RCC_CR          (*(volatile uint32_t *)(RCC_BASE + 0x000u))
+#define RCC_PLL1CFGR    (*(volatile uint32_t *)(RCC_BASE + 0x028u))
+#define RCC_PLL1DIVR    (*(volatile uint32_t *)(RCC_BASE + 0x034u))
+#define RCC_CCIPR5      (*(volatile uint32_t *)(RCC_BASE + 0x0E8u))
 #define RCC_APB1HENR    (*(volatile uint32_t *)(RCC_BASE + 0x0A0u))
+
+/* PLL1 for FDCAN kernel clock (64 MHz from HSI64):
+ *   PLL1SRC=01b(HSI=64MHz), PLL1RGE=11b(8-16 MHz input range)
+ *   PLL1M=7(→M=8, ref=8MHz), PLL1QEN=1
+ *   PLL1N=31(→N=32, VCO=256 MHz), PLL1Q=3(→Q=4, PLL1_Q=64 MHz)
+ * NOTE: PLL1SRC encoding on H563: 00=none, 01=HSI, 10=CSI(4MHz), 11=HSE
+ *       Must use 01b for HSI — 10b selects CSI which won't lock at this VCO range. */
+#define RCC_PLL1CFGR_VAL  ((0x1u << 0) | (0x3u << 2) | (7u << 8) | (1u << 17))
+#define RCC_PLL1DIVR_VAL  ((3u << 16) | (31u << 0))
+#define RCC_CR_PLL1ON     (1u << 24)
+#define RCC_CR_PLL1RDY    (1u << 25)
+#define RCC_CCIPR5_FDCANSEL_PLL1Q  (1u << 8)  /* FDCANSEL=01 = PLL1_Q */
 
 /* FDCAN1 */
 #define FDCAN1_BASE     0x4000A400u
@@ -72,8 +121,10 @@
 #define FDCAN_CCCR_CCE   (1u << 1)
 #define FDCAN_CCCR_TEST  (1u << 7)
 #define FDCAN_TEST_LBCK  (1u << 4)
-#define FDCAN_IR_RF0N    (1u << 0)   /* Rx FIFO0 new message */
-#define FDCAN_IR_TC      (1u << 7)   /* Transmission Complete (bit7, NOT bit9) */
+#define FDCAN_PSR        (*(volatile uint32_t *)(FDCAN1_BASE + 0x044u))
+#define FDCAN_PSR_ACT    (3u << 3)   /* Activity bits[4:3]: 00=sync, 01=idle, 10=rx, 11=tx */
+#define FDCAN_IR_RF0N    (1u << 0)   /* Rx FIFO0 new message (bit0) */
+#define FDCAN_IR_TC      (1u << 9)   /* Transmission Complete — H563 IR bit9 (not bit7 as on G4) */
 
 /* SRAMCAN message RAM base */
 #define SRAMCAN_BASE    0x4000AC00u
@@ -90,31 +141,66 @@
 #define SRAMCAN_TFQSA   0x278u   /* Tx FIFO/Queue start (byte offset) */
 #define SRAMCAN_EL_SIZE 72u      /* element size in bytes (18 words × 4) */
 
-/* Nominal bit timing: 250 kbit/s @ 64 MHz, prescaler=8, tseg1=15, tseg2=4, sjw=4 */
-#define FDCAN_NBTP_VAL  ((3u<<25) | (3u<<20) | (14u<<8) | 7u)
+/* Nominal bit timing: 250 kbit/s @ 64 MHz, prescaler=8, tseg1=15, tseg2=4, sjw=4
+ * NSJW=3<<25, NBRP=7<<16, NTSEG1=14<<8, NTSEG2=3<<0 */
+#define FDCAN_NBTP_VAL  ((3u<<25) | (7u<<16) | (14u<<8) | 3u)
 
-/* RXGFC: ANFE=2 (non-matching extended→FIFO0): bits[3:2]
- *         ANFS=2 (non-matching standard→FIFO0): bits[5:4] */
-#define FDCAN_RXGFC_VAL ((2u<<2) | (2u<<4))
+/* RXGFC: ANFE=0 (non-matching extended→FIFO0): bits[3:2]
+ *         ANFS=0 (non-matching standard→FIFO0): bits[5:4]
+ * H563 M_CAN encoding: 00=FIFO0, 01=FIFO1, 10=REJECT (NOT 2=FIFO0!) */
+#define FDCAN_RXGFC_VAL 0u
 
 #define TIMEOUT  1000000u
 
 int main(void)
 {
+    /* SYSRESETREQ sentinel: on first entry, issue a full system reset to guarantee
+     * clean FDCAN state. SYSRESETREQ resets ALL clock domains (equivalent to NRST),
+     * clearing fdcan_clk domain state that survives RCC APB peripheral reset.
+     * Sentinel in .noinit RAM survives the reset so second entry skips this block. */
+    if (sysreset_done != SYSRESET_MAGIC) {
+        sysreset_done = SYSRESET_MAGIC;
+        /* SCB->AIRCR: VECTKEY=0x05FA, SYSRESETREQ=bit2 */
+        *((volatile uint32_t *)0xE000ED0Cu) = 0x05FA0004u;
+        while (1) {}  /* wait for reset to take effect */
+    }
+    /* Clear sentinel immediately so next GDB run also triggers SYSRESETREQ */
+    sysreset_done = 0u;
+
     ael_mailbox_init();
 
-    /* 1. Enable FDCAN clock (APB1HENR bit9) */
-    RCC_APB1HENR |= (1u << 9);
-    (void)RCC_APB1HENR;
-
-    /* 2. Request initialisation mode */
-    FDCAN_CCCR = FDCAN_CCCR_INIT;
+    /* 1. Configure PLL1_Q = 64 MHz as FDCAN kernel clock.
+     *    H563 FDCANSEL default=00b=HSE, which is not running (no crystal on board).
+     *    PLL1 from HSI64: M=4→16 MHz ref, N=16→256 MHz VCO, Q=4→64 MHz. */
     uint32_t t;
+    RCC_PLL1CFGR = RCC_PLL1CFGR_VAL;
+    RCC_PLL1DIVR = RCC_PLL1DIVR_VAL;
+    RCC_CR |= RCC_CR_PLL1ON;
+    for (t = 0u; t < TIMEOUT; t++) {
+        if (RCC_CR & RCC_CR_PLL1RDY) break;
+    }
+    if (t == TIMEOUT) {
+        ael_mailbox_fail(0xE00Bu, RCC_CR);
+        while (1) {}
+    }
+    /* Select PLL1_Q as FDCAN kernel clock (FDCANSEL=01) */
+    RCC_CCIPR5 = (RCC_CCIPR5 & ~0x300u) | RCC_CCIPR5_FDCANSEL_PLL1Q;
+    (void)RCC_CCIPR5;
+
+    /* 2. Enable FDCAN APB clock (APB1HENR bit9).
+     *    After SYSRESETREQ all RCC enable bits are cleared; must re-enable. */
+    RCC_APB1HENR |= (1u << 9);
+    (void)RCC_APB1HENR;  /* APB read barrier */
+
+    /* 3. Enter init mode and set CCE.
+     *    After SYSRESETREQ FDCAN is in clean reset state: CCCR=0x01 (INIT=1).
+     *    Standard M_CAN sequence: set INIT, then set CCE. */
+    FDCAN_CCCR = FDCAN_CCCR_INIT;
     for (t = 0u; t < TIMEOUT; t++) {
         if (FDCAN_CCCR & FDCAN_CCCR_INIT) break;
     }
 
-    /* 3. Enable configuration change access */
+    /* 4. Enable configuration change access */
     FDCAN_CCCR |= FDCAN_CCCR_CCE;
     for (t = 0u; t < TIMEOUT; t++) {
         if ((FDCAN_CCCR & (FDCAN_CCCR_INIT | FDCAN_CCCR_CCE)) ==
@@ -125,26 +211,40 @@ int main(void)
         while (1) {}
     }
 
-    /* 4. Enable internal loopback (TEST=1 in CCCR unlocks TEST register) */
+    /* 5. Enable internal loopback (TEST=1 in CCCR unlocks TEST register) */
     FDCAN_CCCR |= FDCAN_CCCR_TEST;
     FDCAN_TEST  = FDCAN_TEST_LBCK;
 
-    /* 5. Nominal bit timing: 250 kbit/s @ 64 MHz */
+    /* 6. Nominal bit timing: 250 kbit/s @ 64 MHz */
     FDCAN_NBTP = FDCAN_NBTP_VAL;
 
-    /* 6. Global filter: accept all non-matching std and ext to Rx FIFO0 */
+    /* 7. Global filter: accept all non-matching std and ext to Rx FIFO0 */
     FDCAN_RXGFC = FDCAN_RXGFC_VAL;
 
-    /* 7. Tx buffer config: dedicated mode (TFQM=0), 3 dedicated buffers (fixed in H563) */
+    /* 8. Tx buffer config: dedicated mode (TFQM=0), 3 dedicated buffers (fixed in H563) */
     FDCAN_TXBC = 0u;
 
-    /* 8. Exit initialisation mode */
-    FDCAN_CCCR &= ~FDCAN_CCCR_INIT;
+    /* 9. Exit initialisation mode.
+     *    KEEP TEST=1 (loopback mode must stay active during normal operation).
+     *    Clear CCE first (no config changes after init), then clear INIT to start FDCAN.
+     *    With fdcan_ker_ck running (PLL1_Q=64MHz), INIT clears via CDC synchronizer. */
+    FDCAN_CCCR &= ~FDCAN_CCCR_CCE;   /* clear CCE (config lock) */
+    FDCAN_CCCR &= ~FDCAN_CCCR_INIT;  /* clear INIT: FDCAN starts in loopback mode */
     for (t = 0u; t < TIMEOUT; t++) {
         if (!(FDCAN_CCCR & FDCAN_CCCR_INIT)) break;
     }
+    if (t == TIMEOUT) {
+        ael_mailbox_fail(0xE009u, FDCAN_CCCR);
+        while (1) {}
+    }
 
-    /* 9. Write Tx message to SRAM (Tx FIFO/Queue start = SRAMCAN_BASE + 0x278):
+    /* 9b. Wait for bus synchronization: PSR.ACT[4:3] leaves 00 (synchronizing)
+     *     In loopback, Tx=recessive by default; FDCAN integrates in ~11 bit times. */
+    for (t = 0u; t < TIMEOUT; t++) {
+        if (FDCAN_PSR & FDCAN_PSR_ACT) break;
+    }
+
+    /* 10. Write Tx message to SRAM (Tx FIFO/Queue start = SRAMCAN_BASE + 0x278):
      *    11-bit standard ID = 0x123 → placed in T0 bits[28:18]
      *    DLC = 4 bytes → T1 = (4 << 16)
      *    data = {0x11, 0x22, 0x33, 0x44} = 0x44332211 (LE)
@@ -155,11 +255,11 @@ int main(void)
     tx[2] = 0x44332211u;        /* data bytes 0-3 */
     tx[3] = 0u;
 
-    /* 10. Clear IR, then request transmission of Tx buffer 0 */
+    /* 11. Clear IR, then request transmission of Tx buffer 0 */
     FDCAN_IR  = 0xFFFFFFFFu;
     FDCAN_TXBAR = (1u << 0);
 
-    /* 11. Wait for TC (bit7 in IR) */
+    /* 12. Wait for TC (bit7 in IR) */
     for (t = 0u; t < TIMEOUT; t++) {
         if (FDCAN_IR & FDCAN_IR_TC) break;
     }
@@ -168,14 +268,14 @@ int main(void)
         while (1) {}
     }
 
-    /* 12. Check Rx FIFO0 fill level (bits[3:0] of RXF0S) */
+    /* 13. Check Rx FIFO0 fill level (bits[3:0] of RXF0S) */
     uint32_t rxf0s = FDCAN_RXF0S;
     if ((rxf0s & 0xFu) == 0u) {
         ael_mailbox_fail(0xE003u, rxf0s);
         while (1) {}
     }
 
-    /* 13. Read received element:
+    /* 14. Read received element:
      *     get_idx = F0GI = bits[9:8] of RXF0S
      *     element base = SRAMCAN_BASE + 0x0B0 + get_idx * 72
      *     data = element[2] (word[2] = bytes 8..11 = data 0-3)

@@ -17,7 +17,7 @@
  * RCC register at offset 0x0E0 from RCC_BASE contains BKPRAMEN (bit28),
  * DCACHE1EN (bit30), RAMCFGEN (bit17) — confirmed by passing tests.
  *
- * Backup domain unlock same as TAMP test: PWR_DBPCR at PWR_BASE+0x00C.
+ * Backup domain unlock: PWR_DBPCR at PWR_BASE+0x024 (CMSIS offset 0x24).
  *
  * FAIL codes:
  *   0xE001 — BKPSRAM word[0] readback mismatch
@@ -36,7 +36,7 @@
 #define RCC_AHB1ENR2    (*(volatile uint32_t *)(RCC_BASE + 0x0E0u))
 
 #define PWR_BASE        0x44020800u
-#define PWR_DBPCR       (*(volatile uint32_t *)(PWR_BASE + 0x00Cu))
+#define PWR_DBPCR       (*(volatile uint32_t *)(PWR_BASE + 0x024u))
 #define PWR_DBPCR_DBP   (1u << 0)
 
 #define BKPSRAM_BASE    0x40036400u

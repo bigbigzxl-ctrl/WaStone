@@ -16,7 +16,7 @@
  * TIM16_BASE = 0x40014400 (APB2 + 0x4400)
  * TIM17_BASE = 0x40014800 (APB2 + 0x4800)
  *
- * RCC_APB2ENR = RCC_BASE + 0x0ACu (confirmed from existing spi/uart tests)
+ * RCC_APB2ENR = RCC_BASE + 0x0A4u (CMSIS confirmed; 0xAC is reserved)
  *   bit16 = TIM15EN
  *   bit17 = TIM16EN
  *   bit18 = TIM17EN
@@ -43,7 +43,7 @@
 #include "../ael_mailbox.h"
 
 #define RCC_BASE        0x44020C00u
-#define RCC_APB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0ACu))
+#define RCC_APB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0A4u))
 
 #define TIM15_BASE      0x40014000u
 #define TIM16_BASE      0x40014400u

@@ -3,7 +3,7 @@ import subprocess
 import shutil
 import time
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 from urllib.parse import urlparse
 
 import requests
@@ -33,7 +33,44 @@ def _tcp_ping(endpoint: str) -> bool:
         return False
 
 
-def check_connection_readiness(bench_setup: dict) -> List[PreflightIssue]:
+def _endpoint_matches_selected_probe(endpoint: str, probe_cfg: Dict[str, object]) -> bool:
+    if not endpoint or not isinstance(probe_cfg, dict):
+        return False
+    parsed = urlparse(endpoint if "//" in endpoint else f"tcp://{endpoint}")
+    host = parsed.hostname
+    port = parsed.port
+    if not host or port is None:
+        return False
+    probe_ip = str(probe_cfg.get("ip") or "").strip()
+    if not probe_ip or host != probe_ip:
+        return False
+    gdb_port = probe_cfg.get("gdb_port")
+    web_port = probe_cfg.get("web_port", 443)
+    try:
+        if gdb_port is not None and int(port) == int(gdb_port):
+            return True
+    except Exception:
+        pass
+    try:
+        if web_port is not None and int(port) == int(web_port):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _role_covered_by_probe_preflight(role: dict, probe_cfg: Dict[str, object]) -> bool:
+    if not isinstance(role, dict) or not isinstance(probe_cfg, dict):
+        return False
+    role_instrument_id = str(role.get("instrument_id") or "").strip()
+    probe_instance_id = str(probe_cfg.get("instance_id") or "").strip()
+    if role_instrument_id and probe_instance_id and role_instrument_id == probe_instance_id:
+        return True
+    endpoint = str(role.get("endpoint") or "").strip()
+    return _endpoint_matches_selected_probe(endpoint, probe_cfg)
+
+
+def check_connection_readiness(bench_setup: dict, probe_cfg: Dict[str, object] | None = None) -> List[PreflightIssue]:
     """Check connection/setup readiness before run.
 
     Returns a list of PreflightIssue items (blocking or advisory).
@@ -59,6 +96,8 @@ def check_connection_readiness(bench_setup: dict) -> List[PreflightIssue]:
             continue
         endpoint = str(role.get("endpoint") or "").strip()
         required = bool(role.get("required", True))
+        if probe_cfg and _role_covered_by_probe_preflight(role, probe_cfg):
+            continue
         if endpoint and required:
             if not _tcp_ping(endpoint):
                 issues.append(PreflightIssue(
