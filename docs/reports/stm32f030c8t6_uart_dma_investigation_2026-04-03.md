@@ -704,3 +704,46 @@ What this changes in the overall interpretation:
   wide
 - the remaining unresolved area is now narrower again: receive-side bare-metal
   DMA and any combined TX/RX bare-metal test shape
+
+## Bare-Metal RX Observed Breakthrough
+
+The deferred bare-metal RX-side observed target is now passing as well:
+
+- [main.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_observed/main.c)
+- [startup.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_observed/startup.c)
+- [Makefile](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_observed/Makefile)
+- [stm32f030c8t6_uart_dma_rx_observed.json](/home/ali/work/ai-embedded-lab/tests/plans/stm32f030c8t6_uart_dma_rx_observed.json)
+
+Validated run:
+
+- `2026-04-03_17-08-45_stm32f030c8t6_daplink_uart_stm32f030c8t6_uart_dma_rx_observed`
+
+The repaired target now proves:
+
+- bare-metal `USART1 RX DMA` on `DMA1 Channel3`
+- host-driven payload on `DAPLink TX -> PA10`
+- mailbox pass only after DMA transfer complete and exact payload match
+
+The same startup issue applied here too:
+
+- the original target still inherited the old word-copy reset code
+- the new target now uses a local byte-copy [startup.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_observed/startup.c)
+  plus ST's `system_stm32f0xx.c`
+
+The receive-side proof was also simplified down to one direct path:
+
+- `USART1_RDR -> DMA1_Channel3 -> rx_buf`
+- no remap variants
+- no mixed TX/RX DMA coupling
+- repeated `AEL_UART_DMA_RX_READY` so late host observers still sync correctly
+
+What this means now:
+
+- ST HAL `TX DMA`: proven
+- ST HAL `RX DMA`: proven
+- bare-metal `TX DMA observed`: proven
+- bare-metal `RX DMA observed`: proven
+
+The original DMA investigation is therefore resolved for the split observed
+paths. Any remaining future work would be about whether to add a combined
+bare-metal TX+RX test shape, not whether this MCU and bench can perform UART DMA.
