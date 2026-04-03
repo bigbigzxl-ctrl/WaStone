@@ -1,0 +1,66 @@
+{
+  "name": "stm32f030c8t6_golden",
+  "description": "STM32F030C8T6 canonical staged golden suite on the local DAPLink bench. Stage 0 proves board life with the visible PC13 LED and the runtime mailbox gate. Stage 1 covers timer, SysTick, internal temperature, system identity, reset flags, sleep/wake via WFI, internal VREFINT, and IWDG. Pre-Stage2 connectivity proves the jumper bench wiring before richer GPIO, EXTI, ADC, capture, hardware PWM, SPI1, and UART loopback tests. UART DMA is intentionally deferred from the canonical pack until it is independently stabilized on this exact MCU and bench contract.",
+  "board": "stm32f030c8t6_daplink",
+  "status": "golden",
+  "pre_stage2_connectivity": [
+    "tests/plans/stm32f030c8t6_pb0_pb1_probe.json",
+    "tests/plans/stm32f030c8t6_pb8_pb9_probe.json",
+    "tests/plans/stm32f030c8t6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f030c8t6_pa7_pa6_spi_probe.json",
+    "tests/plans/stm32f030c8t6_uart_loopback_probe.json"
+  ],
+  "stages": {
+    "0": [
+      "tests/plans/stm32f030c8t6_pc13_blinky_visual.json",
+      "tests/plans/stm32f030c8t6_minimal_runtime_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/stm32f030c8t6_timer_mailbox.json",
+      "tests/plans/stm32f030c8t6_systick_mailbox.json",
+      "tests/plans/stm32f030c8t6_internal_temp_mailbox.json",
+      "tests/plans/stm32f030c8t6_system_identity_mailbox.json",
+      "tests/plans/stm32f030c8t6_reset_cause_mailbox.json",
+      "tests/plans/stm32f030c8t6_sleep_wfi_mailbox.json",
+      "tests/plans/stm32f030c8t6_adc_vref_mailbox.json",
+      "tests/plans/stm32f030c8t6_iwdg.json"
+    ],
+    "2": [
+      "tests/plans/stm32f030c8t6_gpio_loopback.json",
+      "tests/plans/stm32f030c8t6_exti_trigger.json",
+      "tests/plans/stm32f030c8t6_adc_loopback.json",
+      "tests/plans/stm32f030c8t6_capture_mailbox.json",
+      "tests/plans/stm32f030c8t6_pwm_capture.json",
+      "tests/plans/stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox.json",
+      "tests/plans/stm32f030c8t6_spi1_loopback_mailbox.json",
+      "tests/plans/stm32f030c8t6_uart_loopback_mailbox.json",
+      "tests/plans/stm32f030c8t6_uart_multibyte.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f030c8t6_pc13_blinky_visual.json",
+    "tests/plans/stm32f030c8t6_minimal_runtime_mailbox.json",
+    "tests/plans/stm32f030c8t6_timer_mailbox.json",
+    "tests/plans/stm32f030c8t6_systick_mailbox.json",
+    "tests/plans/stm32f030c8t6_internal_temp_mailbox.json",
+    "tests/plans/stm32f030c8t6_system_identity_mailbox.json",
+    "tests/plans/stm32f030c8t6_reset_cause_mailbox.json",
+    "tests/plans/stm32f030c8t6_sleep_wfi_mailbox.json",
+    "tests/plans/stm32f030c8t6_adc_vref_mailbox.json",
+    "tests/plans/stm32f030c8t6_iwdg.json",
+    "tests/plans/stm32f030c8t6_pb0_pb1_probe.json",
+    "tests/plans/stm32f030c8t6_pb8_pb9_probe.json",
+    "tests/plans/stm32f030c8t6_pa0_pa1_adc_probe.json",
+    "tests/plans/stm32f030c8t6_pa7_pa6_spi_probe.json",
+    "tests/plans/stm32f030c8t6_uart_loopback_probe.json",
+    "tests/plans/stm32f030c8t6_gpio_loopback.json",
+    "tests/plans/stm32f030c8t6_exti_trigger.json",
+    "tests/plans/stm32f030c8t6_adc_loopback.json",
+    "tests/plans/stm32f030c8t6_capture_mailbox.json",
+    "tests/plans/stm32f030c8t6_pwm_capture.json",
+    "tests/plans/stm32f030c8t6_tim3_pwm_pb0_pb1_mailbox.json",
+    "tests/plans/stm32f030c8t6_spi1_loopback_mailbox.json",
+    "tests/plans/stm32f030c8t6_uart_loopback_mailbox.json",
+    "tests/plans/stm32f030c8t6_uart_multibyte.json"
+  ]
+}
