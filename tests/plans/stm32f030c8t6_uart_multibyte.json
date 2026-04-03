@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_uart_multibyte",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["uart"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_uart_multibyte",
+    "artifact_stem": "stm32f030c8t6_uart_multibyte_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_uart_multibyte"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "USART1 multibyte loopback on PA9 <-> PA10. PASS after all 8 bytes match.",
+    "peripheral_signals": [
+      {
+        "role": "USART1_TX",
+        "dut_signal": "PA9",
+        "direction": "output",
+        "notes": "Wire PA9 -> PA10."
+      },
+      {
+        "role": "USART1_RX",
+        "dut_signal": "PA10",
+        "direction": "input",
+        "notes": "Wire PA9 -> PA10."
+      }
+    ]
+  }
+}

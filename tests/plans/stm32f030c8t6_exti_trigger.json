@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_exti_trigger",
+  "board": "stm32f030c8t6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "cross_instrument"],
+  "covers": ["exti"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_exti_trigger",
+    "artifact_stem": "stm32f030c8t6_exti_trigger_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_exti_trigger"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 30.0,
+    "addr": "0x20001C00"
+  },
+  "bench_setup": {
+    "notes": "EXTI trigger: PA0 drives rising edges and PA1 confirms them through EXTI1 pending events. PASS after 10 detections.",
+    "peripheral_signals": [
+      {
+        "role": "EXTI_DRIVER",
+        "dut_signal": "PA0",
+        "direction": "output",
+        "notes": "Wire PA0 -> PA1."
+      },
+      {
+        "role": "EXTI_INPUT",
+        "dut_signal": "PA1",
+        "direction": "input",
+        "notes": "Wire PA0 -> PA1."
+      }
+    ]
+  }
+}
