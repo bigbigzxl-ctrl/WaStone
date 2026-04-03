@@ -9,7 +9,7 @@
       "preflight": {
         "exp_id": "d9f7bb22-6843-4045-bdd9-af8ec9ce65f2",
         "count": 7,
-        "last_raw": "[stm32h750vbt6] stm32h750_blinky_visual: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_blinky_visual: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -31,7 +31,7 @@
       "preflight": {
         "exp_id": "67286d5a-fd7b-4d10-86c8-f072f9e3b038",
         "count": 4,
-        "last_raw": "[stm32h750vbt6] stm32h750_rtc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_rtc: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -61,7 +61,7 @@
       "preflight": {
         "exp_id": "297847db-16fd-415c-9b98-a3f5a2c18f75",
         "count": 4,
-        "last_raw": "[stm32h750vbt6] stm32h750_lptim: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_lptim: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -75,7 +75,7 @@
       "preflight": {
         "exp_id": "1e6312ba-e7b1-4469-809a-f27ad37571e3",
         "count": 4,
-        "last_raw": "[stm32h750vbt6] stm32h750_i2c_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_i2c_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -105,7 +105,7 @@
       "load": {
         "exp_id": "66bab868-b6a3-4cea-888e-221752c0a30a",
         "count": 3,
-        "last_raw": "[stm32g431cbu6] stm32g431_uart_dma: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_uart_dma: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -119,7 +119,7 @@
       "preflight": {
         "exp_id": "974e8edd-60bd-45be-8a54-9967f4439d95",
         "count": 4,
-        "last_raw": "[stm32h750vbt6] stm32h750_wwdg: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_wwdg: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -133,7 +133,7 @@
       "preflight": {
         "exp_id": "868a6523-b8bd-4191-bf2b-1b5c306ab019",
         "count": 4,
-        "last_raw": "[stm32h750vbt6] stm32h750_fdcan_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_fdcan_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -163,7 +163,7 @@
       "preflight": {
         "exp_id": "15fadeea-6095-4589-9474-80e80dfd3cc0",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_gpio_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_gpio_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -177,7 +177,7 @@
       "preflight": {
         "exp_id": "e7fa79b5-63bd-44a3-bdd2-76e7ffc23773",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_uart_dma: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_uart_dma: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -223,7 +223,7 @@
       "preflight": {
         "exp_id": "f74c0376-c316-42c8-8275-8280b0215db9",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_iwdg: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_iwdg: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -253,7 +253,7 @@
       "preflight": {
         "exp_id": "3adad8c2-cc57-4f02-a7ab-30f4e01507c4",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_crc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_crc: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -275,7 +275,7 @@
       "preflight": {
         "exp_id": "029438d6-51ec-4524-ac5a-1b5723a0961c",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_gpio_signature: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_gpio_signature: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -289,7 +289,7 @@
       "load": {
         "exp_id": "4f0a817a-388f-4328-9265-8f28bae76c87",
         "count": 2,
-        "last_raw": "[stm32g431cbu6] stm32g431_blinky_visual: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_blinky_visual: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -311,7 +311,7 @@
       "preflight": {
         "exp_id": "289f9298-2489-4e23-ac11-b2075957ec00",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_spi_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_spi_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -333,7 +333,7 @@
       "preflight": {
         "exp_id": "88c69a2b-c791-4e3f-8469-0fc45a986338",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_exti: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_exti: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -363,7 +363,7 @@
       "preflight": {
         "exp_id": "29157974-0c9d-4cbf-bdd8-4a6920f190b9",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_wiring_verify: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_wiring_verify: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -401,7 +401,7 @@
       "preflight": {
         "exp_id": "c78926e3-dc20-4322-bba5-53071504ab60",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_adc_dac_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_adc_dac_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -439,7 +439,7 @@
       "preflight": {
         "exp_id": "6724b431-e82e-43c7-8317-db5128bbc017",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_iwdg: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_iwdg: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -493,7 +493,7 @@
       "preflight": {
         "exp_id": "55233d5a-a6b2-48b3-bd0c-1a513b0d532f",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_rng: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_rng: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -523,7 +523,7 @@
       "preflight": {
         "exp_id": "69f708ac-4d01-4677-9862-88b6e01fdeef",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_gpio_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_gpio_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -553,7 +553,7 @@
       "load": {
         "exp_id": "df0993f1-88a6-4364-8134-23e6b8deedb4",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_timer_mailbox: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_timer_mailbox: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -599,7 +599,7 @@
       "preflight": {
         "exp_id": "c6d053bf-4a3f-436a-aa94-47d78192843d",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_bdma: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_bdma: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -613,7 +613,7 @@
       "preflight": {
         "exp_id": "5fb57807-38e7-402e-bbe2-53e14214fc55",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_minimal_runtime_mailbox: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_minimal_runtime_mailbox: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -627,7 +627,7 @@
       "preflight": {
         "exp_id": "6e8ae15e-8791-481a-a185-9bf9f11c9a30",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_internal_temp_mailbox: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_internal_temp_mailbox: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -641,7 +641,7 @@
       "preflight": {
         "exp_id": "1a55354c-c5e0-41f0-868c-8843a8bafa33",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_pll1_clock: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_pll1_clock: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -655,7 +655,7 @@
       "load": {
         "exp_id": "0d618a5b-f8e3-4227-b00e-04bb3958bbdf",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_dac_mailbox: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_dac_mailbox: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -669,7 +669,7 @@
       "preflight": {
         "exp_id": "5eed3aa9-a4b3-4046-978c-b27c45da2153",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_exti_trigger: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_exti_trigger: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -683,7 +683,7 @@
       "load": {
         "exp_id": "9a33c917-a17a-4fba-9ad7-37d2b6ef3a9e",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_fdcan_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_fdcan_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -697,7 +697,7 @@
       "preflight": {
         "exp_id": "9a2fd3fa-39cd-43e1-81cf-9264aa3561dc",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_timer_mailbox: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_timer_mailbox: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -711,7 +711,7 @@
       "preflight": {
         "exp_id": "d9cf6940-3899-4bb7-9e30-2ea051c05522",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_pwm_capture: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_pwm_capture: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -725,7 +725,7 @@
       "preflight": {
         "exp_id": "f8613d66-aeb3-4cdc-b805-3dc8320d8869",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_tim1_pwm: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_tim1_pwm: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -739,7 +739,7 @@
       "preflight": {
         "exp_id": "2b6f24da-8a3d-4340-a5ff-51594721a7db",
         "count": 3,
-        "last_raw": "[stm32g431cbu6] stm32g431_adc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_adc: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -753,7 +753,7 @@
       "preflight": {
         "exp_id": "1fad82c5-4ce9-40da-9219-c15761cd7471",
         "count": 3,
-        "last_raw": "[stm32h750vbt6] stm32h750_uart_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_uart_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -767,7 +767,7 @@
       "load": {
         "exp_id": "e4f15bc4-6640-425d-9aa6-b5556393192c",
         "count": 3,
-        "last_raw": "[stm32g431cbu6] stm32g431_internal_temp_mailbox: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_internal_temp_mailbox: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -781,7 +781,7 @@
       "preflight": {
         "exp_id": "4e68fa57-508e-45ce-a5f7-f0260f1d6bff",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_uart_loopback: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_uart_loopback: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -795,7 +795,7 @@
       "preflight": {
         "exp_id": "013c18b2-7b25-4dad-8abf-60e12ebcb6d2",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_minimal_runtime_mailbox: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_minimal_runtime_mailbox: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -809,7 +809,7 @@
       "preflight": {
         "exp_id": "c08718b7-f185-41b1-8006-a19a43c16ec1",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_capture: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_capture: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -823,7 +823,7 @@
       "preflight": {
         "exp_id": "338732cd-ce05-4582-94d0-a4224134b93c",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_spi: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_spi: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -837,7 +837,7 @@
       "preflight": {
         "exp_id": "2a79f6f5-e4b4-45f3-bc14-b386923e8a23",
         "count": 4,
-        "last_raw": "[stm32g431cbu6] stm32g431_wiring_verify: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_wiring_verify: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -851,7 +851,7 @@
       "preflight": {
         "exp_id": "2c9ea63c-1466-4345-9a46-9a87de7efb9b",
         "count": 2,
-        "last_raw": "[stm32g431cbu6] stm32g431_pwm: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32g431cbu6] stm32g431_pwm: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -889,7 +889,7 @@
       "preflight": {
         "exp_id": "dad5e38e-49b5-40ff-b55f-971c0598b05a",
         "count": 2,
-        "last_raw": "[stm32h750vbt6] stm32h750_qspi_flash: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32h750vbt6] stm32h750_qspi_flash: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -903,7 +903,7 @@
       "preflight": {
         "exp_id": "f0c02a95-00cc-4f1b-9d5c-0200ee5a3b15",
         "count": 1,
-        "last_raw": "[stm32f407vet6] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[stm32f407vet6] unknown: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -917,7 +917,7 @@
       "load": {
         "exp_id": "00b7520a-aac7-4b77-84db-e4eb659f65ff",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_uart_dma: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_uart_dma: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -931,7 +931,7 @@
       "load": {
         "exp_id": "6d728709-6a58-4110-8bc8-ada40cdcc19b",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_spi_dma: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_spi_dma: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -945,7 +945,7 @@
       "load": {
         "exp_id": "6715a6f5-7005-4a18-9d85-1f2e6428d78c",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_can_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_can_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -959,7 +959,7 @@
       "load": {
         "exp_id": "cc278fbb-b7a7-4772-8668-3c87a32ae502",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_tim2_32bit: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_tim2_32bit: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -973,7 +973,7 @@
       "load": {
         "exp_id": "2a36e053-b79a-417b-b655-3bf77ca6040b",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_flash_rw: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_flash_rw: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -987,7 +987,7 @@
       "load": {
         "exp_id": "b41989fe-0afb-43b0-8c6a-c69ee5fe24da",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_dac_dma: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_dac_dma: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1009,7 +1009,7 @@
       "check_mailbox": {
         "exp_id": "d93b613e-81c1-40eb-bf15-3de1dc9be718",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_gpio_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox read failed: parse_failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_gpio_loopback: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox read failed: parse_failed"
       }
     }
   },
@@ -1023,7 +1023,7 @@
       "load": {
         "exp_id": "1a74feb4-1c2e-4f2d-95af-2d0b785895dc",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_uart_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_uart_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1037,7 +1037,7 @@
       "load": {
         "exp_id": "aadbd4fc-64c9-4d5c-9eee-f1f01f985e7e",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_spi_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_spi_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1051,7 +1051,7 @@
       "load": {
         "exp_id": "3bea477d-9843-4f41-a842-66aac50c5e3c",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_adc_temp: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_adc_temp: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1065,7 +1065,7 @@
       "load": {
         "exp_id": "852a5526-5c92-47d5-b9e4-13aada25d84b",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_exti_trigger: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_exti_trigger: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1079,7 +1079,7 @@
       "load": {
         "exp_id": "79488a12-1280-4f54-9c4f-f32e6aa9cce6",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_adc_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_adc_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1093,7 +1093,7 @@
       "load": {
         "exp_id": "4c0d60df-9226-45f5-92f8-7f18e564e943",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_i2c_loopback: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_i2c_loopback: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1107,7 +1107,7 @@
       "load": {
         "exp_id": "8600c570-b357-4083-92ac-d05fae5a5fb3",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_pwm_capture: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_pwm_capture: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1121,7 +1121,7 @@
       "load": {
         "exp_id": "a512c276-321c-4162-b1fe-fdf0047df586",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_dma_m2m: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_dma_m2m: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1135,7 +1135,7 @@
       "load": {
         "exp_id": "eacc954d-5275-4bc1-bf8a-0ca3857b3dc3",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_crc: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_crc: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1149,7 +1149,7 @@
       "load": {
         "exp_id": "c4cfadb8-0b2b-4459-9593-5d4eb39023a2",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_rng: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_rng: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1163,7 +1163,7 @@
       "load": {
         "exp_id": "c2b6c464-484f-41e4-98b4-785b96133249",
         "count": 1,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_dac_adc: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_dac_adc: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1177,7 +1177,7 @@
       "load": {
         "exp_id": "a275ffab-47f7-40c5-a83d-9a76f19750b3",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_fpu: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_fpu: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1191,7 +1191,7 @@
       "load": {
         "exp_id": "31767a81-2ca2-4dce-8db8-16fed731ee83",
         "count": 2,
-        "last_raw": "[stm32f407vet6] stm32f407vet6_rtc: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "last_raw": "[stm32f407vet6] stm32f407vet6_rtc: failed \u2014 stages: preflight, build, run, check \u2014 failure: load \u2014 flash attempt failed"
       }
     }
   },
@@ -1213,7 +1213,7 @@
       "check_signal": {
         "exp_id": "9a8a3d42-91a4-48fe-9510-72f370955ce5",
         "count": 2,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_led_probe: failed — stages: preflight, build, load, run — failure: check_signal — verify failed"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_led_probe: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_signal \u2014 verify failed"
       }
     }
   },
@@ -1227,7 +1227,7 @@
       "check_signal": {
         "exp_id": "25306c25-1371-451a-bf08-456de0932662",
         "count": 2,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_fast_probe: failed — stages: preflight, build, load, run — failure: check_signal — verify failed"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_pc13_fast_probe: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_signal \u2014 verify failed"
       }
     }
   },
@@ -1241,7 +1241,7 @@
       "check_mailbox": {
         "exp_id": "66dd3016-624e-4614-98c5-9ad590bcd604",
         "count": 2,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_timer_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_timer_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=RUNNING (expected PASS)"
       }
     }
   },
@@ -1335,7 +1335,7 @@
       "check_mailbox": {
         "exp_id": "c2b650e3-d078-45c2-b8cb-485864d25611",
         "count": 1,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_exti_trigger: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_exti_trigger: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -1357,7 +1357,7 @@
       "check_mailbox": {
         "exp_id": "f924bf2c-5f71-4c1c-bbf8-d61e3c7d80eb",
         "count": 2,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_spi_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_spi_loopback: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -1411,7 +1411,7 @@
       "check_mailbox": {
         "exp_id": "5811bd9a-948d-4022-928a-67616b6ae915",
         "count": 1,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_reset_cause_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_reset_cause_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -1425,7 +1425,7 @@
       "check_mailbox": {
         "exp_id": "6db36f81-8b13-492c-aaac-36743da8665b",
         "count": 1,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_system_identity_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_system_identity_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -1455,7 +1455,7 @@
       "check_mailbox": {
         "exp_id": "022cf533-d0e5-4954-a105-2b71f2e6c665",
         "count": 2,
-        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_tim4_pwm_pb8_pb9_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[stm32f103c6t6_bluepill_like] stm32f103c6_tim4_pwm_pb8_pb9_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -1485,7 +1485,7 @@
       "preflight": {
         "exp_id": "a1af869a-dec3-4f06-afd9-f5d250a30e7d",
         "count": 2,
-        "last_raw": "[unknown] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[unknown] unknown: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -1632,5 +1632,55 @@
     "last_seen": 1775202313.5055082,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_gpdma2_m2m_mailbox": {
+    "exp_id": "45c1457a-ade7-4188-82a8-38a47dbc5a63",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775207955.788402,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_fmac_mailbox": {
+    "exp_id": "8408c0fb-813b-4afb-a9a2-6e8e6090baac",
+    "success_count": 8,
+    "failure_count": 7,
+    "last_seen": 1775207955.788402,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "73361ec5-3bd0-4172-ac83-db9e9e076f8e",
+        "count": 7,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_fmac_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32h563rgt6|stm32h563rgt6_dts_mailbox": {
+    "exp_id": "1fb4792b-7f52-4dc3-bd5b-f568cbb885a9",
+    "success_count": 14,
+    "failure_count": 10,
+    "last_seen": 1775207955.788402,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "51e45a5a-8c78-4bed-80f8-27f031e6ac01",
+        "count": 10,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dts_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32h563rgt6|stm32h563rgt6_hash_mailbox": {
+    "exp_id": "26aab994-6191-436d-9f6b-62cdf15d47b4",
+    "success_count": 2,
+    "failure_count": 3,
+    "last_seen": 1775207955.788402,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "af5823f6-f41a-4235-aa49-710bbd3598a2",
+        "count": 3,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_hash_mailbox: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
   }
 }

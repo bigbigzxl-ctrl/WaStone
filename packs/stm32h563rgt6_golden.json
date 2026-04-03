@@ -18,6 +18,10 @@
         "tests/plans/stm32h563rgt6_minimal_runtime_mailbox.json",
         "tests/plans/stm32h563rgt6_adc_temp_mailbox.json",
         "tests/plans/stm32h563rgt6_timer_mailbox.json",
-        "tests/plans/stm32h563rgt6_dma_m2m_mailbox.json"
+        "tests/plans/stm32h563rgt6_dma_m2m_mailbox.json",
+        "tests/plans/stm32h563rgt6_gpdma2_m2m_mailbox.json",
+        "tests/plans/stm32h563rgt6_hash_mailbox.json",
+        "tests/plans/stm32h563rgt6_dts_mailbox.json",
+        "tests/plans/stm32h563rgt6_fmac_mailbox.json"
     ]
 }
