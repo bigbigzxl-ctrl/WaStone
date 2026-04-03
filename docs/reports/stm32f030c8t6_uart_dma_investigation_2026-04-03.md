@@ -415,6 +415,35 @@ What this proves:
 - the remaining bug is in the repo's bare-metal UART DMA implementation, not in
   the hardware path and not in ST's supported configuration model
 
+10. Bare-metal one-shot `HALSEQ` probe.
+
+To test whether the remaining gap was only ordering, a one-shot bare-metal probe
+was added:
+
+- [main.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_halseq_probe/main.c)
+- [Makefile](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_halseq_probe/Makefile)
+
+This probe does only one path:
+
+- configure `USART1` at `9600`
+- arm `DMA1 Channel2` with `TCIE|TEIE`
+- enable the DMA channel first
+- clear `TCF`
+- assert `DMAT`
+- on DMA TC, disable `DMAT` and switch to `USART1 TCIE`
+
+Observed host UART output:
+
+- `AEL_HALSEQ_BEGIN`
+- `AEL_HALSEQ_FAIL dma_tc=00000000 dma_te=00000000 uart_tc=00000000 dma_isr=00000000 cndtr=00000013 ccr=0000009B usart_isr=00600010`
+
+What this adds:
+
+- a HAL-like ordering alone is not sufficient
+- even the one-shot bare-metal `Channel2 + IRQ + 9600 + clear-TCF-before-DMAT`
+  path still produces no DMA activity
+- the missing ingredient is therefore deeper than simple high-level ordering
+
 ### Startup / linker trap discovered during the narrowing pass
 
 One additional repo-local issue surfaced during this work:
@@ -482,6 +511,9 @@ The current evidence points to one of these unresolved causes:
 4. The bare-metal sequence still differs from the working ST HAL path in at
    least one material way, even though the broad outline appears similar.
 
+5. That missing difference is not eliminated by converting the bare-metal path
+   into a one-shot HAL-like `Channel2 + IRQ + 9600` sequence.
+
 What the evidence does **not** support:
 
 - generic UART wiring failure
@@ -499,6 +531,7 @@ Those paths were already proven independently by:
 - `stm32f030c8t6_uart_banner`
 - `stm32f030c8t6_dma_m2m`
 - one-off `/tmp/stm32f030_hal_dma_tx_probe` HAL proof
+- repo-local `stm32f030c8t6_uart_dma_halseq_probe` still failing
 
 ## Why This Is Deferred
 
