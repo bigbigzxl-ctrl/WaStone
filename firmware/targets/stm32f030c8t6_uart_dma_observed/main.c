@@ -62,8 +62,7 @@
 
 #define DMA_TIMEOUT     1000000u
 
-static const uint8_t TX_FRAME[] =
-    "AEL_UART_DMA A1 B2 C3 D4 55 66 77 88\r\n";
+static uint8_t TX_FRAME[39];
 
 struct dma_variant_result {
     uint32_t code;
@@ -83,6 +82,14 @@ static void delay(volatile uint32_t n)
 {
     while (n--) {
         __asm__ volatile ("nop");
+    }
+}
+
+static void init_tx_frame(void)
+{
+    static const char pattern[] = "AEL_UART_DMA A1 B2 C3 D4 55 66 77 88\r\n";
+    for (uint32_t i = 0u; i < sizeof(pattern); ++i) {
+        TX_FRAME[i] = (uint8_t)pattern[i];
     }
 }
 
@@ -229,6 +236,7 @@ int main(void)
     USART1_CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 
     ael_mailbox_init();
+    init_tx_frame();
 
     g_r_ch2 = run_variant(0u, 0u);
     if (g_r_ch2.code == 0u) {
