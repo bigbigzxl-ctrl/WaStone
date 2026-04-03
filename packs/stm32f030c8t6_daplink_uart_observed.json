@@ -1,0 +1,11 @@
+{
+  "name": "stm32f030c8t6_daplink_uart_observed",
+  "description": "STM32F030C8T6 host-observed UART validation pack on the local DAPLink bridge. This pack is separate from the canonical local-loopback Golden Suite and assumes PA9->DAPLink RX, DAPLink TX->PA10.",
+  "board": "stm32f030c8t6_daplink_uart",
+  "status": "candidate",
+  "tests": [
+    "tests/plans/stm32f030c8t6_uart_tx_probe.json",
+    "tests/plans/stm32f030c8t6_uart_multibyte_observed.json",
+    "tests/plans/stm32f030c8t6_uart_banner.json"
+  ]
+}

@@ -1,0 +1,65 @@
+board:
+  name: STM32F030C8T6 DAPLink UART
+  target: stm32f030c8t6
+  instrument_instance: daplink_f030_c8_local
+  clock_hz: 8000000
+  kind: bare_mcu
+  features:
+    - programmable_via_swd
+    - has_gpio
+    - has_adc
+    - has_uart
+    - has_spi
+    - has_timer
+  build:
+    type: arm_debug
+    project_dir: firmware/targets/stm32f030c8t6
+    artifact_stem: stm32f030_app
+  firmware:
+    description: STM32F030C8T6 local DAPLink bench with DAPLink-hosted UART on PA9/PA10 and the same SWD/jumper contract as the canonical local-loopback suite
+  flash:
+    speed_khz: 1000
+    reset_strategy: connect_under_reset
+    post_load_settle_s: 2.0
+    target_id: 1
+    gdb_launch_cmds:
+      - "monitor reset halt"
+      - "file {firmware}"
+      - "load"
+      - "monitor reset run"
+      - "detach"
+  mailbox_verify_defaults:
+    skip_attach: true
+    halt_before_read: false
+  bench_connections:
+    - from: PA0
+      to: PA1
+    - from: PB0
+      to: PB1
+    - from: PB8
+      to: PB9
+    - from: PA7
+      to: PA6
+    - from: PA9
+      to: DAPLink RX
+    - from: DAPLink TX
+      to: PA10
+    - from: PC13
+      to: LED
+    - from: NRST
+      to: DAPLink NRST
+    - from: GND
+      to: probe GND
+  safe_pins:
+    - PC13
+  default_wiring:
+    swd: "external"
+    reset: "daplink_nrst"
+    verify: "NC"
+    uart: "daplink_bridge"
+  power_and_boot:
+    reset_strategy: connect_under_reset
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3
