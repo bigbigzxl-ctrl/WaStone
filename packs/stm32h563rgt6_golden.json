@@ -1,0 +1,19 @@
+{
+    "name": "stm32h563rgt6_golden",
+    "board": "stm32h563rgt6",
+    "tests": [
+        "tests/plans/stm32h563rgt6_gpio_loopback.json",
+        "tests/plans/stm32h563rgt6_uart_loopback.json",
+        "tests/plans/stm32h563rgt6_exti_trigger.json",
+        "tests/plans/stm32h563rgt6_spi_loopback.json",
+        "tests/plans/stm32h563rgt6_pwm_capture.json",
+        "tests/plans/stm32h563rgt6_adc_loopback.json",
+        "tests/plans/stm32h563rgt6_dac_adc.json",
+        "tests/plans/stm32h563rgt6_crc_mailbox.json",
+        "tests/plans/stm32h563rgt6_fpu_mailbox.json",
+        "tests/plans/stm32h563rgt6_cordic_mailbox.json",
+        "tests/plans/stm32h563rgt6_i2c_loopback.json",
+        "tests/plans/stm32h563rgt6_uid_mailbox.json",
+        "tests/plans/stm32h563rgt6_rng_mailbox.json"
+    ]
+}

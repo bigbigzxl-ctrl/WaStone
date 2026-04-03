@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h563rgt6_dac_adc",
+  "board": "stm32h563rgt6",
+  "supported_instruments": [
+    "daplink"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "dac",
+    "adc",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32h563rgt6_dac_adc",
+    "artifact_stem": "stm32h563rgt6_dac_adc_app",
+    "build_dir": "artifacts/build_stm32h563rgt6_dac_adc"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20007F00",
+    "skip_attach": true,
+    "halt_before_read": false
+  },
+  "bench_setup": {
+    "notes": "DAC1→ADC1 loopback: PA4 (DAC1_OUT1, normal mode with output buffer) → wire → PA1 (ADC1_INP1). Three levels tested: mid 2048 (expect 1800-2300), high 3900 (expect>3500), low 100 (expect<400). detail0 = (mid_raw<<16)|low_raw. Wire required: PA4 → PA1.",
+    "peripheral_signals": [
+      {
+        "role": "DAC_OUT",
+        "dut_signal": "PA4",
+        "direction": "output",
+        "notes": "DAC1_OUT1 analog output. Wire: PA4 → PA1."
+      },
+      {
+        "role": "ADC_IN",
+        "dut_signal": "PA1",
+        "direction": "input",
+        "notes": "ADC1_INP1 analog input. Wire: PA4 → PA1."
+      }
+    ]
+  }
+}

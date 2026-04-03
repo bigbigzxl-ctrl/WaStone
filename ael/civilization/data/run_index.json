@@ -1197,9 +1197,9 @@
   },
   "stm32f103c6t6_bluepill_like|stm32f103c6_pc13_blinky_visual": {
     "exp_id": "7a63ce6b-984b-439b-ac6b-bb7f61d463fd",
-    "success_count": 10,
+    "success_count": 13,
     "failure_count": 0,
-    "last_seen": 1775061727.9549704,
+    "last_seen": 1775125139.7450566,
     "confidence": 1.0,
     "known_failures": {}
   },
@@ -1473,6 +1473,132 @@
     "failure_count": 0,
     "last_seen": 1775062168.6079886,
     "confidence": 0.6,
+    "known_failures": {}
+  },
+  "unknown|unknown": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1775185635.00589,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "a1af869a-dec3-4f06-afd9-f5d250a30e7d",
+        "count": 2,
+        "last_raw": "[unknown] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
+  },
+  "stm32h563rgt6|unknown": {
+    "exp_id": "47e33643-d62f-47e9-b782-4f8599a15942",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775185687.2762647,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_i2c_loopback": {
+    "exp_id": "8e71a5ac-670a-4b8c-a046-c800736e1888",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_gpio_loopback": {
+    "exp_id": "48b01f99-2f28-4c54-ae91-873b014e9261",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_uart_loopback": {
+    "exp_id": "d6d0a5ca-4a56-46f7-b51d-e6e5d32c4b41",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_exti_trigger": {
+    "exp_id": "8c0e116d-456d-4059-b37d-7e6753a985c5",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_spi_loopback": {
+    "exp_id": "450e2d3d-34ae-430c-a68e-41b6efbf99e9",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_pwm_capture": {
+    "exp_id": "cd621664-3537-4064-8404-58611b1ff441",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_adc_loopback": {
+    "exp_id": "492b3a39-e4af-4d40-8467-da0ba3c258f5",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_dac_adc": {
+    "exp_id": "c77a5612-3555-4bcd-8685-961eb56cf23f",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_crc_mailbox": {
+    "exp_id": "d2776e52-5b5d-4314-94e0-894c85d89bf7",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_fpu_mailbox": {
+    "exp_id": "88f40a69-c9a8-4224-bd9a-7a6ca00e78aa",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_cordic_mailbox": {
+    "exp_id": "259a60d7-71da-4ef6-9c24-6c885ec1d9ae",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775185889.8909407,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_uid_mailbox": {
+    "exp_id": "8b67508c-d2e4-4d65-ac89-70261af65308",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775186014.6667142,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_rng_mailbox": {
+    "exp_id": "a88f0608-eba2-47cf-8788-9a792f5ac924",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775186023.9063232,
+    "confidence": 0.5,
     "known_failures": {}
   }
 }

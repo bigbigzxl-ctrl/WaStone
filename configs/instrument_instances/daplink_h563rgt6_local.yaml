@@ -1,0 +1,32 @@
+instance:
+  id: daplink_h563rgt6_local
+  type: daplink
+  label: DAPLink — STM32H563RGT6 (onboard DPLINK, USB serial 48026DF2)
+
+connection:
+  endpoint: "local:cmsis-dap"
+  serial_port: "/dev/ttyACM1"
+  ip: "127.0.0.1"
+  gdb_port: 3333
+  gdb_cmd: "arm-none-eabi-gdb"
+
+communication:
+  primary: gdb_remote
+  surfaces:
+    - name: gdb_remote
+      transport: usb_local
+      endpoint: "127.0.0.1:3333"
+      protocol: gdb_remote
+      invocation_style: request_response
+    - name: uart_console
+      transport: usb_local
+      endpoint: "/dev/ttyACM1"
+      protocol: uart
+      invocation_style: request_response
+
+capability_surfaces:
+  swd: gdb_remote
+  uart: uart_console
+
+# GDB server: pyocd gdbserver -t STM32H563RGTx --port 3333 --persist
+# Flash:      pyocd flash -t STM32H563RGTx --connect under-reset <elf>

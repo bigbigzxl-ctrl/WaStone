@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32h563rgt6_adc_loopback",
+  "board": "stm32h563rgt6",
+  "supported_instruments": [
+    "daplink"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox"
+  ],
+  "covers": [
+    "adc",
+    "gpio",
+    "loopback"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32h563rgt6_adc_loopback",
+    "artifact_stem": "stm32h563rgt6_adc_loopback_app",
+    "build_dir": "artifacts/build_stm32h563rgt6_adc_loopback"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20007F00",
+    "skip_attach": true,
+    "halt_before_read": false
+  },
+  "bench_setup": {
+    "notes": "GPIO→ADC loopback: PC0 (output, also LED1 active-low) drives HIGH/LOW; PC1 (ADC1_INP11 analog input, also LED2) reads back. GPIO output impedance dominates LED resistor — LED influence negligible. PASS: HIGH raw>3500, LOW raw<500. detail0 = (high_raw<<16)|low_raw. Wire required: PC0 → PC1.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_OUT",
+        "dut_signal": "PC0",
+        "direction": "output",
+        "notes": "Push-pull output. Drives HIGH then LOW. Wire: PC0 → PC1."
+      },
+      {
+        "role": "ADC_IN",
+        "dut_signal": "PC1",
+        "direction": "input",
+        "notes": "ADC1_INP11 analog input. Wire: PC0 → PC1."
+      }
+    ]
+  }
+}
