@@ -22,6 +22,13 @@
         "tests/plans/stm32h563rgt6_gpdma2_m2m_mailbox.json",
         "tests/plans/stm32h563rgt6_hash_mailbox.json",
         "tests/plans/stm32h563rgt6_dts_mailbox.json",
-        "tests/plans/stm32h563rgt6_fmac_mailbox.json"
+        "tests/plans/stm32h563rgt6_fmac_mailbox.json",
+        "tests/plans/stm32h563rgt6_icache_mailbox.json",
+        "tests/plans/stm32h563rgt6_vrefbuf_mailbox.json",
+        "tests/plans/stm32h563rgt6_lptim_mailbox.json",
+        "tests/plans/stm32h563rgt6_fdcan_mailbox.json",
+        "tests/plans/stm32h563rgt6_rtc_mailbox.json",
+        "tests/plans/stm32h563rgt6_pka_mailbox.json",
+        "tests/plans/stm32h563rgt6_lpuart_mailbox.json"
     ]
 }
