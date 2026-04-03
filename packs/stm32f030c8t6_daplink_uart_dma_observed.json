@@ -1,0 +1,10 @@
+{
+  "name": "stm32f030c8t6_daplink_uart_dma_observed",
+  "description": "Validated STM32F030C8T6 DAPLink UART DMA observed side-pack covering split bare-metal USART1 TX DMA and RX DMA proofs on PA9/PA10.",
+  "board": "stm32f030c8t6_daplink_uart",
+  "status": "candidate",
+  "tests": [
+    "tests/plans/stm32f030c8t6_uart_dma_observed.json",
+    "tests/plans/stm32f030c8t6_uart_dma_rx_observed.json"
+  ]
+}
