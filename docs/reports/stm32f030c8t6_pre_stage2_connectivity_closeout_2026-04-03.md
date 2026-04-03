@@ -4,7 +4,7 @@
 **Board:** `stm32f030c8t6_daplink`
 **Pack:** `packs/stm32f030c8t6_pre_stage2_connectivity.json`
 **Instrument:** `daplink_f030_c8_local` @ `127.0.0.1:3333`
-**Status:** partial live validation complete, `4/5 PASS`
+**Status:** final canonical pre-Stage2 rerun complete, `5/5 PASS`
 
 ## Summary
 
@@ -21,20 +21,27 @@ DAPLink bench. The current canonical bench contract for this pack is:
 - `PA9 <-> PA10`
 - `PC13 -> onboard LED`
 
-The live result from this round is not full green yet. Four loopback paths are
-confirmed by mailbox-backed runs, while `PA7 <-> PA6` remains unconfirmed and
-currently fails at the first sampled high level.
+The live result from this round is now full green. All five local loopback
+paths are confirmed by mailbox-backed runs on the same bench contract.
 
 ## Evidence
 
-Passing representative runs:
+Final all-pass rerun:
+
+- `runs/2026-04-03_08-55-54_stm32f030c8t6_daplink_stm32f030c8t6_pb0_pb1_probe`
+- `runs/2026-04-03_08-56-01_stm32f030c8t6_daplink_stm32f030c8t6_pb8_pb9_probe`
+- `runs/2026-04-03_08-56-07_stm32f030c8t6_daplink_stm32f030c8t6_pa0_pa1_adc_probe`
+- `runs/2026-04-03_08-56-13_stm32f030c8t6_daplink_stm32f030c8t6_pa7_pa6_spi_probe`
+- `runs/2026-04-03_08-56-19_stm32f030c8t6_daplink_stm32f030c8t6_uart_loopback_probe`
+
+Earlier targeted runs that established the initial shape:
 
 - `runs/2026-04-03_08-46-02_stm32f030c8t6_daplink_stm32f030c8t6_pb0_pb1_probe`
 - `runs/2026-04-03_08-46-09_stm32f030c8t6_daplink_stm32f030c8t6_pb8_pb9_probe`
 - `runs/2026-04-03_08-46-15_stm32f030c8t6_daplink_stm32f030c8t6_pa0_pa1_adc_probe`
 - `runs/2026-04-03_08-46-33_stm32f030c8t6_daplink_stm32f030c8t6_uart_loopback_probe`
 
-Failing representative runs for the remaining path:
+The initial failing runs that correctly exposed the bad `PA7 <-> PA6` jumper:
 
 - `runs/2026-04-03_08-46-22_stm32f030c8t6_daplink_stm32f030c8t6_pa7_pa6_spi_probe`
 - `runs/2026-04-03_08-50-59_stm32f030c8t6_daplink_stm32f030c8t6_pa7_pa6_spi_probe`
@@ -47,11 +54,8 @@ Confirmed on real hardware:
 - `stm32f030c8t6_pb0_pb1_probe`
 - `stm32f030c8t6_pb8_pb9_probe`
 - `stm32f030c8t6_pa0_pa1_adc_probe`
-- `stm32f030c8t6_uart_loopback_probe`
-
-Not yet confirmed:
-
 - `stm32f030c8t6_pa7_pa6_spi_probe`
+- `stm32f030c8t6_uart_loopback_probe`
 
 ## Key Findings
 
@@ -74,12 +78,12 @@ failed, the pre-Stage2 check was reduced to a plain GPIO connectivity probe so
 that pre-Stage2 remains a wiring gate instead of a mixed wiring-plus-peripheral
 debug exercise.
 
-4. The remaining `PA7 <-> PA6` failure currently points at wiring, not host tooling.
+4. A single failing pre-Stage2 net can still make the pack useful.
 
-The latest mailbox failure is immediate `ERR_HIGH_MISS` on the first sampled
-high level (`0xE601`, `detail0=0`). That means software successfully flashed,
-ran, and toggled the designated output path, but the paired input did not see
-the asserted state.
+The earlier `PA7 <-> PA6` failure was immediate `ERR_HIGH_MISS` on the first
+sampled high level (`0xE601`, `detail0=0`). That correctly pointed at the
+physical jumper rather than host tooling. After the jumper was corrected, the
+same probe passed without software changes.
 
 ## Deferred Scope
 
@@ -97,21 +101,19 @@ few live passes. The pack now has:
 
 - code and config
 - live evidence
-- explicit remaining blocker
+- a full green rerun
 - reusable skill capture
 
-That is the minimum acceptable closeout state for a new pack, even when one
-path is still blocked on bench wiring.
+That is the minimum acceptable closeout state for a new pack.
 
 ## Closeout Decision
 
-This round is a valid pre-Stage2 pack closeout for `STM32F030C8T6`, but not a
-full-pack promotion.
+This round is a valid pre-Stage2 pack closeout for `STM32F030C8T6`.
 
 The correct current conclusion is:
 
 - canonical pack shape: complete
-- live validation: partial
-- confirmed nets: `PB0/PB1`, `PB8/PB9`, `PA0/PA1`, `PA9/PA10`
-- blocked net: `PA7/PA6`
-- next action: re-check or re-seat the `PA7 <-> PA6` jumper, then rerun the pack
+- live validation: complete
+- confirmed nets: `PB0/PB1`, `PB8/PB9`, `PA0/PA1`, `PA7/PA6`, `PA9/PA10`
+- pre-Stage2 gate: green
+- next action: proceed to Stage 2 suite generation and live validation
