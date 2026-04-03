@@ -39,7 +39,7 @@ int main(void) {
         if ((SYST_CSR & SYST_CSR_COUNTFLAG) != 0u) {
             led_ms += 1u;
         }
-        if (led_ms >= 500u) {
+        if (led_ms >= 250u) {
             led_ms = 0u;
             GPIOC_ODR ^= (1u << 13);
         }
