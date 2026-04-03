@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f030c8t6_uart_dma_rx_hal_observed",
+  "board": "stm32f030c8t6_daplink_uart",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["diagnostic", "uart_observed", "uart_dma", "deferred_debug", "hal_reference"],
+  "covers": ["usart1", "dma1", "uart_dma", "uart_rx"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f030c8t6_uart_dma_rx_hal_observed",
+    "artifact_stem": "stm32f030c8t6_uart_dma_rx_hal_observed_app",
+    "build_dir": "artifacts/build_stm32f030c8t6_uart_dma_rx_hal_observed"
+  },
+  "signal_checks": [],
+  "host_uart_exchange": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 9600,
+    "ready_patterns": ["AEL_HAL_UART_DMA_RX_READY"],
+    "tx": "PING_DMA_RX_HAL",
+    "append_newline": false,
+    "expect_patterns": ["AEL_HAL_UART_DMA_RX_OK"],
+    "startup_wait_s": 2.0,
+    "ready_timeout_s": 6.0,
+    "response_timeout_s": 4.0
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 9600,
+      "required": true
+    },
+    "notes": "Deferred debug-only ST HAL reference proof for STM32F030C8T6 USART1 RX DMA on the DAPLink UART fixture. Host sends PING_DMA_RX_HAL on DAPLink TX->PA10. DUT receives through DMA1 Channel3 and reports success over PA9.",
+    "peripheral_signals": [
+      {
+        "role": "UART_TX_DEBUG",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX for status output."
+      },
+      {
+        "role": "UART_RX_DMA",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10 for host-driven RX DMA."
+      }
+    ]
+  }
+}

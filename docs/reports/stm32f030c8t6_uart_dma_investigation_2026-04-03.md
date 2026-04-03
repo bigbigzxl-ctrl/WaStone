@@ -600,3 +600,51 @@ As of this report:
 - a one-off ST HAL TX-only proof now shows that `USART1 TX DMA` does work on
   this exact bench, so the unresolved issue is narrowed to the repo's
   bare-metal implementation
+
+## ST HAL RX DMA Proof
+
+A matching ST HAL receive-side reference target now also exists in the repo:
+
+- [main.c](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_hal_observed/main.c)
+- [Makefile](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_hal_observed/Makefile)
+- [provenance.md](/home/ali/work/ai-embedded-lab/firmware/targets/stm32f030c8t6_uart_dma_rx_hal_observed/provenance.md)
+- [stm32f030c8t6_uart_dma_rx_hal_observed.json](/home/ali/work/ai-embedded-lab/tests/plans/stm32f030c8t6_uart_dma_rx_hal_observed.json)
+
+Implementation notes:
+
+- reuses the vendored ST F0 HAL and CMSIS device sources already formalized for
+  the successful TX-side HAL reference target
+- configures `USART1` on `PA9/PA10`
+- configures `DMA1_Channel3` for `USART1_RX`
+- starts `HAL_UART_Receive_DMA()` for the fixed frame `PING_DMA_RX_HAL`
+- reports the result back over ordinary polling UART TX on `PA9`
+
+Live validation was done on the current DAPLink UART wiring:
+
+- `DAPLink RX -> PA9`
+- `DAPLink TX -> PA10`
+- `GND common`
+
+Observed transcript:
+
+```text
+AEL_HAL_UART_DMA_RX_READY
+AEL_HAL_UART_DMA_RX_OK
+```
+
+Important observation detail:
+
+- to capture the full interaction reliably, the host serial port needed to be
+  opened before issuing `monitor reset run`
+- if the host observer attaches too late, the early `READY` banner can be
+  missed and the run can look like a false no-output failure
+
+What this proves:
+
+- `USART1 RX DMA` also works on this exact `STM32F030C8T6 + DAPLink UART`
+  bench when driven through the ST HAL path
+- ordinary UART TX status reporting still works in the same target while RX DMA
+  is active
+- the remaining unresolved problem is therefore even narrower: the repo's
+  bare-metal `USART1 <-> DMA` sequence, not the hardware bench and not the ST
+  HAL configuration path
