@@ -14,6 +14,10 @@
         "tests/plans/stm32h563rgt6_cordic_mailbox.json",
         "tests/plans/stm32h563rgt6_i2c_loopback.json",
         "tests/plans/stm32h563rgt6_uid_mailbox.json",
-        "tests/plans/stm32h563rgt6_rng_mailbox.json"
+        "tests/plans/stm32h563rgt6_rng_mailbox.json",
+        "tests/plans/stm32h563rgt6_minimal_runtime_mailbox.json",
+        "tests/plans/stm32h563rgt6_adc_temp_mailbox.json",
+        "tests/plans/stm32h563rgt6_timer_mailbox.json",
+        "tests/plans/stm32h563rgt6_dma_m2m_mailbox.json"
     ]
 }
