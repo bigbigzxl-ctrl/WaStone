@@ -33,6 +33,11 @@
         "tests/plans/stm32h563rgt6_crs_mailbox.json",
         "tests/plans/stm32h563rgt6_tamp_mailbox.json",
         "tests/plans/stm32h563rgt6_flash_optsr_mailbox.json",
-        "tests/plans/stm32h563rgt6_ramcfg_mailbox.json"
+        "tests/plans/stm32h563rgt6_ramcfg_mailbox.json",
+        "tests/plans/stm32h563rgt6_dcache_mailbox.json",
+        "tests/plans/stm32h563rgt6_sbs_mailbox.json",
+        "tests/plans/stm32h563rgt6_i3c1_mailbox.json",
+        "tests/plans/stm32h563rgt6_usb_drd_mailbox.json",
+        "tests/plans/stm32h563rgt6_wwdg_mailbox.json"
     ]
 }
