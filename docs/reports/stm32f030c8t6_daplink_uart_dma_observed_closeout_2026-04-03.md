@@ -94,6 +94,7 @@ ST HAL reference proofs remain separately available:
 Detailed investigation log remains:
 
 - [stm32f030c8t6_uart_dma_investigation_2026-04-03.md](/home/ali/work/ai-embedded-lab/docs/reports/stm32f030c8t6_uart_dma_investigation_2026-04-03.md)
+- [stm32f030c8t6_uart_dma_issue_and_fix_2026-04-03.md](/home/ali/work/ai-embedded-lab/docs/reports/stm32f030c8t6_uart_dma_issue_and_fix_2026-04-03.md)
 
 ## Closeout Decision
 
