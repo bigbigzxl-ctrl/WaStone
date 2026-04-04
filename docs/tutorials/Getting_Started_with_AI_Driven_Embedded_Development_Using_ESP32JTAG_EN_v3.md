@@ -90,7 +90,7 @@ In this setup, the debugging connection on ESP32JTAG comes from **P3**, also ref
 
 Once these three wires are connected, the target board is ready for AI-driven bring-up.
 
-[stm32f103c6t6_esp32jtag_hw.jpg](images/stm32f103c6t6_esp32jtag_hw.jpg)
+![stm32f103c6t6_esp32jtag_hw.jpg](images/stm32f103c6t6_esp32jtag_hw.jpg)
 
 ---
 
@@ -104,7 +104,7 @@ Once the account is ready, download **AI Embedded Lab**. It is available from Gi
 
 With both the AI tool and AI Embedded Lab in place, you can start issuing tasks in natural language instead of manually writing the initial project code yourself.
 
-[stm32f103c6t6_esp32jtag_sw.jpg](images/stm32f103c6t6_esp32jtag_sw.jpg)
+![stm32f103c6t6_esp32jtag_sw.jpg](images/stm32f103c6t6_esp32jtag_sw.jpg)
 
 ---
 
