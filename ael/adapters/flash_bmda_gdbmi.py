@@ -126,6 +126,12 @@ def _uses_external_local_gdb_server(probe_cfg) -> bool:
     return False
 
 
+def _local_gdb_server_summary(probe_cfg, ip: str, port: int) -> str:
+    if _uses_external_local_gdb_server(probe_cfg):
+        return f"external local DAPLink/OpenOCD GDB server unavailable at {ip}:{port}"
+    return f"local ST-Link GDB server unavailable at {ip}:{port}"
+
+
 def _port_is_listening(ip: str, port: int, timeout_s: float = 0.25) -> bool:
     try:
         with socket.create_connection((ip, int(port)), timeout=timeout_s):
@@ -642,7 +648,11 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
             last_error = stlink_bootstrap.get("error") or "local ST-Link GDB server startup failed"
     elif _is_local_host(ip) and port:
         stlink_bootstrap["port_checked"] = True
-        stlink_bootstrap["skip_port_probe"] = True
+        if not _port_is_listening(ip, port):
+            last_error = _local_gdb_server_summary(probe_cfg, ip, int(port))
+            emit(f"Flash: {last_error}")
+            stlink_bootstrap["ok"] = False
+            stlink_bootstrap["error"] = last_error
 
     for idx, strat in enumerate(strategies, start=1):
             if last_error and not ok and stlink_bootstrap.get("port_checked") and not stlink_bootstrap.get("ok", True):
@@ -652,7 +662,7 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
                     last_error = "local ST-Link GDB server stopped before flash attempt"
                     _emit_stlink_server_failure(emit, f"Flash: {last_error}", stlink_bootstrap.get("server_log_path", ""))
                 else:
-                    last_error = f"local ST-Link GDB server unavailable at {ip}:{port}"
+                    last_error = _local_gdb_server_summary(probe_cfg, ip, int(port))
                     emit(f"Flash: {last_error}")
                 break
             try:

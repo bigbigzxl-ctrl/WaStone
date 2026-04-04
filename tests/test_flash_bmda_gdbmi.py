@@ -515,6 +515,34 @@ def test_run_stops_when_unmanaged_local_server_is_unavailable_before_attempt(tmp
     assert "local ST-Link GDB server unavailable at 127.0.0.1:4242" in text
 
 
+def test_run_stops_when_external_local_daplink_server_is_unavailable_before_attempt(tmp_path):
+    firmware = tmp_path / "fw.elf"
+    firmware.write_text("stub", encoding="utf-8")
+    flash_log = tmp_path / "flash.log"
+
+    with patch("ael.adapters.flash_bmda_gdbmi._port_is_listening", return_value=False), patch(
+        "ael.adapters.flash_bmda_gdbmi.subprocess.run"
+    ) as run_gdb:
+        ok = flash_bmda_gdbmi.run(
+            {
+                "type": "daplink",
+                "endpoint": "local:cmsis-dap-lu",
+                "ip": "127.0.0.1",
+                "gdb_port": 3333,
+                "gdb_cmd": "arm-none-eabi-gdb",
+            },
+            str(firmware),
+            flash_cfg={
+                "flash_log_path": str(flash_log),
+            },
+        )
+
+    assert ok is False
+    run_gdb.assert_not_called()
+    text = flash_log.read_text(encoding="utf-8")
+    assert "external local DAPLink/OpenOCD GDB server unavailable at 127.0.0.1:3333" in text
+
+
 def test_ensure_local_stlink_gdb_server_clears_stale_process_before_start(tmp_path):
     emitted = []
 
