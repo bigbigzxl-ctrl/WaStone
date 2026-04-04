@@ -509,6 +509,19 @@ That is why AI is no longer just an assistant in embedded development. It is beg
 
 ---
 
+## A Practical Way I Use It
+Finally, I want to share one practical way I use AI-driven programming in daily life.
+
+I install **Tailscale** and **Termux** on my phone, which allows my phone and my PC to access the same working session. When I am sitting at my computer, I work there as usual. When I leave the computer, I can continue from my phone without breaking the flow.
+
+Even if my phone disconnects, i.e. when you leave the WIFI zone and start to use data, that is not a problem—the session itself is still running, and I can reconnect from another interface and continue working. This makes the whole setup surprisingly convenient.
+
+With a workflow like this, I can check on the AI and continue interacting with it even while walking, exercising, or relaxing on the beach. It is a very interesting way to work.
+
+[using_phone_to_drive_AI](images/using_phone_to_drive_AI.png)
+
+---
+
 ## Conclusion
 
 If you look only at an LED blink example, this may still seem like an interesting demonstration.
