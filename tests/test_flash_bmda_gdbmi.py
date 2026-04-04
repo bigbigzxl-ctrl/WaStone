@@ -593,6 +593,55 @@ def test_ensure_local_daplink_gdb_server_starts_when_port_missing(tmp_path):
     assert any("ready at 127.0.0.1:3333" in line for line in emitted)
 
 
+def test_ensure_local_daplink_gdb_server_falls_back_to_usb_bulk(tmp_path):
+    emitted = []
+
+    class ProcFail:
+        pid = 1111
+
+        @staticmethod
+        def poll():
+            return 1
+
+    class ProcOk:
+        pid = 2222
+
+        @staticmethod
+        def poll():
+            return None
+
+    flash_log = tmp_path / "flash.log"
+    with patch("ael.adapters.flash_bmda_gdbmi._port_is_listening", return_value=False), patch(
+        "ael.adapters.flash_bmda_gdbmi.subprocess.Popen", side_effect=[ProcFail(), ProcOk()]
+    ) as popen, patch(
+        "ael.adapters.flash_bmda_gdbmi._find_stale_openocd_pids", return_value=[]
+    ), patch(
+        "ael.adapters.flash_bmda_gdbmi._wait_for_port", side_effect=[False, True]
+    ), patch(
+        "ael.adapters.flash_bmda_gdbmi.os.kill"
+    ) as kill_mock, patch(
+        "ael.adapters.flash_bmda_gdbmi.time.sleep", return_value=None
+    ):
+        result = flash_bmda_gdbmi._ensure_local_daplink_gdb_server(
+            {"type": "daplink", "ip": "127.0.0.1", "gdb_port": 3333},
+            {"target": "stm32f401ce"},
+            emitted.append,
+            flash_log_path=str(flash_log),
+        )
+
+    assert result["ok"] is True
+    assert result["managed"] is True
+    assert result["backend"] == "usb_bulk"
+    assert popen.call_count == 2
+    first_args = popen.call_args_list[0].args[0]
+    second_args = popen.call_args_list[1].args[0]
+    assert "cmsis_dap_backend hid;" in first_args[4]
+    assert "cmsis_dap_backend usb_bulk;" in second_args[4]
+    assert any(call.args == (1111, signal.SIGKILL) for call in kill_mock.call_args_list)
+    assert any("backend 'hid' failed" in line for line in emitted)
+    assert any("backend usb_bulk" in line for line in emitted)
+
+
 def test_run_bootstraps_local_daplink_openocd_server_once_before_flash(tmp_path):
     firmware = tmp_path / "fw.elf"
     firmware.write_text("stub", encoding="utf-8")

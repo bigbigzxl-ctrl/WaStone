@@ -547,6 +547,18 @@ def _openocd_target_cfg(target: str) -> str:
     return ""
 
 
+def _daplink_openocd_backend_candidates(probe_cfg) -> list[str]:
+    preferred = str((probe_cfg or {}).get("openocd_backend") or (probe_cfg or {}).get("cmsis_dap_backend") or "").strip().lower()
+    if preferred:
+        return [preferred]
+    candidates = ["hid", "usb_bulk"]
+    out: list[str] = []
+    for item in candidates:
+        if item not in out:
+            out.append(item)
+    return out
+
+
 def _ensure_local_daplink_gdb_server(
     probe_cfg,
     flash_cfg,
@@ -566,6 +578,7 @@ def _ensure_local_daplink_gdb_server(
         "diagnostic_code": "",
         "skip_port_probe": False,
         "pid": 0,
+        "backend": "",
     }
     if not result["port_checked"]:
         return result
@@ -582,54 +595,63 @@ def _ensure_local_daplink_gdb_server(
         return result
 
     _terminate_stale_openocd_processes(port, emit)
-    cmd = [
-        _OPENOCD_BIN,
-        "-f",
-        "interface/cmsis-dap.cfg",
-        "-c",
-        f"cmsis_dap_backend hid; adapter speed 50; gdb_port {int(port)}; tcl_port disabled; telnet_port disabled",
-        "-f",
-        target_cfg,
-        "-c",
-        "init",
-    ]
-    log_handle: Optional[object] = None
-    try:
-        if result["server_log_path"]:
-            log_handle = open(result["server_log_path"], "a", encoding="utf-8")
-        proc = subprocess.Popen(
-            cmd,
-            cwd=str(_REPO_ROOT),
-            stdout=log_handle or subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
-    except Exception as exc:
-        if log_handle:
-            log_handle.close()
-        msg = f"Flash: failed to start local DAPLink/OpenOCD GDB server ({exc})"
-        diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
-        result["ok"] = False
-        result["error"] = diagnostic.get("summary") or msg
-        return result
-    finally:
-        if log_handle:
-            log_handle.close()
+    last_msg = ""
+    for backend in _daplink_openocd_backend_candidates(probe_cfg):
+        emit(f"Flash: starting local DAPLink/OpenOCD GDB server via CMSIS-DAP backend '{backend}'")
+        cmd = [
+            _OPENOCD_BIN,
+            "-f",
+            "interface/cmsis-dap.cfg",
+            "-c",
+            f"cmsis_dap_backend {backend}; adapter speed 50; gdb_port {int(port)}; tcl_port disabled; telnet_port disabled",
+            "-f",
+            target_cfg,
+            "-c",
+            "init",
+        ]
+        log_handle: Optional[object] = None
+        try:
+            if result["server_log_path"]:
+                log_handle = open(result["server_log_path"], "a", encoding="utf-8")
+            proc = subprocess.Popen(
+                cmd,
+                cwd=str(_REPO_ROOT),
+                stdout=log_handle or subprocess.DEVNULL,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+        except Exception as exc:
+            if log_handle:
+                log_handle.close()
+            last_msg = f"Flash: failed to start local DAPLink/OpenOCD GDB server ({exc})"
+            continue
+        finally:
+            if log_handle:
+                log_handle.close()
 
-    result["managed"] = True
-    result["skip_port_probe"] = True
-    result["pid"] = proc.pid
-    if not _wait_for_port(ip, port, startup_timeout_s):
+        if _wait_for_port(ip, port, startup_timeout_s):
+            result["managed"] = True
+            result["skip_port_probe"] = True
+            result["pid"] = proc.pid
+            result["backend"] = backend
+            emit(f"Flash: local DAPLink/OpenOCD GDB server ready at {ip}:{port} (pid {proc.pid}, backend {backend})")
+            return result
+
         exit_code = proc.poll()
-        msg = "Flash: local DAPLink/OpenOCD GDB server did not start listening in time"
+        last_msg = "Flash: local DAPLink/OpenOCD GDB server did not start listening in time"
         if exit_code is not None:
-            msg = f"Flash: local DAPLink/OpenOCD GDB server exited during startup with code {exit_code}"
-        diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
-        result["ok"] = False
-        result["error"] = diagnostic.get("summary") or msg
-        return result
+            last_msg = f"Flash: local DAPLink/OpenOCD GDB server exited during startup with code {exit_code}"
+        emit(f"Flash: backend '{backend}' failed; trying next CMSIS-DAP backend if available")
+        if _pid_exists(proc.pid):
+            try:
+                os.kill(proc.pid, signal.SIGKILL)
+            except Exception:
+                pass
+        time.sleep(0.2)
 
-    emit(f"Flash: local DAPLink/OpenOCD GDB server ready at {ip}:{port} (pid {proc.pid})")
+    diagnostic = _emit_daplink_server_failure(emit, last_msg or "Flash: failed to start local DAPLink/OpenOCD GDB server", result["server_log_path"])
+    result["ok"] = False
+    result["error"] = diagnostic.get("summary") or last_msg or "failed to start local DAPLink/OpenOCD GDB server"
     return result
 
 
