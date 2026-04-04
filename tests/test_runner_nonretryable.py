@@ -94,3 +94,25 @@ def test_runner_cleans_up_managed_local_stlink_server_after_plan(tmp_path):
     cleanup.assert_called_once_with({"managed": True, "pid": 1234}, print)
     saved = json.loads(state_path.read_text(encoding="utf-8"))
     assert "managed_local_stlink_server" not in saved
+
+
+def test_runner_cleans_up_managed_local_daplink_server_after_plan(tmp_path):
+    artifacts = Path(tmp_path) / "artifacts"
+    artifacts.mkdir(parents=True, exist_ok=True)
+    state_path = artifacts / "runtime_state.json"
+    state_path.write_text(
+        json.dumps({"managed_local_stlink_server": {"managed": True, "kind": "daplink", "pid": 5678}}),
+        encoding="utf-8",
+    )
+
+    adapter = _FailOnceAdapter({"ok": True})
+    plan = {"steps": [{"name": "load", "type": "load.gdbmi"}]}
+
+    from unittest.mock import patch
+    with patch("ael.runner.flash_bmda_gdbmi._cleanup_managed_local_stlink_server") as cleanup:
+        result = run_plan(plan, Path(tmp_path), _Registry(adapter))
+
+    assert result["ok"] is True
+    cleanup.assert_called_once_with({"managed": True, "kind": "daplink", "pid": 5678}, print)
+    saved = json.loads(state_path.read_text(encoding="utf-8"))
+    assert "managed_local_stlink_server" not in saved

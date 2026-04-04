@@ -66,6 +66,7 @@ def _flash_failure_details(flash_json_path: Optional[str]) -> Dict[str, Any]:
     low = error_summary.lower()
     if (
         "local st-link gdb server" in low
+        or "local daplink/openocd gdb server" in low
         or "st-link usb is busy" in low
         or "st-link usb timed out" in low
         or "no st-link device detected" in low

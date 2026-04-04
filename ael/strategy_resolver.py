@@ -401,12 +401,13 @@ def resolve_load_stage(
     method = str(flash_cfg.get("method", "gdbmi")).strip()
     flash_cfg = dict(flash_cfg)
     flash_cfg["flash_log_path"] = flash_log_path
+    target = board_cfg.get("target")
+    if target:
+        flash_cfg["target"] = target
     if method == "idf_esptool":
         if board_cfg.get("build", {}):
             flash_cfg["project_dir"] = board_cfg.get("build", {}).get("project_dir")
-        target = board_cfg.get("target")
         if target:
-            flash_cfg["target"] = target
             build_dir_override = board_cfg.get("build", {}).get("build_dir")
             if build_dir_override:
                 flash_cfg["build_dir"] = os.path.join(str(repo_root), build_dir_override)

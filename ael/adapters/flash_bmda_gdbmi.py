@@ -18,6 +18,7 @@ _STLINK_INSTALL_DIR = _REPO_ROOT / "instruments" / "STLinkInstrument" / "install
 _STLINK_BIN_DIR = _STLINK_INSTALL_DIR / "bin"
 _STLINK_LIB_DIR = _STLINK_INSTALL_DIR / "lib"
 _STINFO_BIN = _STLINK_BIN_DIR / "st-info"
+_OPENOCD_BIN = "openocd"
 
 
 def _run_gdb(gdb_cmd, ip, port, firmware_path, target_id, pre_cmds, post_cmds, timeout_s, do_continue, launch_cmds):
@@ -155,6 +156,14 @@ def _stlink_server_log_path(flash_log_path: str) -> str:
         return ""
     flash_path = Path(target)
     return str(flash_path.with_name(f"{flash_path.stem}_stlink_server.log"))
+
+
+def _openocd_server_log_path(flash_log_path: str) -> str:
+    target = str(flash_log_path or "").strip()
+    if not target:
+        return ""
+    flash_path = Path(target)
+    return str(flash_path.with_name(f"{flash_path.stem}_openocd_server.log"))
 
 
 def _read_recent_text(path: str, limit: int = 1200) -> str:
@@ -343,6 +352,17 @@ def _emit_stlink_server_failure(emit, reason: str, server_log_path: str) -> dict
     return diagnostic
 
 
+def _emit_daplink_server_failure(emit, reason: str, server_log_path: str) -> dict[str, str]:
+    emit(reason)
+    recent = _read_recent_text(server_log_path)
+    if recent:
+        emit("Flash: local DAPLink/OpenOCD GDB server output follows:")
+        emit(recent)
+    elif server_log_path:
+        emit(f"Flash: local DAPLink/OpenOCD GDB server log path: {server_log_path}")
+    return {}
+
+
 _USBDEVFS_RESET = 0x5514
 # ST-Link VID and known PIDs (v2, v2-1, v3)
 _STLINK_VID = "0483"
@@ -403,6 +423,29 @@ def _find_stale_stlink_pids(port: int) -> list[int]:
     return pids
 
 
+def _find_stale_openocd_pids(port: int) -> list[int]:
+    try:
+        res = subprocess.run(["ps", "-ef"], capture_output=True, text=True, timeout=2)
+    except Exception:
+        return []
+    if res.returncode != 0:
+        return []
+    pids: list[int] = []
+    token = f"gdb_port {int(port)}"
+    for line in (res.stdout or "").splitlines():
+        low = line.lower()
+        if "openocd" not in low or token not in line:
+            continue
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+        try:
+            pids.append(int(parts[1]))
+        except Exception:
+            continue
+    return pids
+
+
 def _pid_exists(pid: int) -> bool:
     try:
         os.kill(int(pid), 0)
@@ -435,27 +478,44 @@ def _terminate_stale_stlink_processes(port: int, emit) -> None:
     time.sleep(1.0)
 
 
+def _terminate_stale_openocd_processes(port: int, emit) -> None:
+    pids = _find_stale_openocd_pids(port)
+    if not pids:
+        return
+    emit(f"Flash: found stale local DAPLink/OpenOCD server process(es) on port {int(port)}: {', '.join(str(pid) for pid in pids)}")
+    for pid in pids:
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            continue
+        except Exception as exc:
+            emit(f"Flash: failed to SIGKILL stale local DAPLink/OpenOCD server pid {pid} ({exc})")
+    time.sleep(0.2)
+
+
 def _cleanup_managed_local_stlink_server(bootstrap: dict | None, emit) -> None:
     state = bootstrap if isinstance(bootstrap, dict) else {}
     if not state.get("managed"):
         return
+    kind = str(state.get("kind") or "stlink").strip().lower()
     pid = int(state.get("pid") or 0)
     if pid <= 0 or not _pid_exists(pid):
         return
-    emit(f"Flash: stopping managed local ST-Link GDB server pid {pid}")
-    # Use SIGKILL directly — see comment in _terminate_stale_stlink_processes.
+    label = "local DAPLink/OpenOCD GDB server" if kind == "daplink" else "local ST-Link GDB server"
+    emit(f"Flash: stopping managed {label} pid {pid}")
     try:
         os.kill(pid, signal.SIGKILL)
     except ProcessLookupError:
         return
     except Exception as exc:
-        emit(f"Flash: failed to SIGKILL managed local ST-Link server pid {pid} ({exc})")
+        emit(f"Flash: failed to SIGKILL managed {label} pid {pid} ({exc})")
         return
     time.sleep(0.2)
-    # Send a USB-level reset to the ST-Link device so its firmware exits any partial USB
-    # transaction state from the killed session, then wait for re-enumeration.
-    _reset_stlink_usb_device(emit)
-    time.sleep(1.0)
+    if kind == "stlink":
+        # Send a USB-level reset to the ST-Link device so its firmware exits any partial USB
+        # transaction state from the killed session, then wait for re-enumeration.
+        _reset_stlink_usb_device(emit)
+        time.sleep(1.0)
 
 
 def _local_stlink_server_available(ip: str, port: int, bootstrap: dict | None = None) -> bool:
@@ -466,6 +526,111 @@ def _local_stlink_server_available(ip: str, port: int, bootstrap: dict | None = 
         # Let GDB be the first real client after we spawn st-util locally.
         return True
     return _port_is_listening(ip, port)
+
+
+def _openocd_target_cfg(target: str) -> str:
+    value = str(target or "").strip().lower()
+    if not value:
+        return ""
+    if value.startswith("stm32f0"):
+        return "target/stm32f0x.cfg"
+    if value.startswith("stm32f1"):
+        return "target/stm32f1x.cfg"
+    if value.startswith("stm32f4"):
+        return "target/stm32f4x.cfg"
+    if value.startswith("stm32g4"):
+        return "target/stm32g4x.cfg"
+    if value.startswith("stm32h5"):
+        return "target/stm32h5x.cfg"
+    if value.startswith("stm32u5"):
+        return "target/stm32u5x.cfg"
+    return ""
+
+
+def _ensure_local_daplink_gdb_server(
+    probe_cfg,
+    flash_cfg,
+    emit,
+    flash_log_path: str = "",
+    startup_timeout_s: float = 5.0,
+):
+    ip = str(probe_cfg.get("ip") or "").strip()
+    port = int(probe_cfg.get("gdb_port") or 0)
+    result = {
+        "ok": True,
+        "managed": False,
+        "kind": "daplink",
+        "port_checked": bool(_is_local_host(ip) and port > 0),
+        "server_log_path": _openocd_server_log_path(flash_log_path),
+        "error": "",
+        "diagnostic_code": "",
+        "skip_port_probe": False,
+        "pid": 0,
+    }
+    if not result["port_checked"]:
+        return result
+    if _port_is_listening(ip, port):
+        emit(f"Flash: local DAPLink/OpenOCD GDB server already listening at {ip}:{port}; reusing it")
+        return result
+
+    target_cfg = _openocd_target_cfg(str((flash_cfg or {}).get("target") or ""))
+    if not target_cfg:
+        msg = "Flash: local DAPLink/OpenOCD target config could not be resolved from board target."
+        diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
+        result["ok"] = False
+        result["error"] = diagnostic.get("summary") or msg
+        return result
+
+    _terminate_stale_openocd_processes(port, emit)
+    cmd = [
+        _OPENOCD_BIN,
+        "-f",
+        "interface/cmsis-dap.cfg",
+        "-c",
+        f"cmsis_dap_backend hid; adapter speed 50; gdb_port {int(port)}; tcl_port disabled; telnet_port disabled",
+        "-f",
+        target_cfg,
+        "-c",
+        "init",
+    ]
+    log_handle: Optional[object] = None
+    try:
+        if result["server_log_path"]:
+            log_handle = open(result["server_log_path"], "a", encoding="utf-8")
+        proc = subprocess.Popen(
+            cmd,
+            cwd=str(_REPO_ROOT),
+            stdout=log_handle or subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+    except Exception as exc:
+        if log_handle:
+            log_handle.close()
+        msg = f"Flash: failed to start local DAPLink/OpenOCD GDB server ({exc})"
+        diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
+        result["ok"] = False
+        result["error"] = diagnostic.get("summary") or msg
+        return result
+    finally:
+        if log_handle:
+            log_handle.close()
+
+    result["managed"] = True
+    result["skip_port_probe"] = True
+    result["pid"] = proc.pid
+    if not _wait_for_port(ip, port, startup_timeout_s):
+        exit_code = proc.poll()
+        msg = "Flash: local DAPLink/OpenOCD GDB server did not start listening in time"
+        if exit_code is not None:
+            msg = f"Flash: local DAPLink/OpenOCD GDB server exited during startup with code {exit_code}"
+        diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
+        result["ok"] = False
+        result["error"] = diagnostic.get("summary") or msg
+        return result
+
+    emit(f"Flash: local DAPLink/OpenOCD GDB server ready at {ip}:{port} (pid {proc.pid})")
+    return result
 
 
 def _ensure_local_stlink_gdb_server(
@@ -641,18 +806,22 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
     ok = False
     strategy_used = ""
     last_error = ""
-    stlink_bootstrap = {"ok": True, "managed": False, "port_checked": False, "server_log_path": "", "error": "", "diagnostic_code": "", "skip_port_probe": False, "pid": 0}
-    if _is_local_host(ip) and port and not _uses_external_local_gdb_server(probe_cfg):
+    stlink_bootstrap = {"ok": True, "managed": False, "kind": "", "port_checked": False, "server_log_path": "", "error": "", "diagnostic_code": "", "skip_port_probe": False, "pid": 0}
+    if _is_local_host(ip) and port and _uses_external_local_gdb_server(probe_cfg):
+        stlink_bootstrap = _ensure_local_daplink_gdb_server(
+            probe_cfg,
+            flash_cfg,
+            emit,
+            flash_log_path=flash_log_path,
+        )
+        if not stlink_bootstrap.get("ok", True):
+            last_error = stlink_bootstrap.get("error") or "local DAPLink/OpenOCD GDB server startup failed"
+            if last_error:
+                emit(f"Flash: {last_error}")
+    elif _is_local_host(ip) and port and not _uses_external_local_gdb_server(probe_cfg):
         stlink_bootstrap = _ensure_local_stlink_gdb_server(probe_cfg, emit, flash_log_path=flash_log_path)
         if not stlink_bootstrap.get("ok", True):
             last_error = stlink_bootstrap.get("error") or "local ST-Link GDB server startup failed"
-    elif _is_local_host(ip) and port:
-        stlink_bootstrap["port_checked"] = True
-        if not _port_is_listening(ip, port):
-            last_error = _local_gdb_server_summary(probe_cfg, ip, int(port))
-            emit(f"Flash: {last_error}")
-            stlink_bootstrap["ok"] = False
-            stlink_bootstrap["error"] = last_error
 
     for idx, strat in enumerate(strategies, start=1):
             if last_error and not ok and stlink_bootstrap.get("port_checked") and not stlink_bootstrap.get("ok", True):
@@ -774,6 +943,7 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
         if stlink_bootstrap.get("managed") and int(stlink_bootstrap.get("pid") or 0) > 0:
             payload["managed_stlink_server"] = {
                 "managed": True,
+                "kind": str(stlink_bootstrap.get("kind") or ""),
                 "pid": int(stlink_bootstrap.get("pid") or 0),
             }
         try:

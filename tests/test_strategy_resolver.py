@@ -106,6 +106,28 @@ class TestStrategyResolver(unittest.TestCase):
         self.assertEqual(resolved.board_cfg.get("build", {}).get("project_dir"), "firmware/targets/rp2040_pico_uart")
         self.assertEqual(resolved.board_cfg.get("build", {}).get("artifact_stem"), "pico_uart_banner")
 
+    def test_resolve_load_stage_carries_board_target_for_gdbmi(self):
+        step, flash_cfg = strategy_resolver.resolve_load_stage(
+            probe_cfg={"type": "daplink", "ip": "127.0.0.1", "gdb_port": 3333},
+            board_cfg={
+                "target": "stm32f103rct6",
+                "flash": {"gdb_launch_cmds": ["load"]},
+                "build": {"project_dir": "firmware/targets/stm32f103rct6_mailbox"},
+            },
+            wiring_cfg={"reset": "NC"},
+            known_firmware_path="/tmp/fw.elf",
+            verify_only=False,
+            skip_flash=False,
+            repo_root=Path("."),
+            output_mode="normal",
+            flash_json_path="/tmp/flash.json",
+            flash_log_path="/tmp/flash.log",
+        )
+
+        self.assertEqual(step["type"], "load.gdbmi")
+        self.assertEqual(flash_cfg.get("target"), "stm32f103rct6")
+        self.assertEqual(step["inputs"]["flash_cfg"].get("target"), "stm32f103rct6")
+
     def test_resolve_run_strategy_uses_resolved_instrument_communication(self):
         test_raw = {"instrument": {"id": "meter1"}}
 

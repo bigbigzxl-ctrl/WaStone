@@ -520,7 +520,20 @@ def test_run_stops_when_external_local_daplink_server_is_unavailable_before_atte
     firmware.write_text("stub", encoding="utf-8")
     flash_log = tmp_path / "flash.log"
 
-    with patch("ael.adapters.flash_bmda_gdbmi._port_is_listening", return_value=False), patch(
+    with patch(
+        "ael.adapters.flash_bmda_gdbmi._ensure_local_daplink_gdb_server",
+        return_value={
+            "ok": False,
+            "managed": False,
+            "kind": "daplink",
+            "port_checked": True,
+            "server_log_path": "",
+            "error": "external local DAPLink/OpenOCD GDB server unavailable at 127.0.0.1:3333",
+            "diagnostic_code": "",
+            "skip_port_probe": False,
+            "pid": 0,
+        },
+    ), patch(
         "ael.adapters.flash_bmda_gdbmi.subprocess.run"
     ) as run_gdb:
         ok = flash_bmda_gdbmi.run(
@@ -533,6 +546,7 @@ def test_run_stops_when_external_local_daplink_server_is_unavailable_before_atte
             },
             str(firmware),
             flash_cfg={
+                "target": "stm32f103rct6",
                 "flash_log_path": str(flash_log),
             },
         )
@@ -541,6 +555,84 @@ def test_run_stops_when_external_local_daplink_server_is_unavailable_before_atte
     run_gdb.assert_not_called()
     text = flash_log.read_text(encoding="utf-8")
     assert "external local DAPLink/OpenOCD GDB server unavailable at 127.0.0.1:3333" in text
+
+
+def test_ensure_local_daplink_gdb_server_starts_when_port_missing(tmp_path):
+    emitted = []
+
+    class Proc:
+        pid = 5432
+
+        @staticmethod
+        def poll():
+            return None
+
+    flash_log = tmp_path / "flash.log"
+    with patch("ael.adapters.flash_bmda_gdbmi._port_is_listening", side_effect=[False, True]), patch(
+        "ael.adapters.flash_bmda_gdbmi.subprocess.Popen", return_value=Proc()
+    ) as popen, patch(
+        "ael.adapters.flash_bmda_gdbmi._find_stale_openocd_pids", return_value=[]
+    ), patch(
+        "ael.adapters.flash_bmda_gdbmi.time.sleep", return_value=None
+    ):
+        result = flash_bmda_gdbmi._ensure_local_daplink_gdb_server(
+            {"type": "daplink", "ip": "127.0.0.1", "gdb_port": 3333},
+            {"target": "stm32f103rct6"},
+            emitted.append,
+            flash_log_path=str(flash_log),
+        )
+
+    assert result["ok"] is True
+    assert result["managed"] is True
+    assert result["kind"] == "daplink"
+    popen.assert_called_once()
+    args = popen.call_args.args[0]
+    assert args[:2] == ["openocd", "-f"]
+    assert "interface/cmsis-dap.cfg" in args
+    assert "target/stm32f1x.cfg" in args
+    assert any("ready at 127.0.0.1:3333" in line for line in emitted)
+
+
+def test_run_bootstraps_local_daplink_openocd_server_once_before_flash(tmp_path):
+    firmware = tmp_path / "fw.elf"
+    firmware.write_text("stub", encoding="utf-8")
+
+    class Result:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+
+    with patch(
+        "ael.adapters.flash_bmda_gdbmi._ensure_local_daplink_gdb_server",
+        return_value={
+            "ok": True,
+            "managed": True,
+            "kind": "daplink",
+            "port_checked": True,
+            "server_log_path": "",
+            "error": "",
+            "diagnostic_code": "",
+            "skip_port_probe": True,
+            "pid": 2468,
+        },
+    ) as ensure_server, patch("ael.adapters.flash_bmda_gdbmi.subprocess.run", return_value=Result()):
+        ok = flash_bmda_gdbmi.run(
+            {"type": "daplink", "endpoint": "local:cmsis-dap-lu", "ip": "127.0.0.1", "gdb_port": 3333, "gdb_cmd": "arm-none-eabi-gdb"},
+            str(firmware),
+            flash_cfg={
+                "target": "stm32f103rct6",
+                "gdb_launch_cmds": [
+                    "file {firmware}",
+                    "monitor reset halt",
+                    "load",
+                    "monitor reset run",
+                    "detach",
+                ],
+            },
+        )
+
+    assert ok is True
+    ensure_server.assert_called_once()
 
 
 def test_ensure_local_stlink_gdb_server_clears_stale_process_before_start(tmp_path):

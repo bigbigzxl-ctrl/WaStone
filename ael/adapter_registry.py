@@ -353,6 +353,7 @@ class _LoadAdapter:
                 state = _load_runtime_state(ctx)
                 state["managed_local_stlink_server"] = {
                     "managed": True,
+                    "kind": str(managed.get("kind") or ""),
                     "pid": int(managed.get("pid") or 0),
                 }
                 _save_runtime_state(ctx, state)
