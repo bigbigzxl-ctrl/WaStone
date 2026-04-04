@@ -150,3 +150,45 @@ def test_run_cli_uses_explicit_controller_alias_override(monkeypatch):
 
     assert exc.value.code == 0
     assert captured["probe_path"] == "configs/instrument_instances/esp32jtag_stm32_golden.yaml"
+
+
+def test_instruments_detect_mcu_cli_uses_instance_and_target(monkeypatch, capsys):
+    monkeypatch.setattr(
+        "ael.__main__._load_instrument_instance_probe_cfg",
+        lambda repo_root, instance_id: {
+            "type": "daplink",
+            "endpoint": "local:cmsis-dap-lu",
+            "ip": "127.0.0.1",
+            "gdb_port": 3333,
+            "gdb_cmd": "arm-none-eabi-gdb",
+        },
+    )
+    monkeypatch.setattr(
+        "ael.__main__.mcu_detect.detect_mcu_from_probe_cfg",
+        lambda probe_cfg, target: {
+            "ok": True,
+            "managed_session": False,
+            "reused_session": True,
+            "registers": {
+                "0xe000ed00": 0x411FC231,
+                "0xe0042000": 0x10036414,
+            },
+            "identity": {
+                "family": "STM32F1 high-density",
+                "part": "STM32F103RC",
+                "flash_kb": 256,
+            },
+        },
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["ael", "instruments", "detect-mcu", "--id", "daplink_f103_rct6", "--target", "stm32f103rct6"],
+    )
+
+    with pytest.raises(SystemExit) as exc:
+        ael_main.main()
+
+    assert exc.value.code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["ok"] is True
+    assert payload["identity"]["part"] == "STM32F103RC"

@@ -37,6 +37,7 @@ from ael import connection_doctor
 from ael import inventory as inventory_view
 from ael.pack_loader import load_pack
 from ael import stage_explain
+from ael.instruments import mcu_detect
 from tools.audit_test_plan_schema import build_report as build_test_plan_schema_report, render_text as render_test_plan_schema_report_text
 from tools.audit_test_plan_schema import build_report as build_test_plan_schema_report, render_text as render_test_plan_schema_report_text
 
@@ -142,6 +143,29 @@ def _load_default_verification_manifest(setting_file: str, runs_root: str) -> di
     return payload if isinstance(payload, dict) else {}
 
 
+def _load_instrument_instance_probe_cfg(repo_root: str, instance_id: str) -> dict:
+    path = Path(repo_root) / "configs" / "instrument_instances" / f"{instance_id}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"instrument instance not found: {instance_id}")
+    raw = _simple_yaml_load(path)
+    cfg = _normalize_probe_cfg(raw)
+    if not isinstance(cfg, dict):
+        raise RuntimeError(f"invalid instrument instance config: {path}")
+    return cfg
+
+
+def _load_board_target(repo_root: str, board_id: str) -> str:
+    path = Path(repo_root) / "configs" / "boards" / f"{board_id}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"board config not found: {board_id}")
+    raw = _simple_yaml_load(path) or {}
+    board = raw.get("board") if isinstance(raw, dict) else {}
+    target = str((board or {}).get("target") or "").strip()
+    if not target:
+        raise RuntimeError(f"board target missing in {path}")
+    return target
+
+
 def main():
     parser = argparse.ArgumentParser(prog="ael")
     # Follow docs/AI_USAGE_RULES.md: CLI is a deterministic control interface for AI agents.
@@ -244,6 +268,14 @@ def main():
         "--format", choices=["json", "text"], default="text",
         help="Output format (default: text)",
     )
+    instr_detect_mcu = instr_sub.add_parser(
+        "detect-mcu",
+        help="Read MCU identity registers through a configured instrument instance",
+    )
+    instr_detect_mcu.add_argument("--id", required=True, help="Instrument instance id from configs/instrument_instances/")
+    instr_detect_mcu.add_argument("--target", default=None, help="MCU target hint used to select the debug target cfg")
+    instr_detect_mcu.add_argument("--board", default=None, help="Board id to resolve the MCU target hint from configs/boards/")
+    instr_detect_mcu.add_argument("--format", choices=["json", "text"], default="json")
 
     dut_p = sub.add_parser("dut")
     dut_sub = dut_p.add_subparsers(dest="dut_cmd", required=True)
@@ -716,6 +748,33 @@ def main():
             from ael.instruments import usb_probe as _usb_probe
             rc = _usb_probe.run_probe(Path(repo_root), fmt=args.format)
             sys.exit(rc)
+        if args.instr_cmd == "detect-mcu":
+            target = str(args.target or "").strip()
+            try:
+                probe_cfg = _load_instrument_instance_probe_cfg(repo_root, args.id)
+                if not target and args.board:
+                    target = _load_board_target(repo_root, args.board)
+                payload = mcu_detect.detect_mcu_from_probe_cfg(probe_cfg, target=target)
+            except Exception as exc:
+                payload = {"ok": False, "error": str(exc)}
+            if args.format == "text" and payload.get("ok"):
+                ident = payload.get("identity") if isinstance(payload.get("identity"), dict) else {}
+                regs = payload.get("registers") if isinstance(payload.get("registers"), dict) else {}
+                print(f"Instrument: {args.id}")
+                print(f"Target hint: {target}")
+                print(f"Session: {'managed' if payload.get('managed_session') else 'reused'}")
+                print(f"CPUID: {regs.get('0xe000ed00', 'n/a')}")
+                print(f"DBGMCU_IDCODE: {regs.get('0xe0042000', 'n/a')}")
+                print(f"FLASH_SIZE_KB: {ident.get('flash_kb', 0)}")
+                family = str(ident.get("family") or "").strip()
+                part = str(ident.get("part") or "").strip()
+                if family:
+                    print(f"Family: {family}")
+                if part:
+                    print(f"Part: {part}")
+            else:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            sys.exit(0 if payload.get("ok") else 1)
     if args.cmd == "pack":
         board_override = args.board
         if args.dut:

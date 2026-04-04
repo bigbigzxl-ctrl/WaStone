@@ -42,6 +42,27 @@ ESP32JTAG BMDA 固件有 bug —— 任何一次 GDB 连接失败（SWD scan 失
 
 ## Open Tasks
 
+### TASK-002 — 多探头场景下的本地 GDB/OpenOCD 会话隔离
+
+**Status:** [ ] 待实现
+
+**问题：**
+当前本地 ST-Link / DAPLink 会话管理主要按 `127.0.0.1:<port>` 判断和复用。
+如果同一台 PC 上同时接了多个 ST-Link / DAPLink，对不同板子并行或交替操作时，可能错误复用、误杀、或连到错误目标。
+
+**风险：**
+- 复用到另一个探头/板子的旧会话
+- 新会话因端口占用无法启动
+- MCU 识别/flash 实际连到了错误目标
+- cleanup 误杀不属于当前 run 的调试会话
+
+**后续修复方向：**
+- 用探头稳定身份做会话绑定：优先 USB serial，fallback 到 USB bus/device path
+- 不再只靠端口识别会话；运行态保存 `(probe identity, port, pid, owner, target)`
+- 仅当会话身份匹配当前探头时才允许 reuse
+- cleanup 只回收当前 run 自己启动的会话
+- DAPLink/OpenOCD 启动时增加精确 probe 选择，避免“first CMSIS-DAP wins”
+
 ### TASK-001 — ESP32JTAG Web UI / CLI 直接重启按钮
 
 **Status:** [ ] 待实现
