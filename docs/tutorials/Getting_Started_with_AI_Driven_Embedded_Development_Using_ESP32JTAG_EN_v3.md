@@ -236,7 +236,7 @@ In this setup, ESP32JTAG plays two roles at once:
 
 Herer is a picture of hardware setup:
 
-![uart_roundtrip_setup.jpg](docs/tutorials/images/uart_roundtrip_setup.jpg).
+![uart_roundtrip_setup.jpg](images/uart_roundtrip_setup.jpg).
 
 ### How the firmware works
 
@@ -288,11 +288,11 @@ We can further checkthe results manualy, if we are curious.
 
 Here is a picture of captured ESP32JTAG side using its LA(ligic analyzer).
 
-![uart_waveform.png](docs/tutorials/images/uart_waveform.png)
+![uart_waveform.png](images/uart_waveform.png)
 
 Here is a picture of ESP32JTAG web terminal interfcae
 
-![web_terminal.png](docs/tutorials/images/web_terminal.png)
+![web_terminal.png](images/web_terminal.png)
 
 ### Why this matters
 
