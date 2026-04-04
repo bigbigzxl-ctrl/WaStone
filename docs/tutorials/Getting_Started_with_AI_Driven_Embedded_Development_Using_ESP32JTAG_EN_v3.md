@@ -104,7 +104,7 @@ Once the account is ready, download **[AI Embedded Lab](https://github.com/EZ32I
 
 With both the AI tool and AI Embedded Lab in place, you can start issuing tasks in natural language instead of manually writing the initial project code yourself.
 
-![stm32f103c6t6_esp32jtag_sw.jpg](images/stm32f103c6t6_esp32jtag_sw.jpg)
+![stm32f103c6t6_esp32jtag_sw.png](images/stm32f103c6t6_esp32jtag_sw.png)
 
 ---
 
@@ -234,6 +234,8 @@ In this setup, ESP32JTAG plays two roles at once:
 - it acts as the **SWD programmer/debugger** used to flash the STM32
 - it also acts as the **UART gateway**, forwarding serial data to a browser-accessible interface
 
+Herer is a ![picture of the hardware setup](docs/tutorials/images/uart_roundtrip_setup.jpg).
+
 ### How the firmware works
 
 The firmware behaves like a small bare-metal UART echo server.
@@ -279,6 +281,12 @@ That means the system has verified, in one run, that:
 - ESP32JTAG received the UART data
 - the Web bridge forwarded it correctly
 - the AI runner was able to observe and validate the result
+
+We can further checkthe results manualy, if we are curious. 
+
+Here is a picture of captured ESP32JTAG side ![UART RX waveform](docs/tutorials/images/uart_waveform.png) using its LA(ligic analyzer).
+
+Here is a picture of ESP32JTAG ![web termenal interface](docs/tutorials/images/web_terminal.png).
 
 ### Why this matters
 
