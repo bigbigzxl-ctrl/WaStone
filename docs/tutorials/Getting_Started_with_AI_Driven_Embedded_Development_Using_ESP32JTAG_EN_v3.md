@@ -234,7 +234,7 @@ In this setup, ESP32JTAG plays two roles at once:
 - it acts as the **SWD programmer/debugger** used to flash the STM32
 - it also acts as the **UART gateway**, forwarding serial data to a browser-accessible interface
 
-Herer is a ![picture of the hardware setup](docs/tutorials/images/uart_roundtrip_setup.jpg).
+Herer is a ![uart_roundtrip_setup.jpg](docs/tutorials/images/uart_roundtrip_setup.jpg).
 
 ### How the firmware works
 
@@ -285,10 +285,10 @@ That means the system has verified, in one run, that:
 We can further checkthe results manualy, if we are curious. 
 
 Here is a picture of captured ESP32JTAG side using its LA(ligic analyzer).
-![UART RX waveform](docs/tutorials/images/uart_waveform.png)
+![uart_waveform.png](docs/tutorials/images/uart_waveform.png)
 
 Here is a picture of ESP32JTAG web terminal interfcae
-![web termenal interface](docs/tutorials/images/web_terminal.png)
+![web_terminal.png](docs/tutorials/images/web_terminal.png)
 
 ### Why this matters
 
