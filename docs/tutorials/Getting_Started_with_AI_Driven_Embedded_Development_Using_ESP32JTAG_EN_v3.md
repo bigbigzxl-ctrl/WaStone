@@ -284,9 +284,11 @@ That means the system has verified, in one run, that:
 
 We can further checkthe results manualy, if we are curious. 
 
-Here is a picture of captured ESP32JTAG side ![UART RX waveform](docs/tutorials/images/uart_waveform.png) using its LA(ligic analyzer).
+Here is a picture of captured ESP32JTAG side using its LA(ligic analyzer).
+![UART RX waveform](docs/tutorials/images/uart_waveform.png)
 
-Here is a picture of ESP32JTAG ![web termenal interface](docs/tutorials/images/web_terminal.png).
+Here is a picture of ESP32JTAG web terminal interfcae
+![web termenal interface](docs/tutorials/images/web_terminal.png)
 
 ### Why this matters
 
