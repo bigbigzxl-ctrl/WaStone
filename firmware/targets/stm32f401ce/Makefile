@@ -10,17 +10,18 @@ CUBE_ROOT = ../../../third_party/cache/STM32CubeF4
 CMSIS_CORE_INC = $(CUBE_ROOT)/Drivers/CMSIS/Include
 CMSIS_DEV_INC = vendor/include/st
 
-# Cortex-M4 with FPU (hard-float ABI) — STM32F401CE
+# Cortex-M4 with FPU (hard-float ABI) — live Black Pill on this bench identifies
+# as an STM32F401xC-class device (256 KB flash / 64 KB RAM).
 CFLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard \
          -O2 -ffreestanding \
          -fdata-sections -ffunction-sections -Wall -Wextra \
-         -DSTM32F401xE \
+         -DSTM32F401xC \
          -I$(CMSIS_CORE_INC) -I$(CMSIS_DEV_INC)
 
 LDFLAGS = -T stm32f401ce.ld -Wl,--gc-sections -nostartfiles -nostdlib
 
 SRCS = main.c vendor/st/system_stm32f4xx.c
-ASMSRCS = vendor/st/startup_stm32f401xe.s
+ASMSRCS = vendor/st/startup_stm32f401xc.s
 OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o) $(ASMSRCS:%.s=$(BUILD_DIR)/%.o)
 
 all: $(OUT_ELF) $(OUT_BIN)
