@@ -114,6 +114,42 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### Zephyr RTOS on STM32F4 Discovery — Full AEL Closed-Loop RTOS Validation (2026-04-05)
+
+AEL now supports **Zephyr RTOS** as a first-class build/flash/verify target alongside its existing bare-metal firmware pipeline. The entire workflow — `west build` → `west flash` → UART observe → AEL verify — runs end-to-end under AI control with no manual steps.
+
+**What was done:**
+
+- Implemented `ZephyrBackend` (`ael/backends/zephyr_backend.py`): `build()`, `flash()`, `start_debugserver()`, `observe()`, `verify()` against the `AELBackend` contract
+- Added `build.zephyr` and `load.zephyr_west` adapters wired into `adapter_registry.py` and `strategy_resolver.py` — Zephyr test plans are now auto-routed by `build.type = "zephyr"` / `flash.method = "zephyr_west"` without any special handling
+- Solved port conflict between AEL st-util/pyocd (`:4242`/`:3333`) and OpenOCD/west flash using `_release_port()` before every flash/debugserver operation
+- Custom `stm32f407_zephyr_hello_loop` firmware avoids hello_world single-print race by printing `AEL_ZEPHYR_IDLE count=N` every 500ms
+- Validated three Zephyr samples end-to-end on **STM32F4 Discovery** (STM32F407VGT6), all **PASS**:
+
+| Test | Sample | What it proves |
+|------|--------|---------------|
+| `stm32f407_zephyr_hello_loop` | custom hello loop | Full build→flash→observe→verify pipeline works |
+| `stm32f407_zephyr_synchronization` | `samples/synchronization` | Two threads ping-pong via semaphore every 500ms — Zephyr scheduler + semaphore operational |
+| `stm32f407_zephyr_philosophers` | `samples/philosophers` | 6 threads (4 preemptible + 2 cooperative) compete for mutexes — EATING/THINKING/STARVING states all confirmed |
+
+**Key engineering findings:**
+
+- Zephyr 4.4.0-rc2 requires Python ≥ 3.12; Ubuntu 22.04 ships 3.10. Solved with `uv` + dedicated venv at `~/zephyr-venv/` — no sudo required.
+- `samples/philosophers` emits VT100 cursor-positioning codes (`\x1b[N;1H`) in the raw UART stream. AEL substring pattern match is unaffected; this boundary condition is documented in the test plan notes.
+- PA2 (USART2_TX) is the Zephyr console pin on stm32f4_disco DTS — not PD5 as assumed from AEL loopback wiring.
+
+**Regression test:**
+
+- `tests/zephyr/test_zephyr_backend_hello_world.py` — 2/2 PASS: covers flash→observe→verify pipeline and synthetic failure path
+
+**Canonical assets:**
+
+- ZephyrBackend: [`ael/backends/zephyr_backend.py`](ael/backends/zephyr_backend.py)
+- Test plans: [`tests/plans/stm32f407_zephyr_hello_loop.json`](tests/plans/stm32f407_zephyr_hello_loop.json), [`stm32f407_zephyr_synchronization.json`](tests/plans/stm32f407_zephyr_synchronization.json), [`stm32f407_zephyr_philosophers.json`](tests/plans/stm32f407_zephyr_philosophers.json)
+- Pilot plan: [`docs/plans/zephyr_stm32f407_discovery_hybrid_pilot_plan.md`](docs/plans/zephyr_stm32f407_discovery_hybrid_pilot_plan.md)
+
+---
+
 ### STM32H563RGT6 — Deepest Cortex-M33 Golden Suite: 46/46 PASS via DAPLink (2026-04-05)
 
 AEL completed the most comprehensive STM32H5-series bare-metal golden suite: **46 tests across 35+ peripherals** on an `STM32H563RGT6` board (Cortex-M33, 250 MHz, TrustZone), validated via DAPLink/CMSIS-DAP over USB.
