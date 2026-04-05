@@ -1,0 +1,69 @@
+CC      = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+
+BUILD_DIR ?= build
+OUT_ELF   ?= $(BUILD_DIR)/stm32h563rgt6_freertos_uart.elf
+OUT_BIN   ?= $(BUILD_DIR)/stm32h563rgt6_freertos_uart.bin
+
+FRTDIR = ../../third_party/FreeRTOS-Kernel
+PORT   = $(FRTDIR)/portable/GCC/ARM_CM33_NTZ/non_secure
+
+CFLAGS  = -mcpu=cortex-m33 -mthumb \
+          -O0 -g3 \
+          -ffreestanding -fdata-sections -ffunction-sections \
+          -Wall -Wextra \
+          -I$(FRTDIR)/include \
+          -I$(PORT) \
+          -I.
+
+LDFLAGS = -T stm32h563rgt6.ld \
+          -Wl,--gc-sections -nostartfiles -nostdlib \
+          -specs=nano.specs -lc
+
+OBJS = \
+    $(BUILD_DIR)/startup.o \
+    $(BUILD_DIR)/main.o \
+    $(BUILD_DIR)/frt_tasks.o \
+    $(BUILD_DIR)/frt_list.o \
+    $(BUILD_DIR)/frt_queue.o \
+    $(BUILD_DIR)/frt_port.o \
+    $(BUILD_DIR)/frt_portasm.o \
+    $(BUILD_DIR)/frt_heap4.o
+
+all: $(OUT_ELF) $(OUT_BIN)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/startup.o: startup.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/main.o: main.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_tasks.o: $(FRTDIR)/tasks.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_list.o: $(FRTDIR)/list.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_queue.o: $(FRTDIR)/queue.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_port.o: $(PORT)/port.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_portasm.o: $(PORT)/portasm.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_heap4.o: $(FRTDIR)/portable/MemMang/heap_4.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OUT_ELF): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) -lgcc
+
+$(OUT_BIN): $(OUT_ELF)
+	$(OBJCOPY) -O binary $< $@
+
+clean:
+	rm -rf $(BUILD_DIR)
