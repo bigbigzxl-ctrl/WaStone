@@ -2456,11 +2456,11 @@
     }
   },
   "stm32f103rct6|stm32f103rct6_timer_mailbox": {
-    "exp_id": null,
-    "success_count": 0,
+    "exp_id": "bc0b8630-201a-4efa-a54f-41cc637350b4",
+    "success_count": 2,
     "failure_count": 1,
-    "last_seen": 1775351244.1861897,
-    "confidence": 0.5,
+    "last_seen": 1775387798.6016433,
+    "confidence": 0.6,
     "known_failures": {
       "load": {
         "exp_id": "e5c6c1c9-737c-4374-a66f-67cc02073858",
@@ -2470,11 +2470,11 @@
     }
   },
   "stm32f103rct6|stm32f103rct6_systick_mailbox": {
-    "exp_id": null,
-    "success_count": 0,
+    "exp_id": "f0ccc43b-8fb0-4f8a-9438-412d5caa546d",
+    "success_count": 2,
     "failure_count": 1,
-    "last_seen": 1775351254.779976,
-    "confidence": 0.5,
+    "last_seen": 1775387841.8686256,
+    "confidence": 0.6,
     "known_failures": {
       "load": {
         "exp_id": "5e525402-dfc7-495d-ac5b-594b500e5991",
@@ -2779,18 +2779,18 @@
   },
   "stm32f103rct6|stm32f103rct6_zephyr_synchronization": {
     "exp_id": "032c9a01-0a12-442b-9a68-6220ced8ab75",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1775387600.0399928,
-    "confidence": 0.6,
+    "last_seen": 1775387790.233526,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "stm32f103rct6|stm32f103rct6_zephyr_philosophers": {
     "exp_id": "0547240f-5101-4725-93fc-1f8b95a81bc4",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1775387564.4602284,
-    "confidence": 0.7,
+    "last_seen": 1775387833.4992752,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "stm32f103rct6|unknown": {
@@ -2806,5 +2806,21 @@
         "last_raw": "[stm32f103rct6] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
       }
     }
+  },
+  "stm32f103rct6|stm32f103rct6_mailbox": {
+    "exp_id": "1fb643c2-730d-4b76-98a7-bcd54e7e675f",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775387759.0980697,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32f103rct6|stm32f103rct6_hybrid": {
+    "exp_id": "a27a92ab-1795-4fb9-8c43-660560c7418a",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775387990.2688813,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }

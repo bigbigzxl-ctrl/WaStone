@@ -1,0 +1,13 @@
+{
+  "name": "stm32f103rct6_hybrid",
+  "description": "Hybrid pack: Zephyr RTOS + AEL bare-metal on STM32F103RCT6 in one run. Proves Zephyr OS tests and bare-metal mailbox tests can co-exist on the same board — each test re-flashes the board, alternating between Zephyr and bare-metal firmware. No jumper changes needed between tests.",
+  "board": "stm32f103rct6",
+  "status": "golden",
+  "tests": [
+    "tests/plans/stm32f103rct6_mailbox.json",
+    "tests/plans/stm32f103rct6_zephyr_synchronization.json",
+    "tests/plans/stm32f103rct6_timer_mailbox.json",
+    "tests/plans/stm32f103rct6_zephyr_philosophers.json",
+    "tests/plans/stm32f103rct6_systick_mailbox.json"
+  ]
+}
