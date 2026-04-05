@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "stm32f103rct6_freertos_uart",
+  "board": "stm32f103rct6",
+  "supported_instruments": ["stlink", "esp32jtag", "daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["uart_observed", "freertos", "rtos"],
+  "covers": ["usart1", "uart_tx", "freertos_scheduler", "multitask"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103rct6_freertos_uart",
+    "artifact_stem": "stm32f103rct6_freertos_uart",
+    "build_dir": "artifacts/build_stm32f103rct6_freertos_uart"
+  },
+  "signal_checks": [],
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 8,
+    "expect_patterns": [
+      "AEL_FREERTOS_A TICK",
+      "AEL_FREERTOS_B TICK"
+    ]
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true
+    },
+    "notes": "FreeRTOS two-task UART pilot on DAPLink serial bridge. task_a fires every 500 ms, task_b every 700 ms. Both patterns must appear within 8 s.",
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10."
+      }
+    ]
+  }
+}

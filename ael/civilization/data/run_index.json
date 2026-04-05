@@ -2694,11 +2694,11 @@
     }
   },
   "stm32f103rct6|stm32f103rct6_uart_banner": {
-    "exp_id": null,
-    "success_count": 0,
+    "exp_id": "2e302384-928f-4c6c-b98c-99f4eee18dc7",
+    "success_count": 2,
     "failure_count": 1,
-    "last_seen": 1775351424.0796628,
-    "confidence": 0.5,
+    "last_seen": 1775401423.683419,
+    "confidence": 0.6,
     "known_failures": {
       "load": {
         "exp_id": "2c7ea173-7fa7-4335-a9e7-14dd3c1ce4c8",
@@ -2822,5 +2822,41 @@
     "last_seen": 1775387990.2688813,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "esp32c3_devkit|esp32c3_gpio_signature_with_meter": {
+    "exp_id": "1531e67e-48f7-4e10-80ad-dfaf627c97f3",
+    "success_count": 42,
+    "failure_count": 0,
+    "last_seen": 1775401223.083753,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "esp32c6_devkit|esp32c6_gpio_signature_with_meter": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 14,
+    "last_seen": 1775401223.1845136,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_signal": {
+        "exp_id": "c6e883ad-15e8-4d02-aa13-9c2ca29362a3",
+        "count": 14,
+        "last_raw": "[esp32c6_devkit] esp32c6_gpio_signature_with_meter: failed — stages: preflight, build, load, run — failure: check_signal — instrument digital verification failed"
+      }
+    }
+  },
+  "stm32f103rct6|stm32f103rct6_freertos_uart": {
+    "exp_id": "291117b8-c7fb-4f7d-a8ba-57552e350c91",
+    "success_count": 9,
+    "failure_count": 5,
+    "last_seen": 1775402346.9886796,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "bbb956bb-23cb-411e-8c58-de25a4e893e7",
+        "count": 5,
+        "last_raw": "[stm32f103rct6] stm32f103rct6_freertos_uart: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
   }
 }
