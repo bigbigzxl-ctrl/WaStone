@@ -3,6 +3,11 @@ board:
   target: stm32f407_discovery
   instrument_instance: stlink_f407_discovery
   clock_hz: 16000000
+  kind: board
+  features:
+    - programmable_via_swd
+    - has_gpio
+    - has_uart_console
   default_bench_profile: stm32f407_discovery__default
   build:
     type: arm_debug

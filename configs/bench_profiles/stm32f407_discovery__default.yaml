@@ -1,9 +1,44 @@
 bench_profile:
   id: stm32f407_discovery__default
   board_id: stm32f407_discovery
-  description: "ST-Link onboard SWD only; no external LA wiring"
+  description: >
+    ST-Link/V2 onboard SWD (idVendor=0483, idProduct=3748).
+    UART console: PA2 (USART2_TX, AF7) → CH341 USB-serial → /dev/ttyUSB0, 115200 8N1.
+    Loopback jumper: PD5 (USART2_TX) ↔ PD6 (USART2_RX) for uart_loopback tests.
+    Note: PA9/PA10 are bridged to the ST-Link MCU on some Discovery revisions —
+    use USART2/PA2 for console and USART2/PD5-PD6 for loopback.
+
+  bench_connections:
+    - from: PA2
+      to: CH341_RXD
+      notes: "USART2_TX → CH341 USB-serial RXD (/dev/ttyUSB0)"
+    - from: PD5
+      to: PD6
+      notes: "USART2 TX→RX loopback jumper for uart_loopback tests"
+    - from: GND
+      to: CH341_GND
 
   default_wiring:
     swd: "onboard"
     reset: "NC"
     verify: "NC"
+
+  serial_console:
+    port: /dev/ttyUSB0
+    baud: 115200
+    adapter: ch341
+    dut_pin: PA2
+    peripheral: USART2_TX
+    af: AF7
+
+  safe_pins:
+    - PA2
+    - PA3
+    - PD5
+    - PD6
+    - PB6
+    - PB7
+    - PC0
+    - PC1
+    - PC4
+    - PC5

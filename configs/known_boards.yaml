@@ -14,6 +14,27 @@
 boards:
 
   # ── STM32F4xx ──────────────────────────────────────────────────────────────
+  - dut_id: stm32f407_discovery
+    board_name: STM32F4 Discovery (STM32F407VGT6)
+    mcu: stm32f407vgt6
+    aliases:
+      - stm32f4 discovery
+      - stm32f4-discovery
+      - stm32f4disco
+      - stm32f4_disco
+      - f4 discovery
+      - f4disco
+      - stm32f407 discovery
+      - stm32f407vgt6
+      - stm32f407vg
+      - stm32f407
+    notes: >
+      ST STM32F4 Discovery board (MB997). STM32F407VGT6 Cortex-M4F, 1MB flash, 192KB RAM.
+      Onboard ST-Link/V2 (idVendor=0483, idProduct=3748) for SWD.
+      UART console: PA2 (USART2_TX, AF7) → CH341 USB-serial → /dev/ttyUSB0, 115200 8N1.
+      UART loopback: PD5 (USART2_TX) ↔ PD6 (USART2_RX, AF7) — PA9/PA10 conflict with ST-Link UART bridge.
+      Instrument: stlink_f407_discovery (GDB server port 4242).
+
   - dut_id: stm32f411ceu6
     board_name: WeAct Black Pill V2.0 (STM32F411CEU6)
     mcu: stm32f411ceu6
