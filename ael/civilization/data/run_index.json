@@ -1510,376 +1510,581 @@
   },
   "stm32h563rgt6|stm32h563rgt6_i2c_loopback": {
     "exp_id": "8e71a5ac-670a-4b8c-a046-c800736e1888",
-    "success_count": 36,
-    "failure_count": 0,
-    "last_seen": 1775375698.8241107,
+    "success_count": 39,
+    "failure_count": 1,
+    "last_seen": 1775429571.3177984,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "7e8ddf2c-4ec6-426f-8e03-ae06290c4b13",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_i2c_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_gpio_loopback": {
     "exp_id": "48b01f99-2f28-4c54-ae91-873b014e9261",
-    "success_count": 36,
-    "failure_count": 1,
-    "last_seen": 1775405013.141884,
+    "success_count": 39,
+    "failure_count": 2,
+    "last_seen": 1775429491.6459954,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "6b9ad3cc-750d-4b2c-bb3e-40ef55042864",
         "count": 1,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_gpio_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: magic mismatch: got 0x00000000, expected 0xae100001"
+      },
+      "load": {
+        "exp_id": "74ea1735-0d6d-4d11-a81d-675e2e5345d6",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_gpio_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_uart_loopback": {
     "exp_id": "d6d0a5ca-4a56-46f7-b51d-e6e5d32c4b41",
     "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375627.835295,
+    "failure_count": 1,
+    "last_seen": 1775422960.7636764,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "7752f698-4bab-48b4-8391-227a9c892e3d",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_uart_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_exti_trigger": {
     "exp_id": "8c0e116d-456d-4059-b37d-7e6753a985c5",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375635.2460685,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429498.9960642,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "c8589a31-e233-44ab-a712-04a7cd9058b1",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_exti_trigger: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_spi_loopback": {
     "exp_id": "450e2d3d-34ae-430c-a68e-41b6efbf99e9",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375642.6573606,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429509.9874816,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "fa619a1e-e85f-47d1-935e-5eb8e8bb028e",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_spi_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_pwm_capture": {
     "exp_id": "cd621664-3537-4064-8404-58611b1ff441",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375652.113832,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429519.19901,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "27d67814-294c-41ec-89bd-dc941077821f",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_pwm_capture: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_adc_loopback": {
     "exp_id": "492b3a39-e4af-4d40-8467-da0ba3c258f5",
-    "success_count": 34,
-    "failure_count": 1,
-    "last_seen": 1775375661.669313,
+    "success_count": 37,
+    "failure_count": 2,
+    "last_seen": 1775429528.5968437,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "dde3b4f1-c6ee-4e32-be7e-e98d226f370a",
         "count": 1,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_adc_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "e33956eb-36d3-4221-8716-b2bba4890770",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_adc_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_dac_adc": {
     "exp_id": "c77a5612-3555-4bcd-8685-961eb56cf23f",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375671.0713825,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429537.9089336,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "2eddffb7-0e2c-4bbb-adff-cee70cf72b1c",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dac_adc: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_crc_mailbox": {
     "exp_id": "d2776e52-5b5d-4314-94e0-894c85d89bf7",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375677.4832158,
+    "success_count": 39,
+    "failure_count": 1,
+    "last_seen": 1775429545.979091,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "d9fcafec-6b57-4d91-b3cd-1c83a85a78c3",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_crc_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_fpu_mailbox": {
     "exp_id": "88f40a69-c9a8-4224-bd9a-7a6ca00e78aa",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375684.886325,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429553.3467026,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "3375b7ea-7b17-45b5-b0ab-5453dba3b513",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_fpu_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_cordic_mailbox": {
     "exp_id": "259a60d7-71da-4ef6-9c24-6c885ec1d9ae",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375691.3032618,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429563.9918468,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "8200d3b5-e00c-4bde-b4a9-90702660d147",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_cordic_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_uid_mailbox": {
     "exp_id": "8b67508c-d2e4-4d65-ac89-70261af65308",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375706.3620708,
+    "success_count": 37,
+    "failure_count": 1,
+    "last_seen": 1775429578.6795266,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "dbe6665a-6ce3-4aaf-9ac1-1ca59f8ed33b",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_uid_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_rng_mailbox": {
     "exp_id": "a88f0608-eba2-47cf-8788-9a792f5ac924",
-    "success_count": 34,
-    "failure_count": 0,
-    "last_seen": 1775375713.7669911,
+    "success_count": 37,
+    "failure_count": 1,
+    "last_seen": 1775429586.0142374,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "a3532428-342d-42a6-97c9-377a41dba727",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_rng_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_minimal_runtime_mailbox": {
     "exp_id": "71839d27-823d-4e1c-b332-25cfc094f712",
-    "success_count": 34,
-    "failure_count": 0,
-    "last_seen": 1775375720.1653044,
+    "success_count": 37,
+    "failure_count": 1,
+    "last_seen": 1775429592.3382192,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "0dda48fc-6854-4798-8eb4-0b60a789158a",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_minimal_runtime_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_adc_temp_mailbox": {
     "exp_id": "37f07d61-8604-47a1-9ff4-513363a39378",
-    "success_count": 34,
-    "failure_count": 0,
-    "last_seen": 1775375727.6185434,
+    "success_count": 37,
+    "failure_count": 1,
+    "last_seen": 1775429599.6890957,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "5e0f9c69-4090-4477-bb46-42a6fb0b91a7",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_adc_temp_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_timer_mailbox": {
     "exp_id": "580d7d0c-0540-4752-8a16-fe650f337b61",
-    "success_count": 34,
-    "failure_count": 0,
-    "last_seen": 1775375735.9744287,
+    "success_count": 38,
+    "failure_count": 6,
+    "last_seen": 1775429608.034667,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "c7a9e021-4db2-4b8b-b09c-8553b344d695",
+        "count": 6,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_timer_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: pyocd gdbserver exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_dma_m2m_mailbox": {
     "exp_id": "74294fb7-dbdb-4ed4-b611-09d506ed04c8",
-    "success_count": 34,
-    "failure_count": 0,
-    "last_seen": 1775375743.3548126,
+    "success_count": 37,
+    "failure_count": 1,
+    "last_seen": 1775429615.2307043,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "7913858f-df0a-4f15-b12d-2e469c1f5792",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dma_m2m_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_gpdma2_m2m_mailbox": {
     "exp_id": "45c1457a-ade7-4188-82a8-38a47dbc5a63",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375750.8426852,
+    "success_count": 38,
+    "failure_count": 1,
+    "last_seen": 1775429622.5393088,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "41b804e1-55ff-4646-8d44-d8aab95499e0",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_gpdma2_m2m_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_fmac_mailbox": {
     "exp_id": "8408c0fb-813b-4afb-a9a2-6e8e6090baac",
-    "success_count": 41,
-    "failure_count": 7,
-    "last_seen": 1775375771.9069347,
+    "success_count": 44,
+    "failure_count": 8,
+    "last_seen": 1775429651.5283,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "73361ec5-3bd0-4172-ac83-db9e9e076f8e",
         "count": 7,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_fmac_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "400ec6b2-19de-454d-bc46-36b42a6edcd6",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_fmac_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_dts_mailbox": {
     "exp_id": "1fb4792b-7f52-4dc3-bd5b-f568cbb885a9",
-    "success_count": 47,
-    "failure_count": 10,
-    "last_seen": 1775375764.5318425,
+    "success_count": 50,
+    "failure_count": 11,
+    "last_seen": 1775429640.7251163,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "51e45a5a-8c78-4bed-80f8-27f031e6ac01",
         "count": 10,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_dts_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "553d3c81-80b2-4dd4-a144-f4db281792b8",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dts_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_hash_mailbox": {
     "exp_id": "26aab994-6191-436d-9f6b-62cdf15d47b4",
-    "success_count": 35,
-    "failure_count": 3,
-    "last_seen": 1775375758.222174,
+    "success_count": 38,
+    "failure_count": 4,
+    "last_seen": 1775429629.8755245,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "af5823f6-f41a-4235-aa49-710bbd3598a2",
         "count": 3,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_hash_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "205b7368-fb5e-45b3-8153-f9348e202514",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_hash_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_icache_mailbox": {
     "exp_id": "fb3f5e14-7b9d-4f7c-9c38-c6c5346328f7",
-    "success_count": 36,
-    "failure_count": 0,
-    "last_seen": 1775375779.1946416,
+    "success_count": 39,
+    "failure_count": 1,
+    "last_seen": 1775429662.373196,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "0b41bb61-00bf-4b54-abe9-7c2362c1238a",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_icache_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_vrefbuf_mailbox": {
     "exp_id": "7ad62855-c161-48d1-a2e8-6a0f219e4253",
-    "success_count": 35,
-    "failure_count": 2,
-    "last_seen": 1775375786.6499376,
+    "success_count": 38,
+    "failure_count": 3,
+    "last_seen": 1775429673.184742,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "83848ab1-16d4-43ba-bec8-21ec07026734",
         "count": 2,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_vrefbuf_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "b33fbc6c-6ff6-4b6b-8c13-89c5524faafd",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_vrefbuf_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_lptim_mailbox": {
     "exp_id": "f3a8f4bb-a81c-41b2-b5af-ef8fb2b33b8e",
-    "success_count": 34,
-    "failure_count": 4,
-    "last_seen": 1775375794.0288455,
+    "success_count": 37,
+    "failure_count": 5,
+    "last_seen": 1775429683.9726105,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "7859b205-8346-4d03-b538-c271a946532c",
         "count": 4,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_lptim_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "148fa579-ed1e-44d8-a0cc-f0c8949a292e",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_lptim_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_fdcan_mailbox": {
     "exp_id": "584ea0e9",
-    "success_count": 6,
-    "failure_count": 59,
-    "last_seen": 1775375801.4661303,
+    "success_count": 9,
+    "failure_count": 60,
+    "last_seen": 1775429694.7340693,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "e2bd9491-28f4-4afa-8d41-e324e6f95658",
         "count": 59,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_fdcan_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "7c694fdd-27d1-44eb-a8b5-cce4255a5c80",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_fdcan_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_rtc_mailbox": {
     "exp_id": "584ea0e9",
-    "success_count": 33,
-    "failure_count": 1,
-    "last_seen": 1775375808.8712943,
+    "success_count": 36,
+    "failure_count": 2,
+    "last_seen": 1775429705.449266,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "9855a527-4263-427e-beaf-d8f5a2a124f1",
         "count": 1,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_rtc_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "ce8aca5f-7628-42a1-8b74-2f75240015cf",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_rtc_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_pka_mailbox": {
     "exp_id": "584ea0e9",
     "success_count": 2,
-    "failure_count": 75,
-    "last_seen": 1775374754.5574152,
+    "failure_count": 77,
+    "last_seen": 1775426189.4282162,
     "confidence": 0.6,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "90767496-61c6-4e77-80e8-4b65ede8d863",
-        "count": 73,
+        "count": 74,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_pka_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       },
       "load": {
         "exp_id": "4ab41577-02dd-4bdb-9848-aa8549c9845f",
-        "count": 2,
-        "last_raw": "[stm32h563rgt6] stm32h563rgt6_pka_mailbox: failed — stages: preflight, build, run, check — failure: load — flash attempt failed"
+        "count": 3,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_pka_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_lpuart_mailbox": {
     "exp_id": "584ea0e9",
-    "success_count": 18,
-    "failure_count": 17,
-    "last_seen": 1775375816.2639632,
+    "success_count": 21,
+    "failure_count": 18,
+    "last_seen": 1775429716.2540076,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "ccaf06dd-52ba-48c0-bcf1-50f74cf2c7e5",
         "count": 17,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_lpuart_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "03026c5e-7273-4983-8cab-c37f8d2de7e7",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_lpuart_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_crs_mailbox": {
     "exp_id": "672492ce-28c5-4677-ac5b-8cf329690be1",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375823.645544,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429727.0924473,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "4ea406a1-1e9e-4979-abed-7888f72c97f6",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_crs_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_tamp_mailbox": {
     "exp_id": "e466f63f-a14c-4806-831c-52653639fb09",
-    "success_count": 24,
-    "failure_count": 8,
-    "last_seen": 1775375831.0898836,
+    "success_count": 27,
+    "failure_count": 9,
+    "last_seen": 1775429737.8690863,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "066cedfb-f925-4ce8-835b-8f77b657e260",
         "count": 8,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_tamp_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "9d4103ff-ab62-49c3-b4c7-71da355c368f",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_tamp_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_flash_optsr_mailbox": {
     "exp_id": "460788c7-df54-49b1-9800-edfccf3f9ccf",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375838.5823765,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429748.7095208,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "f8854434-42a1-4dd5-96ba-0a8d667332d3",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_flash_optsr_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_ramcfg_mailbox": {
     "exp_id": "d09e576c-48de-4209-ad5a-9bdc46d9d7bf",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375846.0325003,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429759.5467112,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "e89abe7e-1c30-4110-8da1-ce6734ba9494",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_ramcfg_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_dcache_mailbox": {
     "exp_id": "35aa40bb-b482-4255-80a5-640e449df865",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375853.4599442,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429770.3415978,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "2baf4e84-fabd-4404-9285-56d84cf0d8ea",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dcache_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_sbs_mailbox": {
     "exp_id": "fb0314a6-5ee2-4d72-b4b1-bbf0bb408afa",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375860.8685062,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429777.6625402,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "16335d8d-385d-4cc6-8644-632a28e63661",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_sbs_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_i3c1_mailbox": {
     "exp_id": "d696c844-d6dc-44d4-bb0a-93108c5cf255",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375868.2495213,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429785.003834,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "aedc17d1-fceb-4cbf-a7ac-e8abfdaa1e4f",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_i3c1_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_usb_drd_mailbox": {
     "exp_id": "be6d1977-81f6-4e84-af5a-856058ef5679",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375875.6729808,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429792.368022,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "9292de9e-45c3-488b-a7b6-587c420b3f27",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_usb_drd_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_wwdg_mailbox": {
     "exp_id": "f2dd67b1-ff6f-4966-99ba-ab896f679a6c",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375883.0893688,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429799.6896932,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "69b73a28-6385-4f0d-8c63-409b8cb0a9f2",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_wwdg_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32f030c8t6_daplink|stm32f030c8t6_pb0_pb1_probe": {
     "exp_id": "",
@@ -2309,121 +2514,187 @@
   },
   "stm32h563rgt6|stm32h563rgt6_dbgmcu_mailbox": {
     "exp_id": "004c1d8a-2397-40ee-aa63-5b3345cedb00",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375890.5748055,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429807.0349984,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "3ec681ef-ca83-4889-a099-e45ad960212c",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dbgmcu_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_bkpsram_mailbox": {
     "exp_id": "e24790d2-5690-41e4-928f-4e68c11bcefd",
-    "success_count": 24,
-    "failure_count": 7,
-    "last_seen": 1775375901.0878868,
+    "success_count": 27,
+    "failure_count": 8,
+    "last_seen": 1775429817.4004426,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "55017bdc-a312-44ac-8063-b5630cf36dfd",
         "count": 7,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_bkpsram_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      },
+      "load": {
+        "exp_id": "3dd47a9a-a191-4531-9109-b22910c13591",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_bkpsram_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_ucpd1_mailbox": {
     "exp_id": "0e2a14be-796b-41f5-9e9f-73fb0b204911",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375908.5685766,
+    "success_count": 33,
+    "failure_count": 1,
+    "last_seen": 1775429828.1979628,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "3b0871a7-29a3-41be-b315-c8b2979f2192",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_ucpd1_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_cec_mailbox": {
     "exp_id": "53934048-7be3-4f8c-9c80-9ec85be5f9be",
-    "success_count": 23,
-    "failure_count": 9,
-    "last_seen": 1775375915.9592237,
+    "success_count": 26,
+    "failure_count": 10,
+    "last_seen": 1775429838.9963663,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "c6b64f9e-26b0-42f8-8245-4d0ff24792dc",
         "count": 9,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_cec_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "71dd18cd-0bf2-4619-abc0-554a7df6681d",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_cec_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_sau_mailbox": {
     "exp_id": "1295cdd2-41a2-4bc0-98e9-3599881b06ce",
-    "success_count": 23,
-    "failure_count": 8,
-    "last_seen": 1775375923.39835,
+    "success_count": 26,
+    "failure_count": 9,
+    "last_seen": 1775429849.7851257,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "3116c45f-6873-4c19-83a6-387dab6f2ee1",
         "count": 8,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_sau_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "8ebdddf4-2633-435a-8ec9-670646dc9d97",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_sau_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_flash_scratch_mailbox": {
     "exp_id": "77b745a8-af1f-46c4-becb-b1b65e710b67",
-    "success_count": 11,
-    "failure_count": 21,
-    "last_seen": 1775241830.3849404,
+    "success_count": 14,
+    "failure_count": 22,
+    "last_seen": 1775430000.2516918,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "b4baad49-0eb6-404e-aa51-e6062698a621",
         "count": 21,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_flash_scratch_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "06a82f86-5006-4418-bee3-856b291a5b72",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_flash_scratch_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_lptim_multi_mailbox": {
     "exp_id": "487e5ede-2a4b-48e9-8135-042bd0c459b0",
-    "success_count": 30,
-    "failure_count": 0,
-    "last_seen": 1775375930.8931694,
+    "success_count": 33,
+    "failure_count": 2,
+    "last_seen": 1775430230.7243688,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "b60b40e6-1100-4e79-823c-c01ee3454aec",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_lptim_multi_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      },
+      "check_mailbox": {
+        "exp_id": "9ddc3798-55dc-4dd9-b328-88b4b3a878c6",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_lptim_multi_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox read failed: parse_failed"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_tim151617_mailbox": {
     "exp_id": "59447767-a32d-45e8-a5e7-289194385f90",
-    "success_count": 24,
-    "failure_count": 7,
-    "last_seen": 1775375937.388014,
+    "success_count": 28,
+    "failure_count": 9,
+    "last_seen": 1775430220.1904962,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "5c76c922-7412-44e1-8ff8-143584e104c1",
-        "count": 7,
-        "last_raw": "[stm32h563rgt6] stm32h563rgt6_tim151617_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "count": 8,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_tim151617_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox read failed: parse_failed"
+      },
+      "load": {
+        "exp_id": "8a5c38d0-c6b1-4b0d-90bb-64b4a68c15ea",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_tim151617_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_lptim2_mailbox": {
     "exp_id": "02d2605a-e4ad-4df0-816d-a18e9567a5c6",
-    "success_count": 29,
-    "failure_count": 0,
-    "last_seen": 1775375944.8203864,
+    "success_count": 32,
+    "failure_count": 1,
+    "last_seen": 1775429978.2969775,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "b8da6237-9891-4cb4-8446-472d0530069a",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_lptim2_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_mpu_mailbox": {
     "exp_id": "aeff4ae6-6e74-4796-8440-726d47210901",
-    "success_count": 29,
-    "failure_count": 0,
-    "last_seen": 1775375952.2151132,
+    "success_count": 32,
+    "failure_count": 1,
+    "last_seen": 1775429985.6146708,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "4c3277cc-f58c-4da9-8784-2e1ecbf6fb32",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_mpu_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_dwt_mailbox": {
     "exp_id": "4efc7a65-d3fa-4dac-befc-18390328fa76",
-    "success_count": 29,
-    "failure_count": 0,
-    "last_seen": 1775375959.6321204,
+    "success_count": 32,
+    "failure_count": 1,
+    "last_seen": 1775429992.9005816,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "5cc75023-146a-474f-9992-3e3803867e71",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_dwt_mailbox: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+      }
+    }
   },
   "stm32f103c6t6_bluepill_like|stm32f103c6_uart_roundtrip_with_esp32jtag": {
     "exp_id": "4b393e37-856d-4d83-a642-067f81883159",
@@ -2873,10 +3144,10 @@
   },
   "stm32h563rgt6|stm32h563rgt6_freertos_uart": {
     "exp_id": "517637ee-5b36-4a72-826f-60466775d10f",
-    "success_count": 4,
-    "failure_count": 6,
-    "last_seen": 1775412595.3253005,
-    "confidence": 0.8,
+    "success_count": 7,
+    "failure_count": 7,
+    "last_seen": 1775430012.9498148,
+    "confidence": 1.0,
     "known_failures": {
       "check_uart": {
         "exp_id": "4e56b666-df51-48f7-8068-d5f732b54f4a",
@@ -2885,7 +3156,7 @@
       },
       "load": {
         "exp_id": "73b9259a-7610-478f-a07a-5de43fec0f73",
-        "count": 3,
+        "count": 4,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_freertos_uart: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
@@ -2960,10 +3231,10 @@
   },
   "stm32h563rgt6|stm32h563rgt6_zephyr_hello_loop": {
     "exp_id": "f04daa28-1808-4037-9157-f07c01d883f5",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 1,
-    "last_seen": 1775412920.938977,
-    "confidence": 0.6,
+    "last_seen": 1775430047.826059,
+    "confidence": 1.0,
     "known_failures": {
       "check_uart": {
         "exp_id": "bd9a0308-c5c4-4efb-bc13-91570680c2b0",
@@ -2974,28 +3245,28 @@
   },
   "stm32h563rgt6|stm32h563rgt6_zephyr_philosophers": {
     "exp_id": "65c1935d-6205-455b-9122-3615e4fcb28c",
-    "success_count": 2,
-    "failure_count": 5,
-    "last_seen": 1775414537.450492,
-    "confidence": 0.6,
+    "success_count": 5,
+    "failure_count": 14,
+    "last_seen": 1775430088.5097754,
+    "confidence": 0.9,
     "known_failures": {
       "check_uart": {
         "exp_id": "4d8ba8e8-5cae-44e3-8d41-22206519551b",
-        "count": 5,
+        "count": 14,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_philosophers: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
       }
     }
   },
   "stm32h563rgt6|stm32h563rgt6_zephyr_synchronization": {
     "exp_id": "9a6f514f-7f2a-4e2c-be79-d9e13cd53863",
-    "success_count": 3,
-    "failure_count": 2,
-    "last_seen": 1775414493.3503864,
-    "confidence": 0.7,
+    "success_count": 6,
+    "failure_count": 4,
+    "last_seen": 1775430123.284868,
+    "confidence": 1.0,
     "known_failures": {
       "check_uart": {
         "exp_id": "f7459446-ae12-4626-8cf0-af6ed8ffb754",
-        "count": 2,
+        "count": 4,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_synchronization: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
       }
     }

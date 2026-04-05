@@ -257,7 +257,8 @@ def resolve_run_strategy(
         if project_override:
             build_cfg["project_dir"] = str(project_override)
         for key in ("type", "artifact_stem", "build_dir", "target",
-                    "zephyr_board", "config_args", "pristine"):
+                    "zephyr_board", "config_args", "pristine",
+                    "extra_overlay_file", "extra_conf_file"):
             value = test_build.get(key)
             if value not in (None, ""):
                 build_cfg[key] = value

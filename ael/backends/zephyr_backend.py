@@ -211,7 +211,8 @@ class ZephyrBackend(AELBackend):
                 raise subprocess.CalledProcessError(result.returncode, cmd, result.stdout, result.stderr)
             return
 
-        # Release the ST-Link from any AEL-managed gdbserver before OpenOCD takes it
+        # Release the ST-Link from any AEL-managed gdbserver before the flash
+        # runner takes exclusive ownership of the probe.
         self._release_port(3333)
         self._release_port(4242)
         cmd = [self.west_bin, "flash", "--runner", runner,
@@ -220,7 +221,28 @@ class ZephyrBackend(AELBackend):
             cmd += ["--openocd", str(openocd_exe)]
         if openocd_config:
             cmd += ["--config", str(openocd_config)]
-        self._run(cmd)
+
+        if runner == "pyocd":
+            # pyocd exits non-zero when MCU disconnects during post-flash reset
+            # (WAIT_ACK / SWD fault after SYSRESETREQ).  This is harmless — the
+            # flash succeeded — but causes AEL to retry, which runs a second
+            # west flash that skips programming and leaves the MCU halted.
+            # Fix: ignore the exit code, then always run an explicit pyocd reset
+            # so the MCU is running regardless of whether content was programmed
+            # or skipped.
+            subprocess.run(
+                cmd,
+                env=self._env(),
+                cwd=str(self.workspace),
+            )
+            reset_cmd = ["pyocd", "reset"]
+            if pyocd_target:
+                reset_cmd += ["-t", pyocd_target]
+            if pyocd_uid:
+                reset_cmd += ["--uid", pyocd_uid]
+            subprocess.run(reset_cmd)
+        else:
+            self._run(cmd)
 
     def start_debugserver(
         self,

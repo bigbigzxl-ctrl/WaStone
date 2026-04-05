@@ -26,6 +26,7 @@
     "method": "zephyr_west",
     "runner": "pyocd",
     "build_dir": "artifacts/build_stm32h563rgt6_zephyr_hello_loop",
+    "pyocd_target": "stm32h563rgtx",
     "post_load_settle_s": 1.5
   },
   "observe_uart": {

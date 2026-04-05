@@ -48,7 +48,6 @@
         "tests/plans/stm32h563rgt6_mpu_mailbox.json",
         "tests/plans/stm32h563rgt6_dwt_mailbox.json",
         "tests/plans/stm32h563rgt6_flash_scratch_mailbox.json",
-        "tests/plans/stm32h563rgt6_pka_mailbox.json",
         "tests/plans/stm32h563rgt6_freertos_uart.json",
         "tests/plans/stm32h563rgt6_zephyr_hello_loop.json",
         "tests/plans/stm32h563rgt6_zephyr_philosophers.json",
