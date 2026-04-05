@@ -2722,5 +2722,19 @@
     "last_seen": 1775376744.7160244,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_zephyr_hello_loop": {
+    "exp_id": "ad5eeaf5-ed00-40d9-9046-59709378b857",
+    "success_count": 1,
+    "failure_count": 1,
+    "last_seen": 1775379308.3533113,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "3ff4b2a1-ef41-46b8-b329-1de4ca79f8a7",
+        "count": 1,
+        "last_raw": "[stm32f407_discovery] stm32f407_zephyr_hello_loop: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
   }
 }
