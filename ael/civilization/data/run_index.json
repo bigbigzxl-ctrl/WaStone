@@ -2847,9 +2847,9 @@
   },
   "stm32f103rct6|stm32f103rct6_freertos_uart": {
     "exp_id": "291117b8-c7fb-4f7d-a8ba-57552e350c91",
-    "success_count": 9,
+    "success_count": 10,
     "failure_count": 5,
-    "last_seen": 1775402346.9886796,
+    "last_seen": 1775402428.9271715,
     "confidence": 1.0,
     "known_failures": {
       "check_uart": {
