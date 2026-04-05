@@ -114,6 +114,61 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### STM32H563RGT6 — Deepest Cortex-M33 Golden Suite: 46/46 PASS via DAPLink (2026-04-05)
+
+AEL completed the most comprehensive STM32H5-series bare-metal golden suite: **46 tests across 35+ peripherals** on an `STM32H563RGT6` board (Cortex-M33, 250 MHz, TrustZone), validated via DAPLink/CMSIS-DAP over USB.
+
+**What was covered:**
+
+| Category | Tests | Peripherals |
+|----------|-------|-------------|
+| Connectivity / Loopback | 6 | GPIO, UART, EXTI, SPI, PWM capture, I2C |
+| Analog | 3 | ADC loopback, DAC→ADC, ADC internal temp |
+| Core / Runtime | 3 | minimal runtime mailbox, FPU, MPU |
+| DMA / Cache / Memory | 5 | GPDMA1 M2M, GPDMA2 M2M, ICache, DCache, RAMCFG |
+| Timers | 5 | TIM basic, LPTIM, LPTIM multi, LPTIM2, TIM15/16/17 |
+| Crypto / Math Accelerators | 4 | CRC, HASH (SHA-256), CORDIC, FMAC |
+| ID / RNG / Sensor | 3 | UID, RNG, DTS (temp sensor) |
+| Communication Peripherals | 7 | LPUART, FDCAN, USB DRD FS, I3C, CEC, UCPD, CRS |
+| System / Security | 7 | SBS, SAU (TrustZone), DBGMCU, DWT, Flash option bytes, BKPSRAM, VREFBUF |
+| RTC / Tamper / Watchdog | 3 | RTC, TAMP, WWDG |
+
+**Key engineering findings:**
+
+- **PKA ECC anomaly** — PKA internal SRAM ECC state survives `NRST` and appears to persist even after power cycle on this board instance; INITOK never fires within any tested timeout. Suspended pending board-swap diagnosis. See [`docs/reports/stm32h563rgt6_pka_mailbox_investigation_2026-04-05.md`](docs/reports/stm32h563rgt6_pka_mailbox_investigation_2026-04-05.md).
+- **STM32H5 DTS** requires `TS1_START` (CFGR1 bit4) + `ITENR.TS1_ITEEN` for valid measurements; `TS1_RDY` alone is insufficient. CE record `db885...`.
+- **FDCAN** needed multiple iterations to stabilize (19% historical pass rate → now reliable); key was correct bit-timing configuration at HSI 64 MHz.
+
+**Canonical result:**
+
+- DUT: `stm32h563rgt6` (Cortex-M33 @ 64 MHz HSI, 512 KB Flash, TrustZone)
+- Pack: [`packs/stm32h563rgt6_golden.json`](packs/stm32h563rgt6_golden.json)
+- Report: [`docs/reports/stm32h563rgt6_golden_suite_closeout_2026-04-05.md`](docs/reports/stm32h563rgt6_golden_suite_closeout_2026-04-05.md)
+
+---
+
+### STM32F103C6T6 — Blue Pill Golden Suite: 24/24 PASS via ESP32JTAG (2026-04-01)
+
+AEL completed a full **24-test staged golden suite** on an `STM32F103C6T6` (Blue Pill-like) board via ESP32JTAG over WiFi, covering the complete Cortex-M3 peripheral set available on this small 64 KB Flash chip.
+
+**What was covered:**
+
+| Stage | Tests | Peripherals |
+|-------|-------|-------------|
+| 0 — Board life | pc13_blinky_visual, minimal_runtime_mailbox | LED blink (LA-verified), mailbox health |
+| 1 — Internal self-tests | timer, systick, internal_temp, system_identity, reset_cause, sleep_wfi, adc_vref, iwdg | TIM2, SysTick, ADC temp, UID, RCC reset cause, WFI, VDDA sense, IWDG |
+| Pre-Stage 2 — Wire scan | pb0_pb1, pb8_pb9, pa0_pa1_adc, pb15_pb14 probes | GPIO connectivity verification via IDR scan |
+| 2 — Functional | gpio_loopback, exti_trigger, adc_loopback, capture_mailbox, pwm_capture, tim3_pwm, spi1_loopback, uart_loopback, uart_multibyte, uart_dma | GPIO, EXTI, ADC, TIM3 capture+PWM, SPI1, USART1 |
+
+**Canonical result:**
+
+- DUT: `stm32f103c6t6` (Blue Pill-like, Cortex-M3 @ 72 MHz, 64 KB Flash)
+- Instrument: `esp32jtag_stm32_golden` @ `192.168.2.98:4242`
+- Pack: [`packs/stm32f103c6t6_golden.json`](packs/stm32f103c6t6_golden.json)
+- Report: [`docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md`](docs/reports/stm32f103c6t6_golden_suite_closeout_2026-04-01.md)
+
+---
+
 ### STM32F407VET6 — Deepest Cortex-M4 Golden Suite: 21/21 PASS via ESP32JTAG (2026-04-01)
 
 AEL completed the most comprehensive STM32 bare-metal golden suite to date: **21 tests across 20 peripherals** on a custom `STM32F407VET6` board, validated end-to-end via `ESP32JTAG` over WiFi (BMDA/SWD).
