@@ -146,6 +146,7 @@ detach
 | **[HIGH_PRIORITY] wire_scan IDR technique: drive output LOW, XOR full IDR = connected pins** | `df19dd7c` | 所有需要验证 GPIO 连通性的场景 | 0.9 |
 | **[HIGH_PRIORITY] BMDA flash+run: use `load + attach 1 + detach`, never `continue&`** | `77469dc5` | 所有 ESP32JTAG/BMDA GDB batch flash 场景 | 0.9 |
 | **[HIGH_PRIORITY] ARM Cortex-M bare-metal 必须定义 HardFault_Handler + SYSRESETREQ — 否则 LOCKUP 导致 SWD 死亡级联** | `3f13ca66` | 所有 ARM Cortex-M MCU 裸机固件（STM32/RP2040/SAM/NXP，via BMDA/OpenOCD/J-Link）| 0.95 |
+| **[HIGH_PRIORITY] STM32H5 HSIDIV 在 pyocd 软复位后不复位 — 裸机固件 main() 必须先清零 HSIDIV** | `00914fb3` | 所有 STM32H5 裸机固件（依赖 HSI 64 MHz 的 UART/定时器）| 0.95 |
 
 ## ESP32-C5 board_family 已知陷阱
 

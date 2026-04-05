@@ -16,6 +16,7 @@
 #include "../ael_mailbox.h"
 
 #define RCC_BASE        0x44020C00u
+#define RCC_CR          (*(volatile uint32_t *)(RCC_BASE + 0x000u))
 #define RCC_AHB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x08Cu))
 #define RCC_APB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0A4u))
 
@@ -46,6 +47,10 @@ static const uint8_t tx_data[4] = {0x55u, 0xAAu, 0x12u, 0x34u};
 
 int main(void)
 {
+    /* STM32H5 HSIDIV survives pyocd soft reset — force HSIDIV=0 → HSI=64MHz */
+    RCC_CR &= ~(0x3u << 3);
+    while (RCC_CR & (1u << 5)) {}   /* wait HSIDIVF=0 */
+
     ael_mailbox_init();
 
     /* 1. Enable GPIOA (AHB2 bit0), USART1 (APB2 bit14) */

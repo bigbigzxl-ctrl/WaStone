@@ -16,6 +16,7 @@
 
 /* RCC */
 #define RCC_BASE        0x44020C00u
+#define RCC_CR          (*(volatile uint32_t *)(RCC_BASE + 0x000u))
 #define RCC_AHB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x08Cu))
 #define RCC_APB1LENR    (*(volatile uint32_t *)(RCC_BASE + 0x09Cu))
 #define RCC_APB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0A4u))
@@ -71,6 +72,10 @@ static void usart_puts(volatile uint32_t *isr, volatile uint32_t *tdr, const cha
 
 int main(void)
 {
+    /* STM32H5 HSIDIV survives pyocd soft reset — force HSIDIV=0 → HSI=64MHz */
+    RCC_CR &= ~(0x3u << 3);
+    while (RCC_CR & (1u << 5)) {}   /* wait HSIDIVF=0 */
+
     ael_mailbox_init();
 
     /* 1. Enable GPIOA, GPIOB clocks (AHB2 bits 0, 1) */

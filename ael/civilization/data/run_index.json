@@ -1518,11 +1518,17 @@
   },
   "stm32h563rgt6|stm32h563rgt6_gpio_loopback": {
     "exp_id": "48b01f99-2f28-4c54-ae91-873b014e9261",
-    "success_count": 35,
-    "failure_count": 0,
-    "last_seen": 1775375620.4234495,
+    "success_count": 36,
+    "failure_count": 1,
+    "last_seen": 1775405013.141884,
     "confidence": 1.0,
-    "known_failures": {}
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "6b9ad3cc-750d-4b2c-bb3e-40ef55042864",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_gpio_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: magic mismatch: got 0x00000000, expected 0xae100001"
+      }
+    }
   },
   "stm32h563rgt6|stm32h563rgt6_uart_loopback": {
     "exp_id": "d6d0a5ca-4a56-46f7-b51d-e6e5d32c4b41",
@@ -2825,22 +2831,22 @@
   },
   "esp32c3_devkit|esp32c3_gpio_signature_with_meter": {
     "exp_id": "1531e67e-48f7-4e10-80ad-dfaf627c97f3",
-    "success_count": 42,
+    "success_count": 45,
     "failure_count": 0,
-    "last_seen": 1775401223.083753,
+    "last_seen": 1775403683.8236883,
     "confidence": 1.0,
     "known_failures": {}
   },
   "esp32c6_devkit|esp32c6_gpio_signature_with_meter": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 14,
-    "last_seen": 1775401223.1845136,
+    "failure_count": 15,
+    "last_seen": 1775403683.9161978,
     "confidence": 0.5,
     "known_failures": {
       "check_signal": {
         "exp_id": "c6e883ad-15e8-4d02-aa13-9c2ca29362a3",
-        "count": 14,
+        "count": 15,
         "last_raw": "[esp32c6_devkit] esp32c6_gpio_signature_with_meter: failed — stages: preflight, build, load, run — failure: check_signal — instrument digital verification failed"
       }
     }
@@ -2856,6 +2862,25 @@
         "exp_id": "bbb956bb-23cb-411e-8c58-de25a4e893e7",
         "count": 5,
         "last_raw": "[stm32f103rct6] stm32f103rct6_freertos_uart: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
+  },
+  "stm32h563rgt6|stm32h563rgt6_freertos_uart": {
+    "exp_id": "517637ee-5b36-4a72-826f-60466775d10f",
+    "success_count": 4,
+    "failure_count": 4,
+    "last_seen": 1775407754.090851,
+    "confidence": 0.8,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "4e56b666-df51-48f7-8068-d5f732b54f4a",
+        "count": 3,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_freertos_uart: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      },
+      "load": {
+        "exp_id": "73b9259a-7610-478f-a07a-5de43fec0f73",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_freertos_uart: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   }

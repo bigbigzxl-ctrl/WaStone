@@ -24,6 +24,7 @@
  * STM32H563 register addresses
  * ----------------------------------------------------------------------- */
 #define RCC_BASE        0x44020C00u
+#define RCC_CR          (*(volatile uint32_t *)(RCC_BASE + 0x000u))
 #define RCC_AHB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x08Cu))
 #define RCC_APB2ENR     (*(volatile uint32_t *)(RCC_BASE + 0x0A4u))
 
@@ -107,6 +108,13 @@ void HardFault_Handler(void)
  * ----------------------------------------------------------------------- */
 int main(void)
 {
+    /* STM32H5 HSIDIV may be non-zero after pyocd soft-reset (peripheral regs
+     * survive VECTRESET). Force HSIDIV=0 → HSI = 64 MHz before UART init.
+     * RCC_CR bits[4:3] = HSIDIV; clear to 00b = divide-by-1.
+     * Wait for HSIDIVF (bit5) = 0 to confirm divider applied.          */
+    RCC_CR &= ~(0x3u << 3);
+    while (RCC_CR & (1u << 5)) {}   /* wait HSIDIVF = 0 */
+
     usart1_init();
     usart1_puts("STM32H563_FREERTOS SCHEDULER STARTED\r\n");
 
