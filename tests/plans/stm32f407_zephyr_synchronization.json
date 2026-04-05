@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "zephyr_uart_observe",
+  "name": "stm32f407_zephyr_synchronization",
+  "board": "stm32f407_discovery",
+  "supported_instruments": ["stlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_swd"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["zephyr", "uart_observe", "rtos", "regression"],
+  "covers": ["zephyr_scheduler", "semaphore", "multi_thread", "verify"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "Runs Zephyr upstream samples/synchronization on stm32f4_disco. Two threads (thread_a, thread_b) alternate printing via semaphore ping-pong every 500ms. AEL verifies both threads are live and scheduler is operating. Console on PA2 (USART2) 115200 8N1.",
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "stm32f4_disco",
+    "project_dir": "/home/aes/zephyrproject/zephyr/samples/synchronization",
+    "build_dir": "artifacts/build_stm32f407_zephyr_synchronization"
+  },
+  "flash": {
+    "method": "zephyr_west",
+    "runner": "openocd",
+    "build_dir": "artifacts/build_stm32f407_zephyr_synchronization",
+    "post_load_settle_s": 1.5
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyUSB0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 8,
+    "expect_patterns": [
+      "thread_a: Hello World",
+      "thread_b: Hello World"
+    ]
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "stlink_f407_discovery",
+        "required": true,
+        "notes": "Onboard ST-Link/V2-A for SWD flash via west flash --runner openocd."
+      }
+    ],
+    "serial_console": {
+      "port": "/dev/ttyUSB0",
+      "baud": 115200,
+      "required": true,
+      "notes": "USB-UART adapter: STM32 PA2 (USART2_TX) -> RXD, GND -> GND."
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA2/USART2_TX",
+        "direction": "output",
+        "notes": "Zephyr console UART. Connect to USB-UART adapter RXD."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "STM32 PA2 (USART2_TX)",
+        "to": "USB-UART adapter RXD"
+      },
+      {
+        "from": "STM32 GND",
+        "to": "USB-UART adapter GND"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
