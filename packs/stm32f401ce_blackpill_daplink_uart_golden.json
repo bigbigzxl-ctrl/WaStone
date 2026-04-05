@@ -1,0 +1,27 @@
+{
+  "name": "stm32f401ce_blackpill_daplink_uart_golden",
+  "description": "STM32F401 Black Pill DAPLink UART golden pack for the local SWD plus DAPLink CDC bench. Stage0 proves the onboard PC13 LED blink path. Stage1 proves passive UART readiness on USART1 PA9/PA10 through the DAPLink CDC bridge. Stage2 proves host-driven PING/PONG over the same bridge. Stage3 proves host-driven ECHO over the same bridge.",
+  "board": "stm32f401ce_blackpill_daplink",
+  "status": "validated",
+  "verified_date": "2026-04-05",
+  "stages": {
+    "0": [
+      "tests/plans/stm32f401ce_blackpill_daplink_led_blink.json"
+    ],
+    "1": [
+      "tests/plans/stm32f401ce_blackpill_daplink_uart_banner.json"
+    ],
+    "2": [
+      "tests/plans/stm32f401ce_blackpill_daplink_uart_ping_pong.json"
+    ],
+    "3": [
+      "tests/plans/stm32f401ce_blackpill_daplink_uart_echo.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f401ce_blackpill_daplink_led_blink.json",
+    "tests/plans/stm32f401ce_blackpill_daplink_uart_banner.json",
+    "tests/plans/stm32f401ce_blackpill_daplink_uart_ping_pong.json",
+    "tests/plans/stm32f401ce_blackpill_daplink_uart_echo.json"
+  ]
+}

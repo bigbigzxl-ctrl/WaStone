@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "stm32f401ce_blackpill_daplink_uart_banner",
+  "board": "stm32f401ce_blackpill_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["stage1", "uart_observed", "banner"],
+  "covers": ["usart1", "uart_tx", "banner"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f401ce_uart_daplink",
+    "artifact_stem": "stm32f401ce_uart_daplink_app",
+    "build_dir": "artifacts/build_stm32f401ce_uart_daplink"
+  },
+  "signal_checks": [],
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/serial/by-id/usb-Arm_DAPLink_CMSIS-DAP_29e7f7fcfc57322e01-if00",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 7,
+    "expect_patterns": [
+      "READY"
+    ]
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/serial/by-id/usb-Arm_DAPLink_CMSIS-DAP_29e7f7fcfc57322e01-if00",
+      "baud": 115200,
+      "required": true
+    },
+    "notes": "Passive UART banner proof on the DAPLink CDC bridge. The firmware emits a startup banner and periodic READY lines while blinking PC13.",
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10."
+      }
+    ]
+  }
+}

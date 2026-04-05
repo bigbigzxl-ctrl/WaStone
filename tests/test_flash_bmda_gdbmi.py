@@ -590,7 +590,8 @@ def test_ensure_local_daplink_gdb_server_starts_when_port_missing(tmp_path):
     assert args[:2] == ["openocd", "-f"]
     assert "interface/cmsis-dap.cfg" in args
     assert "target/stm32f1x.cfg" in args
-    assert any("ready at 127.0.0.1:3333" in line for line in emitted)
+    actual_port = int(result.get("actual_port") or 3333)
+    assert any(f"ready at 127.0.0.1:{actual_port}" in line for line in emitted)
 
 
 def test_ensure_local_daplink_gdb_server_falls_back_to_usb_bulk(tmp_path):

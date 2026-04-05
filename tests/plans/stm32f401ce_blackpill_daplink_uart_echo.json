@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f401ce_blackpill_daplink_uart_echo",
+  "board": "stm32f401ce_blackpill_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["stage3", "uart", "stim"],
+  "covers": ["uart", "host_exchange", "echo"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f401ce_uart_daplink",
+    "artifact_stem": "stm32f401ce_uart_daplink_app",
+    "build_dir": "artifacts/build_stm32f401ce_uart_daplink"
+  },
+  "signal_checks": [],
+  "host_uart_exchange": {
+    "enabled": true,
+    "port": "/dev/serial/by-id/usb-Arm_DAPLink_CMSIS-DAP_29e7f7fcfc57322e01-if00",
+    "baud": 115200,
+    "ready_patterns": ["READY"],
+    "tx": "ECHO hello-from-pc\n",
+    "expect_patterns": ["ECHO hello-from-pc"],
+    "startup_wait_s": 1.0,
+    "ready_timeout_s": 8.0,
+    "response_timeout_s": 4.0
+  },
+  "bench_setup": {
+    "serial_console": {
+      "port": "/dev/serial/by-id/usb-Arm_DAPLink_CMSIS-DAP_29e7f7fcfc57322e01-if00",
+      "baud": 115200,
+      "required": true
+    },
+    "notes": "Active host-to-target UART echo proof through the DAPLink CDC port using USART1 on PA9/PA10.",
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Connect STM32 PA9 to DAPLink RX."
+      },
+      {
+        "role": "uart_rx",
+        "dut_signal": "PA10/USART1_RX",
+        "direction": "input",
+        "notes": "Connect DAPLink TX to STM32 PA10."
+      }
+    ]
+  }
+}
