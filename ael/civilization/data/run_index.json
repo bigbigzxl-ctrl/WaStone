@@ -2921,10 +2921,10 @@
     "known_failures": {}
   },
   "stm32f407_discovery|stm32f407_spi_loopback": {
-    "exp_id": null,
-    "success_count": 0,
+    "exp_id": "8e4c79d3-6a08-4011-ba69-fe6bee1bca94",
+    "success_count": 1,
     "failure_count": 1,
-    "last_seen": 1775410591.0744276,
+    "last_seen": 1775411498.3249152,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
