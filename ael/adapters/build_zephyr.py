@@ -61,6 +61,13 @@ def run(board_cfg: Dict[str, Any]) -> str | None:
     extra_conf        = _resolve_optional("extra_conf_file")
     extra_dtc_overlay = _resolve_optional("extra_overlay_file")
 
+    # Inject extra_overlay_file as -DDTC_OVERLAY_FILE=<abs> in config_args.
+    # --extra-dtc-overlay is unreliable with west 1.5.0 for upstream samples
+    # (the flag is silently ignored when source_dir is an absolute path outside
+    # the workspace).  Passing via CMake -D is always honoured.
+    if extra_dtc_overlay:
+        config_args = list(config_args) + [f"-DDTC_OVERLAY_FILE={extra_dtc_overlay}"]
+
     backend = ZephyrBackend()
 
     # build() takes a sample_dir relative to the workspace; for external apps
@@ -72,7 +79,6 @@ def run(board_cfg: Dict[str, Any]) -> str | None:
         config_args=config_args if config_args else None,
         pristine=pristine,
         extra_conf=extra_conf,
-        extra_dtc_overlay=extra_dtc_overlay,
     )
 
     return str(elf) if elf and elf.exists() else None

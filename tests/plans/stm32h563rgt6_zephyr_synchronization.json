@@ -21,9 +21,7 @@
     "zephyr_board": "nucleo_h563zi",
     "project_dir": "/home/aes/zephyrproject/zephyr/samples/synchronization",
     "build_dir": "artifacts/build_stm32h563rgt6_zephyr_synchronization",
-    "config_args": [
-      "-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/stm32h563rgt6_zephyr_synchronization/boards/nucleo_h563zi.overlay"
-    ]
+    "extra_overlay_file": "firmware/targets/stm32h563rgt6_zephyr_synchronization/boards/nucleo_h563zi.overlay"
   },
   "flash": {
     "method": "zephyr_west",

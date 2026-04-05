@@ -1,0 +1,10 @@
+/*
+ * DTS overlay — STM32F103RCT6 / stm32f103_mini (synchronization sample)
+ *
+ * No overrides needed:
+ *   Clock: stm32f103_mini uses HSI 8 MHz by default — no external crystal.
+ *   Console: USART1 PA9 is the stm32f103_mini default console, already
+ *            wired to the DAPLink USB-UART bridge → /dev/ttyACM0.
+ *
+ * This file exists so the boards/ structure is present for future overrides.
+ */

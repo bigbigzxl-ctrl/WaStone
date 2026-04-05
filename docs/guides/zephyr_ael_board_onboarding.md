@@ -8,7 +8,7 @@ Bring any Zephyr-supported board under AEL closed-loop UART validation in six st
 
 AEL's Zephyr pipeline uses `build.type = "zephyr"` to build with `west build`, then flashes via the board's existing AEL instrument path (ST-Link, DAPLink, etc.) — the same GDB-based `load.gdbmi` stage used for bare-metal firmware.  Once a board passes the smoke test here, every Zephyr upstream sample (synchronization, philosophers, …) can be added as an `ael run` test plan with no firmware changes.
 
-> **Flash path clarification:** `flash.method = "zephyr_west"` in a test plan is currently a no-op — the AEL pipeline uses the board profile's GDB flash path (`load.gdbmi`) to program the Zephyr ELF, not `west flash`. The `runner` and `openocd_config` fields in the test plan's `flash` section are therefore informational only. `west flash` is only called if you invoke `ZephyrBackend.flash()` directly (e.g. from a regression test or standalone script).
+> **Flash path:** Two flash paths are supported.  The default for DAPLink boards is `flash.method = "pyocd"` — AEL calls `pyocd flash` directly (no GDB).  For ST-Link boards, `flash.method = "gdbmi"` uses the board profile's GDB flash path (`load.gdbmi`) to program the Zephyr ELF.  Set `flash.runner = "pyocd"` and `flash.target = "<pyocd_target>"` for DAPLink boards.  The legacy `"zephyr_west"` method is a no-op (informational only).
 
 **Validated boards:**
 
@@ -16,6 +16,7 @@ AEL's Zephyr pipeline uses `build.type = "zephyr"` to build with `west build`, t
 |-------|-------------------|-------------|------------|-----------|------|
 | STM32F4 Discovery | `stm32f4_disco` | PA2 (USART2 TX) | ST-Link onboard | USB-UART `/dev/ttyUSB0` | 2026-04-05 |
 | STM32F103RCT6 | `stm32f103_mini` | PA9 (USART1 TX) | DAPLink CMSIS-DAP | DAPLink bridge `/dev/ttyACM0` | 2026-04-05 |
+| STM32H563RGT6 | `nucleo_h563zi` | PA9 (USART1 TX) | DAPLink CMSIS-DAP | DAPLink bridge `/dev/ttyACM0` | 2026-04-05 |
 
 ---
 
@@ -59,6 +60,7 @@ grep "usart1_tx\|usart2_tx\|lpuart1_tx" ~/zephyrproject/zephyr/boards/<arch>/<bo
 | `stm32f4_disco` | USART2 | PA2 | USB-UART adapter RXD | PA9/PA10 occupied by ST-Link UART bridge — do NOT use |
 | `stm32f103_mini` | USART1 | PA9 | DAPLink UART bridge (`/dev/ttyACM0`) | DAPLink has built-in USB-UART; no separate adapter needed |
 | `stm32_min_dev` | USART1 | PA9 | USB-UART adapter RXD | Blue Pill variant (F103xb) |
+| `nucleo_h563zi` | USART1 | PA9 | DAPLink UART bridge (`/dev/ttyACM0`) | Default console is USART3/PD8; DTS overlay remaps to USART1/PA9 + switches to HSI 64 MHz |
 
 > **Caution:** On STM32F4 Discovery, PA9/PA10 are bridged to the onboard ST-Link UART chip and are not wired to the MCU USART in the typical hardware configuration. Zephyr's DTS correctly maps the console to USART2/PA2.
 
@@ -165,6 +167,8 @@ python3 -m ael run --board <ael_board_id> --test tests/plans/<your_plan>.json
 | Patterns not found | Single-print firmware (like hello_world) printed before observe_uart opened | Use `firmware/templates/zephyr_hello_loop_template/` which prints every 500 ms |
 | `preflight` stage fails | AEL trying to use instrument stack for Zephyr board | Add `"preflight": {"enabled": false}` to test plan |
 | philosophers UART looks garbled | VT100 cursor codes (`\x1b[N;1H`) present | Normal — AEL substring match works through escape codes |
+| UART silent after flash on board with no HSE crystal | Zephyr board default clock uses HSE+PLL; board has no external crystal → clock init fails silently | Add a DTS overlay that disables HSE/PLL and enables HSI: `&clk_hse { status = "disabled"; }; &pll { status = "disabled"; }; &clk_hsi { status = "okay"; hsi-div = <1>; }; &rcc { clocks = <&clk_hsi>; clock-frequency = <DT_FREQ_M(64)>; ... };` |
+| `--extra-dtc-overlay` silently ignored for upstream Zephyr samples | With west 1.5.0, `--extra-dtc-overlay` is ignored when `source_dir` is outside the workspace; CMakeCache shows `DTC_OVERLAY_FILE:STRING=` empty | Pass as CMake variable instead: `-DDTC_OVERLAY_FILE=<abs_path>` via `config_args`; or use the `extra_overlay_file` field in the test plan (repo-relative path) — AEL injects it as `-DDTC_OVERLAY_FILE=` automatically |
 
 ---
 

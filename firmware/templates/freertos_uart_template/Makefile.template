@@ -1,0 +1,101 @@
+# Makefile template for AEL FreeRTOS UART demo
+# Copy to firmware/targets/<board>_freertos_uart/Makefile and fill in the
+# BOARD_* variables below.
+#
+# Board-specific files to provide:
+#   bsp_uart.c          — implements bsp_uart_init() + bsp_uart_puts()
+#   FreeRTOSConfig.h    — set configCPU_CLOCK_HZ + configTOTAL_HEAP_SIZE,
+#                         then #include "FreeRTOSConfig_base.h"
+#   <board>.ld          — linker script (or reference one from ../stm32_bsp/)
+#   vendor/st/startup_<chip>.s  — ST ASM startup (or symlink)
+#   vendor/st/system_<chip>.c   — ST system init (or symlink)
+
+# ── Fill in ──────────────────────────────────────────────────────────────────
+BOARD_TAG     := YOUR_BOARD          # e.g. STM32F103RCT6 — used in TICK messages
+BOARD_ID      := your_board          # e.g. stm32f103rct6 — used in filenames
+CPU_FLAGS     := -mcpu=cortex-m3 -mthumb          # adjust for your core
+FPU_FLAGS     :=                                  # e.g. -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+FREERTOS_PORT := ARM_CM3                          # ARM_CM3 | ARM_CM4F | ARM_CM33_NTZ | etc.
+LD_SCRIPT     := ../$(BOARD_ID)/$(BOARD_ID).ld
+STARTUP_S     := ../$(BOARD_ID)/vendor/st/startup_<chip>.s
+SYSTEM_C      := ../$(BOARD_ID)/vendor/st/system_<chip>.c
+CMSIS_INC     := ../$(BOARD_ID)/vendor/include/st
+# ─────────────────────────────────────────────────────────────────────────────
+
+CC       := arm-none-eabi-gcc
+OBJCOPY  := arm-none-eabi-objcopy
+
+TEMPLATES := ../../templates/freertos_uart_template
+FRTDIR    := ../../third_party/FreeRTOS-Kernel
+PORT      := $(FRTDIR)/portable/GCC/$(FREERTOS_PORT)
+
+BUILD_DIR ?= build
+OUT_ELF   ?= $(BUILD_DIR)/$(BOARD_ID)_freertos_uart.elf
+OUT_BIN   ?= $(BUILD_DIR)/$(BOARD_ID)_freertos_uart.bin
+
+CFLAGS := $(CPU_FLAGS) $(FPU_FLAGS) \
+          -O0 -g3 \
+          -ffreestanding -fdata-sections -ffunction-sections \
+          -Wall -Wextra \
+          -DBOARD_TAG=\"$(BOARD_TAG)\" \
+          -I$(CMSIS_INC) \
+          -I$(FRTDIR)/include \
+          -I$(PORT) \
+          -I$(TEMPLATES) \
+          -I.
+
+LDFLAGS := -T $(LD_SCRIPT) \
+           -Wl,--gc-sections -nostartfiles -nostdlib \
+           -specs=nano.specs -lc
+
+OBJS := \
+    $(BUILD_DIR)/startup.o \
+    $(BUILD_DIR)/system.o \
+    $(BUILD_DIR)/bsp_uart.o \
+    $(BUILD_DIR)/tasks_main.o \
+    $(BUILD_DIR)/frt_tasks.o \
+    $(BUILD_DIR)/frt_list.o \
+    $(BUILD_DIR)/frt_queue.o \
+    $(BUILD_DIR)/frt_port.o \
+    $(BUILD_DIR)/frt_heap4.o
+
+all: $(OUT_ELF) $(OUT_BIN)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/startup.o: $(STARTUP_S) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/system.o: $(SYSTEM_C) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/bsp_uart.o: bsp_uart.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/tasks_main.o: $(TEMPLATES)/tasks_main.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_tasks.o: $(FRTDIR)/tasks.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_list.o: $(FRTDIR)/list.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_queue.o: $(FRTDIR)/queue.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_port.o: $(PORT)/port.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/frt_heap4.o: $(FRTDIR)/portable/MemMang/heap_4.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OUT_ELF): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) -lgcc
+
+$(OUT_BIN): $(OUT_ELF)
+	$(OBJCOPY) -O binary $< $@
+
+clean:
+	rm -rf $(BUILD_DIR)

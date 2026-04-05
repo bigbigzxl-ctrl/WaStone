@@ -1,0 +1,11 @@
+/*
+ * DTS overlay — STM32F407 Discovery / stm32f4_disco (philosophers sample)
+ *
+ * No overrides needed:
+ *   Clock: stm32f4_disco uses the onboard 8 MHz HSE crystal provided by the
+ *          ST-Link MCO pin — PLL brings SYSCLK to 168 MHz.
+ *   Console: USART2 PA2 is the stm32f4_disco default console, wired to the
+ *            CH341 USB-UART adapter → /dev/ttyUSB0.
+ *
+ * This file exists so the boards/ structure is present for future overrides.
+ */

@@ -13,7 +13,7 @@ int main(void)
 {
     uint32_t count = 0;
 
-    printk("AEL_ZEPHYR_READY board=stm32h563rgt6\n");
+    printk("AEL_ZEPHYR_READY board=" CONFIG_BOARD "\n");
 
     while (1) {
         printk("AEL_ZEPHYR_IDLE count=%u\n", count++);
