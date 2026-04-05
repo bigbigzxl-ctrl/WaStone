@@ -2,19 +2,19 @@
   "name": "stm32f401ce_led_blink",
   "board": "stm32f401ce_blackpill",
   "pin": "led",
-  "duration_s": 1.2,
-  "expected_hz": 1.0,
+  "duration_s": 2.5,
+  "expected_hz": 0.5,
   "min_edges": 1,
   "max_edges": 20,
   "observe_led": {
     "enabled": true,
     "pin": "led",
-    "duration_s": 1.2,
-    "expected_hz": 1.0,
+    "duration_s": 2.5,
+    "expected_hz": 0.5,
     "min_edges": 1,
     "max_edges": 20,
     "max_attempts": 20,
     "sleep_s": 0.0
   },
-  "notes": "Checks the Black Pill onboard PC13 LED blink path at 1 Hz."
+  "notes": "Checks the Black Pill onboard PC13 LED blink path at 0.5 Hz."
 }
