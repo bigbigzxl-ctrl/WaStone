@@ -10,6 +10,8 @@ from ael.adapters import (
     build_cmake,
     build_idf,
     build_stm32,
+    build_zephyr,
+    flash_zephyr,
     check_mailbox_verify,
     control_reset_serial,
     flash_bmda_gdbmi,
@@ -266,6 +268,8 @@ class _BuildAdapter:
                     firmware_path = build_idf.run(board_cfg)
                 elif self.kind == "arm_debug":
                     firmware_path = build_stm32.run(board_cfg)
+                elif self.kind == "zephyr":
+                    firmware_path = build_zephyr.run(board_cfg)
                 else:
                     firmware_path = build_cmake.run(board_cfg)
         else:
@@ -273,6 +277,8 @@ class _BuildAdapter:
                 firmware_path = build_idf.run(board_cfg)
             elif self.kind == "arm_debug":
                 firmware_path = build_stm32.run(board_cfg)
+            elif self.kind == "zephyr":
+                firmware_path = build_zephyr.run(board_cfg)
             else:
                 firmware_path = build_cmake.run(board_cfg)
         if not firmware_path:
@@ -302,7 +308,11 @@ class _LoadAdapter:
         if not firmware_path:
             return {"ok": False, "error_summary": "missing firmware path"}
         instrument_spec_name = str(flash_cfg.get("instrument_spec") or "").strip() if isinstance(flash_cfg, dict) else ""
-        if log_path and self.method == "idf_esptool":
+        if self.method == "zephyr_west":
+            flash_cfg_copy = dict(flash_cfg) if isinstance(flash_cfg, dict) else {}
+            ok = flash_zephyr.run(flash_cfg_copy)
+            return {"ok": bool(ok)}
+        elif log_path and self.method == "idf_esptool":
             with _tee_output(log_path, output_mode):
                 ok = flash_idf.run(probe_cfg, firmware_path, flash_cfg=flash_cfg, flash_json_path=flash_json_path)
             payload = {"ok": bool(ok), "method": "idf_esptool"}
@@ -1669,6 +1679,8 @@ class AdapterRegistry:
             "build.idf": _BuildAdapter("idf"),
             "build.arm_debug": _BuildAdapter("arm_debug"),
             "build.cmake": _BuildAdapter("cmake"),
+            "build.zephyr": _BuildAdapter("zephyr"),
+            "load.zephyr_west": _LoadAdapter("zephyr_west"),
             "load.idf_esptool": _LoadAdapter("idf_esptool"),
             "load.gdbmi": _LoadAdapter("gdbmi"),
             "check.uart_log": _UartCheckAdapter(),

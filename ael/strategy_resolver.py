@@ -415,7 +415,11 @@ def resolve_load_stage(
                 flash_cfg["build_dir"] = os.path.join(str(repo_root), "artifacts", f"build_{target}")
     step = {
         "name": "load",
-        "type": "load.idf_esptool" if method == "idf_esptool" else "load.gdbmi",
+        "type": (
+            "load.idf_esptool"  if method == "idf_esptool"  else
+            "load.zephyr_west"  if method == "zephyr_west"  else
+            "load.gdbmi"
+        ),
         "inputs": {
             "probe_cfg": probe_cfg,
             "firmware_path": known_firmware_path,
