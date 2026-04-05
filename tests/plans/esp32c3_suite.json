@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "esp32c3_suite",
-  "test_kind": "instrument_specific",
+  "test_kind": "uart_observe",
   "board": "esp32c3_devkit_native_usb",
   "supported_instruments": [],
   "requires": {"mailbox": false, "datacapture": false},

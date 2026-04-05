@@ -145,11 +145,12 @@ def test_inventory_instances_cli_json_output():
 def test_build_instrument_instance_inventory_includes_references():
     payload = inventory.build_instrument_instance_inventory(REPO_ROOT)
     probe = next(item for item in payload["control_instrument_instances"] if item["id"] == "esp32jtag_stm32_golden")
+    blackpill = next(item for item in payload["control_instrument_instances"] if item["id"] == "esp32jtag_blackpill_192_168_2_106")
     meter = next(item for item in payload["instruments"] if item["id"] == "esp32s3_dev_c_meter")
     assert payload["summary"]["control_instrument_instance_count"] >= 1
     assert probe["kind"] == "control_instrument_instance"
-    assert "stm32f103_gpio" in probe["referenced_by"]["boards"]
-    assert "stm32f401rct6" in probe["referenced_by"]["boards"]
+    assert "stm32f407_discovery_esp32jtag" in probe["referenced_by"]["boards"]
+    assert "stm32f401rct6" in blackpill["referenced_by"]["boards"]
     assert "esp32c6_gpio_signature_with_meter.json" in " ".join(meter["referenced_by"]["plans"])
     assert probe["metadata_validation_errors"] == []
     assert meter["metadata_validation_errors"] == []
@@ -166,14 +167,14 @@ def test_describe_test_for_stm32f401_gpio_signature():
     assert payload["selected_instrument"]["kind"] == "controller"
     assert payload["selected_instrument"]["legacy_kind"] == "control_instrument"
     assert payload["selected_instrument"]["compatibility_kind"] == "probe"
-    assert payload["selected_instrument"]["id"] == "esp32jtag_stm32_golden"
+    assert payload["selected_instrument"]["id"] == "esp32jtag_blackpill_192_168_2_106"
     assert payload["selected_instrument"]["communication"]["primary"] == "gdb_remote"
     assert payload["compatibility"]["probe_or_instrument"]["kind"] == "controller"
-    assert payload["selected_bench_resources"]["resource_keys"] == ["probe:192.168.2.109:4242", "controller:192.168.2.109:4242"]
+    assert payload["selected_bench_resources"]["resource_keys"] == ["probe:192.168.2.106:4242", "controller:192.168.2.106:4242"]
     assert payload["selected_bench_resources"]["contract_version"] == 1
-    assert "controller_id:esp32jtag_stm32_golden" in payload["selected_bench_resources"]["selection_digest"]
-    assert payload["selected_bench_resources"]["resource_summary"]["control_instrument_endpoints"] == ["192.168.2.109:4242"]
-    assert payload["selected_bench_resources"]["resource_summary"]["controller_endpoints"] == ["192.168.2.109:4242"]
+    assert "controller_id:esp32jtag_blackpill_192_168_2_106" in payload["selected_bench_resources"]["selection_digest"]
+    assert payload["selected_bench_resources"]["resource_summary"]["control_instrument_endpoints"] == ["192.168.2.106:4242"]
+    assert payload["selected_bench_resources"]["resource_summary"]["controller_endpoints"] == ["192.168.2.106:4242"]
     assert payload["compatibility"]["probe_or_instrument"]["legacy_kind"] == "control_instrument"
     assert payload["compatibility"]["probe_or_instrument"]["compatibility_kind"] == "probe"
     assert any(conn["from"] == "SWD" and conn["to"] == "P3" for conn in payload["connections"])
@@ -186,7 +187,7 @@ def test_describe_test_for_stm32f401_gpio_signature():
     assert payload["board_context"]["verification_views"]["signal"]["resolved_to"] == "P0.0"
     assert payload["connection_setup"]["resolved_wiring"]["verify"] == "P0.0"
     assert payload["connection_setup"]["verification_views"]["signal"]["resolved_to"] == "P0.0"
-    assert payload["selected_bench_resources"]["selected_instrument"]["id"] == "esp32jtag_stm32_golden"
+    assert payload["selected_bench_resources"]["selected_instrument"]["id"] == "esp32jtag_blackpill_192_168_2_106"
     assert any(item.startswith("wiring:") for item in payload["selected_bench_resources"]["connection_digest"])
     assert any(check["type"] == "signal" for check in payload["expected_checks"])
     rendered = inventory.render_describe_text(payload)
@@ -195,9 +196,9 @@ def test_describe_test_for_stm32f401_gpio_signature():
     assert "dut_runtime_binding: board_profile_driven" in rendered
     assert "board_profile_role: runtime_policy" in rendered
     assert "bench_resource_contract_version: 1" in rendered
-    assert "bench_resource_selection_digest: controller_id:esp32jtag_stm32_golden; control_instrument_id:esp32jtag_stm32_golden; controller_endpoint:192.168.2.109:4242; control_instrument_endpoint:192.168.2.109:4242" in rendered
+    assert "bench_resource_selection_digest: controller_id:esp32jtag_blackpill_192_168_2_106; control_instrument_id:esp32jtag_blackpill_192_168_2_106; controller_endpoint:192.168.2.106:4242; control_instrument_endpoint:192.168.2.106:4242" in rendered
     assert "board_profile_config: configs/boards/stm32f401rct6.yaml" in rendered
-    assert "controller: esp32jtag_stm32_golden" in rendered
+    assert "controller: esp32jtag_blackpill_192_168_2_106" in rendered
     assert "legacy_kind: control_instrument" in rendered
     assert "compatibility_kind: probe" in rendered
     assert "connection_setup:" in rendered

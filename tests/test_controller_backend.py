@@ -40,7 +40,7 @@ def test_capture_signature_calls_gpio_adapter(monkeypatch):
     probe_cfg = {"instance_id": "esp32jtag_stm32_golden"}
     calls = {}
 
-    def fake_gpio_run(cfg, *, pin, pins, duration_s, expected_hz, min_edges, max_edges, capture_out, verify_edges):
+    def fake_gpio_run(cfg, *, pin, pins, duration_s, expected_hz, min_edges, max_edges, capture_out, verify_edges, expected_state=None):
         calls["pin"] = pin
         calls["cfg"] = cfg
         capture_out["edges"] = 4

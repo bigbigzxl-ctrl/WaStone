@@ -59,6 +59,21 @@ _ELF        = _BACKEND.workspace / "build" / "zephyr" / "zephyr.elf"
 # ---------------------------------------------------------------------------
 # Skip guards
 # ---------------------------------------------------------------------------
+def _stlink_usb_present() -> bool:
+    """Return True if an STMicroelectronics USB device (VID 0483) is visible."""
+    try:
+        import glob
+        for vendor_file in glob.glob("/sys/bus/usb/devices/*/idVendor"):
+            try:
+                if open(vendor_file).read().strip().lower() == "0483":
+                    return True
+            except OSError:
+                pass
+    except Exception:
+        pass
+    return False
+
+
 _skip_no_uart = pytest.mark.skipif(
     not Path(UART_PORT).exists(),
     reason=f"UART adapter not present at {UART_PORT}",
@@ -66,6 +81,10 @@ _skip_no_uart = pytest.mark.skipif(
 _skip_no_elf = pytest.mark.skipif(
     not _ELF.exists(),
     reason=f"Zephyr build not found: {_ELF}",
+)
+_skip_no_stlink = pytest.mark.skipif(
+    not _stlink_usb_present(),
+    reason="ST-Link USB device not detected (STM32F4 Discovery not connected)",
 )
 
 
@@ -95,6 +114,7 @@ def _openocd_reset() -> None:
 
 @_skip_no_uart
 @_skip_no_elf
+@_skip_no_stlink
 def test_flash_observe_verify_hello_world():
     """
     Full pipeline: flash → observe → verify → ok=True.

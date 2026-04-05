@@ -7,7 +7,9 @@
       "stm32f4",
       "stm32f7",
       "stm32g4",
-      "stm32h7"
+      "stm32h5",
+      "stm32h7",
+      "stm32u5"
     ],
     "generation_class": [
       "verified_local_baseline",
@@ -410,6 +412,167 @@
         "cross_family_proof": {
           "recommendation": "secondary",
           "reason": "Broadens family coverage, but M0 support is a sharper change than STM32G431."
+        }
+      }
+    },
+    {
+      "board_id": "stm32f030c8t6_daplink",
+      "target_id": "stm32f030c8t6",
+      "display_name": "STM32F030C8T6 DAPLink",
+      "family": "stm32f0",
+      "generation_class": "provisional_template_based",
+      "validation_status": "plan_verified_only",
+      "baseline_recommendation": "not_recommended_yet",
+      "notes": [
+        "STM32F030C8T6 board via DAPLink instrument.",
+        "No hardware validation yet."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "No hardware validation yet; DAPLink instrument path not yet exercised."
+        },
+        "cross_family_proof": {
+          "recommendation": "not_selected",
+          "reason": "Same F0 family as existing stm32f030c8t6 baseline."
+        }
+      }
+    },
+    {
+      "board_id": "stm32f030c8t6_daplink_uart",
+      "target_id": "stm32f030c8t6",
+      "display_name": "STM32F030C8T6 DAPLink UART",
+      "family": "stm32f0",
+      "generation_class": "provisional_template_based",
+      "validation_status": "plan_verified_only",
+      "baseline_recommendation": "not_recommended_yet",
+      "notes": [
+        "STM32F030C8T6 UART bench variant via DAPLink.",
+        "No hardware validation yet."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "No hardware validation yet."
+        },
+        "cross_family_proof": {
+          "recommendation": "not_selected",
+          "reason": "Same F0 family as existing stm32f030c8t6 baseline."
+        }
+      }
+    },
+    {
+      "board_id": "stm32f103c6t6_bluepill_like",
+      "target_id": "stm32f103c6t6",
+      "display_name": "STM32F103C6T6 Bluepill-like",
+      "family": "stm32f1",
+      "generation_class": "verified_local_baseline",
+      "validation_status": "build_and_plan_verified",
+      "baseline_recommendation": "candidate",
+      "notes": [
+        "Smaller STM32F103 variant (C6T6) with less flash than C8T6.",
+        "Bench wired to ESP32-JTAG instrument."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "Same F1 family as existing baseline; less suitable than larger variants."
+        },
+        "cross_family_proof": {
+          "recommendation": "not_selected",
+          "reason": "Does not broaden family coverage beyond existing F1."
+        }
+      }
+    },
+    {
+      "board_id": "stm32f401ce_blackpill",
+      "target_id": "stm32f401ce_blackpill",
+      "display_name": "STM32F401CE Black Pill",
+      "family": "stm32f4",
+      "generation_class": "verified_local_baseline",
+      "validation_status": "build_and_plan_verified",
+      "baseline_recommendation": "candidate",
+      "notes": [
+        "STM32F401CE Black Pill board via ESP32JTAG.",
+        "Compact form factor variant of the STM32F4 family."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "Same F4 family as stm32f401rct6 primary candidate; adds marginal coverage."
+        },
+        "cross_family_proof": {
+          "recommendation": "not_selected",
+          "reason": "Does not broaden family coverage beyond existing F4."
+        }
+      }
+    },
+    {
+      "board_id": "stm32f407vet6",
+      "target_id": "stm32f407vet6",
+      "display_name": "STM32F407VET6",
+      "family": "stm32f4",
+      "generation_class": "verified_local_baseline",
+      "validation_status": "build_and_plan_verified",
+      "baseline_recommendation": "candidate",
+      "notes": [
+        "STM32F407VET6 custom board via ESP32JTAG.",
+        "Cortex-M4 with FPU; multiple mailbox tests verified."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "Same F4 family as existing baselines."
+        },
+        "cross_family_proof": {
+          "recommendation": "not_selected",
+          "reason": "Does not broaden family coverage beyond existing F4."
+        }
+      }
+    },
+    {
+      "board_id": "stm32h563rgt6",
+      "target_id": "stm32h563rgt6",
+      "display_name": "STM32H563RGT6",
+      "family": "stm32h5",
+      "generation_class": "verified_local_baseline",
+      "validation_status": "build_and_plan_verified",
+      "baseline_recommendation": "candidate",
+      "notes": [
+        "STM32H563RGT6 via DAPLink instrument.",
+        "Cortex-M33 with TrustZone; multiple mailbox tests across peripheral IPs verified."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "H5 complexity is higher than F4/G4; not suitable for near-term process hardening."
+        },
+        "cross_family_proof": {
+          "recommendation": "secondary",
+          "reason": "Extends coverage to STM32H5 (Cortex-M33 + TrustZone) after G4 is proven."
+        }
+      }
+    },
+    {
+      "board_id": "stm32u585ciu6",
+      "target_id": "stm32u585ciu6",
+      "display_name": "STM32U585CIU6",
+      "family": "stm32u5",
+      "generation_class": "verified_local_baseline",
+      "validation_status": "build_and_plan_verified",
+      "baseline_recommendation": "candidate",
+      "notes": [
+        "STM32U585CIU6 via ESP32JTAG.",
+        "Cortex-M33 ultra-low-power MCU with TrustZone; mailbox tests verified."
+      ],
+      "pilot_assessment": {
+        "process_hardening": {
+          "recommendation": "not_selected",
+          "reason": "U5 complexity and TrustZone add variables not needed for near-term hardening."
+        },
+        "cross_family_proof": {
+          "recommendation": "secondary",
+          "reason": "Extends coverage to STM32U5 (Cortex-M33 + TrustZone) after G4 is proven."
         }
       }
     },

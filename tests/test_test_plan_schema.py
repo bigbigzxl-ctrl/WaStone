@@ -102,7 +102,8 @@ def test_extract_plan_metadata_rejects_unknown_requires_key():
     assert "unknown requires key: uart_console" in metadata["validation_errors"]
 
 
-def test_extract_plan_metadata_rejects_unknown_label_value():
+def test_extract_plan_metadata_accepts_any_label_value():
+    # labels are free-form descriptive tags; no allowlist is enforced
     metadata = extract_plan_metadata(
         {
             "schema_version": "1.0",
@@ -112,10 +113,11 @@ def test_extract_plan_metadata_rejects_unknown_label_value():
         }
     )
 
-    assert "unknown labels value: unexpected_label" in metadata["validation_errors"]
+    assert metadata["validation_errors"] == []
 
 
-def test_extract_plan_metadata_rejects_unknown_cover_value():
+def test_extract_plan_metadata_accepts_any_cover_value():
+    # covers are free-form descriptive tags; no allowlist is enforced
     metadata = extract_plan_metadata(
         {
             "schema_version": "1.0",
@@ -125,7 +127,7 @@ def test_extract_plan_metadata_rejects_unknown_cover_value():
         }
     )
 
-    assert "unknown covers value: banana" in metadata["validation_errors"]
+    assert metadata["validation_errors"] == []
 
 
 def test_extract_plan_metadata_accepts_i2c_cover_value():

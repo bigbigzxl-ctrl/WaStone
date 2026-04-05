@@ -882,8 +882,20 @@ def describe_test(board_id: str, test_path: str, repo_root: Path | None = None) 
     metadata = extract_plan_metadata(payload)
     explanation = _metadata_explanation(metadata)
     board_cfg = _load_board_cfg(root, board_id)
+    bench_profile_id = str(board_cfg.extra.get("default_bench_profile") or "").strip() or None
+    bench_profile = _load_bench_profile(root, board_id, bench_profile_id)
+    board_dict = board_cfg.to_legacy_dict()
+    if bench_profile:
+        if bench_profile.get("connections"):
+            board_dict["bench_connections"] = bench_profile["connections"]
+        if bench_profile.get("observe_map"):
+            board_dict["observe_map"] = bench_profile["observe_map"]
+        if bench_profile.get("verification_views"):
+            board_dict["verification_views"] = bench_profile["verification_views"]
+        if bench_profile.get("default_wiring"):
+            board_dict["default_wiring"] = bench_profile["default_wiring"]
     connection_ctx = normalize_connection_context(
-        board_cfg,
+        board_dict,
         payload,
         required_wiring=["swd", "reset", "verify"],
     )

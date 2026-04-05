@@ -24,7 +24,7 @@ def test_build_resolved_probe_instance_view():
     assert payload["instrument_interface"]["instrument_family"] == "esp32jtag"
     assert payload["instrument_interface_summary"]["metadata_command_count"] == 4
     assert payload["native_interface"]["instrument_family"] == "esp32jtag"
-    assert "stm32f103_gpio" in payload["referenced_by"]["boards"]
+    assert "stm32f407_discovery_esp32jtag" in payload["referenced_by"]["boards"]
 
 
 def test_build_resolved_instrument_manifest_view():

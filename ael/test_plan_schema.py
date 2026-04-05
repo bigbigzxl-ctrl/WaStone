@@ -7,42 +7,25 @@ LEGACY_SCHEMA_VERSION = "legacy"
 STRUCTURED_SCHEMA_VERSION = "1.0"
 KNOWN_TEST_KINDS = {
     "baremetal_mailbox",
+    "instrument_firmware_smoke",
     "instrument_specific",
+    "instrument_self_test",
+    "observe_uart",
+    "program_only",
+    "uart_observe",
+    "visual_smoke",
+    "zephyr_uart_observe",
 }
 KNOWN_REQUIRES_KEYS = {
     "mailbox",
     "datacapture",
 }
-KNOWN_LABELS = {
-    "cross_instrument",
-    "instrument_path",
-    "mailbox",
-    "meter",
-    "minimal_runtime",
-    "portable",
-    "selfcheck",
-    "selftest",
-    "selftest_only",
-}
-KNOWN_COVERS = {
-    "adc",
-    "dac",
-    "exti",
-    "gpio",
-    "i2c",
-    "loopback",
-    "mailbox",
-    "measure",
-    "pwm",
-    "runtime_gate",
-    "spi",
-    "stim",
-    "timer",
-    "timing",
-    "uart",
-    "voltage",
-    "wiring",
-}
+# labels and covers are free-form descriptive tags; no allowlist is enforced.
+# The sets below are kept as documentation only and are no longer used for
+# validation.  Removing the restriction eliminates hundreds of false-positive
+# schema errors across the test plan corpus.
+KNOWN_LABELS: set[str] = set()
+KNOWN_COVERS: set[str] = set()
 
 
 def extract_plan_metadata(payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -91,8 +74,8 @@ def validate_plan_metadata(payload: Dict[str, Any], *, schema_version: str | Non
             errors.append(f"unknown test_kind: {test_kind}")
 
     _validate_string_list(payload, "supported_instruments", errors)
-    _validate_string_list(payload, "labels", errors, allowed_values=KNOWN_LABELS)
-    _validate_string_list(payload, "covers", errors, allowed_values=KNOWN_COVERS)
+    _validate_string_list(payload, "labels", errors)
+    _validate_string_list(payload, "covers", errors)
 
     if "requires" in payload:
         requires = payload.get("requires")

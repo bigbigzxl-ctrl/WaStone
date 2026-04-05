@@ -20,23 +20,23 @@ def test_explain_plan_for_stm32f401():
     assert payload['selected']['check_model'] == 'signal_verify'
     assert payload['selected']['verification_views']['signal']['resolved_to'] == 'P0.0'
     assert 'led' not in payload['selected']['verification_views']
-    assert payload['selected']['controller_selection']['instance'] == 'esp32jtag_stm32_golden'
+    assert payload['selected']['controller_selection']['instance'] == 'esp32jtag_blackpill_192_168_2_106'
     assert payload['selected']['controller_selection']['type'] == 'esp32jtag'
-    assert payload['selected']['controller'] == 'configs/instrument_instances/esp32jtag_stm32_golden.yaml'
-    assert payload['selected']['controller_instance'] == 'esp32jtag_stm32_golden'
+    assert payload['selected']['controller'] == 'configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml'
+    assert payload['selected']['controller_instance'] == 'esp32jtag_blackpill_192_168_2_106'
     assert payload['selected']['controller_type'] == 'esp32jtag'
     assert payload['selected']['controller_communication']['primary'] == 'gdb_remote'
     assert payload['selected']['controller_capability_surfaces']['swd'] == 'gdb_remote'
-    assert payload['selected']['compatibility']['probe'] == 'configs/instrument_instances/esp32jtag_stm32_golden.yaml'
-    assert payload['selected']['compatibility']['probe_instance'] == 'esp32jtag_stm32_golden'
+    assert payload['selected']['compatibility']['probe'] == 'configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml'
+    assert payload['selected']['compatibility']['probe_instance'] == 'esp32jtag_blackpill_192_168_2_106'
     assert payload['selected']['compatibility']['probe_type'] == 'esp32jtag'
     assert payload['selected']['compatibility']['probe_communication']['primary'] == 'gdb_remote'
     assert payload['selected']['compatibility']['probe_capability_surfaces']['swd'] == 'gdb_remote'
-    assert payload["selected"]["selected_bench_resources"]["controller"]["instance"] == "esp32jtag_stm32_golden"
+    assert payload["selected"]["selected_bench_resources"]["controller"]["instance"] == "esp32jtag_blackpill_192_168_2_106"
     assert payload["selected"]["selected_bench_resources"]["contract_version"] == 1
-    assert "controller_instance:esp32jtag_stm32_golden" in payload["selected"]["selected_bench_resources"]["selection_digest"]
-    assert "probe_path:configs/instrument_instances/esp32jtag_stm32_golden.yaml" in payload["selected"]["selected_bench_resources"]["resource_keys"]
-    assert payload["selected"]["selected_bench_resources"]["resource_summary"]["control_instrument_configs"] == ["configs/instrument_instances/esp32jtag_stm32_golden.yaml"]
+    assert "controller_instance:esp32jtag_blackpill_192_168_2_106" in payload["selected"]["selected_bench_resources"]["selection_digest"]
+    assert "probe_path:configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml" in payload["selected"]["selected_bench_resources"]["resource_keys"]
+    assert payload["selected"]["selected_bench_resources"]["resource_summary"]["control_instrument_configs"] == ["configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml"]
     assert any(item['capability'] == 'swd' and item['surface'] == 'gdb_remote' for item in payload['selected']['capability_surface_plan'])
     assert any(item['capability'] == 'gpio_in' and item['surface'] == 'web_api' for item in payload['selected']['capability_surface_plan'])
 
@@ -191,8 +191,8 @@ def test_render_text_includes_communication_blocks_readably():
                 "selected_dut": {"id": "stm32f401rct6", "name": "STM32F401"},
                 "selected_board_profile": {"id": "stm32f401rct6", "config": "configs/boards/stm32f401rct6.yaml"},
                 "selected_bench_resources": {
-                    "controller": {"instance": "esp32jtag_stm32_golden"},
-                    "control_instrument": {"instance": "esp32jtag_stm32_golden"},
+                    "controller": {"instance": "esp32jtag_blackpill_192_168_2_106"},
+                    "control_instrument": {"instance": "esp32jtag_blackpill_192_168_2_106"},
                     "connection_setup": {
                         "source_summary": {"bench_setup": "test.bench_setup"},
                         "resolved_wiring": {"verify": "P0.0"},
@@ -206,8 +206,8 @@ def test_render_text_includes_communication_blocks_readably():
                 "labels": ["mailbox", "portable"],
                 "covers": ["uart"],
                 "test_validation_errors": [],
-                "controller": "configs/instrument_instances/esp32jtag_stm32_golden.yaml",
-                "control_instrument": "configs/instrument_instances/esp32jtag_stm32_golden.yaml",
+                "controller": "configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml",
+                "control_instrument": "configs/instrument_instances/esp32jtag_blackpill_192_168_2_106.yaml",
                 "controller_communication": {"primary": "gdb_remote"},
                 "control_instrument_communication": {"primary": "gdb_remote"},
                 "controller_capability_surfaces": {"swd": "gdb_remote"},
