@@ -2715,19 +2715,25 @@
   },
   "stm32f407_discovery|stm32f407_mailbox": {
     "exp_id": "f6b0baee-dac6-4a21-80cc-01f0f47b2bf2",
-    "success_count": 1,
+    "success_count": 2,
     "failure_count": 0,
-    "last_seen": 1775376723.161417,
-    "confidence": 0.5,
+    "last_seen": 1775410531.154054,
+    "confidence": 0.6,
     "known_failures": {}
   },
   "stm32f407_discovery|stm32f407_timer_mailbox": {
     "exp_id": "6a5c46f6-bd1d-4e51-87d1-4cb5ed4b79e3",
-    "success_count": 1,
-    "failure_count": 0,
-    "last_seen": 1775376744.7160244,
-    "confidence": 0.5,
-    "known_failures": {}
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1775410504.4104013,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "b65ed939-9688-48d0-86e8-cfb30694f906",
+        "count": 1,
+        "last_raw": "[stm32f407_discovery] stm32f407_timer_mailbox: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: magic mismatch: got 0xa5d1c145, expected 0xae100001"
+      }
+    }
   },
   "stm32f407_discovery|stm32f407_zephyr_hello_loop": {
     "exp_id": "ad5eeaf5-ed00-40d9-9046-59709378b857",
@@ -2883,5 +2889,73 @@
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_freertos_uart: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
+  },
+  "stm32f407_discovery|unknown": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 4,
+    "last_seen": 1775410246.8426926,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "94fb4e6e-f9dd-460a-839c-ac6116056bf2",
+        "count": 4,
+        "last_raw": "[stm32f407_discovery] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
+  },
+  "stm32f407_discovery|stm32f407_gpio_loopback": {
+    "exp_id": "bec87a57-b1f6-49b3-a41f-219ab45a2550",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775410547.4099598,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_uart_loopback": {
+    "exp_id": "3b0c2a0f-e830-4591-8bab-beb4faceb3aa",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775410564.7301693,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_spi_loopback": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1775410591.0744276,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "bcf0d28c-44cd-48ce-9c40-13e033db53b6",
+        "count": 1,
+        "last_raw": "[stm32f407_discovery] stm32f407_spi_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f407_discovery|stm32f407_exti_trigger": {
+    "exp_id": "a1776e9d-13f8-40f5-b8b7-c36dbfb818df",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775410608.3680446,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_adc_loopback": {
+    "exp_id": "49ab9834-78c7-4bc7-bf3c-8b9224da0fae",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775410625.7139418,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_freertos_uart": {
+    "exp_id": "ee7bb8f4-15c1-401c-a3cc-f0a3e703adaf",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775410966.9928215,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }
