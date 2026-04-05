@@ -114,46 +114,42 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
-### Zephyr RTOS — Multi-Board RTOS Validation, Portable Methodology (2026-04-05)
+### Zephyr + FreeRTOS — Three-Board RTOS Coverage Complete (2026-04-05)
 
-AEL now supports **Zephyr RTOS** as a first-class build/flash/verify target. Any board with a Zephyr-supported chip and a console UART can be brought under AEL closed-loop validation in one session. The same pipeline runs bare-metal and RTOS firmware on the same bench with no reconfiguration.
+AEL now has **full RTOS coverage across three boards and two RTOS families** (Zephyr and FreeRTOS). Every board in the active bench can run bare-metal, FreeRTOS, and Zephyr firmware under closed-loop AEL validation with no bench reconfiguration.
 
-**What was built:**
+**12 RTOS tests across 3 boards, all PASS**
 
-- `ZephyrBackend` (`ael/backends/zephyr_backend.py`) — `build()` / `flash()` / `start_debugserver()` / `observe()` / `verify()` against the `AELBackend` contract
-- `build.zephyr` adapter auto-routes any test plan with `build.type = "zephyr"` through `west build`; AEL's existing GDB flash path (`load.gdbmi`) programs the resulting ELF — ST-Link and DAPLink both work unchanged
-- Fixed `strategy_resolver.py` to correctly propagate `zephyr_board` from test plan into the build stage
-- Board-agnostic firmware template (`firmware/templates/zephyr_hello_loop_template/`) and test plan template (`tests/plans/templates/zephyr_uart_observe_template.json`) — five fields to fill in per board
-- Board onboarding guide: [`docs/guides/zephyr_ael_board_onboarding.md`](docs/guides/zephyr_ael_board_onboarding.md)
+| Board | Chip | Instrument | UART path | Zephyr (3) | FreeRTOS (1) |
+|-------|------|------------|-----------|------------|--------------|
+| STM32F103RCT6 | Cortex-M3 @ 72 MHz | DAPLink CMSIS-DAP | PA9 → DAPLink bridge `/dev/ttyACM0` | ✅ hello_loop / synchronization / philosophers | ✅ freertos_uart |
+| STM32F4 Discovery | Cortex-M4 @ 16 MHz HSI | ST-Link onboard | PA2 → USB-UART `/dev/ttyUSB0` | ✅ hello_loop / synchronization / philosophers | ✅ freertos_uart |
+| STM32H563RGT6 | Cortex-M33 @ 64 MHz HSI | DAPLink CMSIS-DAP | PA9 → DAPLink bridge `/dev/ttyACM0` | ✅ hello_loop / synchronization / philosophers | ✅ freertos_uart |
 
-**Validated: 7 tests across 2 boards, all PASS**
+**RTOS proof points (identical across all three boards):**
 
-| Board | Chip | Instrument | UART path | Tests |
-|-------|------|------------|-----------|-------|
-| STM32F4 Discovery | STM32F407VGT6 (Cortex-M4) | ST-Link onboard | PA2 → USB-UART `/dev/ttyUSB0` | hello_loop, synchronization, philosophers |
-| STM32F103RCT6 | STM32F103RCT6 (Cortex-M3) | DAPLink CMSIS-DAP | PA9 → DAPLink bridge `/dev/ttyACM0` | hello_loop, synchronization, philosophers |
+| Test | RTOS | What it proves |
+|------|------|----------------|
+| `*_zephyr_hello_loop` | Zephyr | Full west build → pyocd/openocd flash → UART observe pipeline |
+| `*_zephyr_synchronization` | Zephyr | Kernel scheduler + semaphore: two threads alternate every 500 ms |
+| `*_zephyr_philosophers` | Zephyr | 6 threads (preemptible + cooperative) compete for mutexes — EATING/THINKING/STARVING confirmed |
+| `*_freertos_uart` | FreeRTOS | Two tasks at different priorities print `TICK` interleaved; scheduler and `vTaskDelay` verified |
 
-**RTOS proof points per board:**
+**Key per-board engineering notes:**
 
-| Sample | What it proves |
-|--------|---------------|
-| `zephyr_hello_loop` (custom) | Full build → GDB flash → UART observe → verify pipeline |
-| `samples/synchronization` | Kernel scheduler + semaphore: two threads alternate every 500ms |
-| `samples/philosophers` | 6 threads (preemptible + cooperative) compete for mutexes — EATING/THINKING/STARVING confirmed |
+- **STM32H563RGT6 (Zephyr)**: `nucleo_h563zi` Zephyr board used with a DTS overlay disabling HSE/PLL and switching to HSI 64 MHz — the board carries no external crystal. Console remapped from USART3/PD8 to USART1/PA9. Overlay applied via `-DDTC_OVERLAY_FILE=` CMake arg (more reliable than `--extra-dtc-overlay` with west 1.5.0 for upstream samples).
+- **STM32F4 Discovery (Zephyr)**: `stm32f4_disco` board — console is PA2/USART2; PA9/PA10 are hardwired to the onboard ST-Link USB-UART bridge and cannot be used as a user UART.
+- **STM32F103RCT6 (Zephyr)**: `stm32f103_mini` board — DAPLink USB-UART bridge doubles as console adapter; no separate USB-serial adapter needed.
+- **FreeRTOS (all boards)**: ARM_CM3 FreeRTOS port used on all three (including Cortex-M4/M33 with `-mfloat-abi=soft`). Handler names mapped via `FreeRTOSConfig.h` macros. `_init()` stub required for ST ASM startup's `__libc_init_array`.
 
-**Hybrid Mode — Zephyr + bare-metal in one pack run (2026-04-05):**
+**ZephyrBackend fixes landed this session:**
 
-`packs/stm32f103rct6_hybrid.json` runs 3 bare-metal mailbox tests and 2 Zephyr UART observe tests interleaved on the same board, all PASS in a single `ael pack` run. Each test re-flashes the board independently — no jumper changes, no operator intervention. This proves AEL's pack runner is firmware-class-agnostic: Zephyr and bare-metal firmware coexist in the same suite without conflict.
+- `ZephyrBackend.build()`: `--extra-conf` / `--extra-dtc-overlay` flags must precede the source directory argument — west ignores them when placed after `[source_dir]`.
+- `build_zephyr.py`: added `extra_conf_file` / `extra_overlay_file` field resolution; resolves repo-relative paths to absolute before passing to west.
 
-**Key engineering findings:**
+**Hybrid Mode — Zephyr + bare-metal in one pack run:**
 
-- AEL uses the board profile's existing GDB flash path (`load.gdbmi`) for Zephyr ELFs — no `west flash` needed in the pipeline. ST-Link and DAPLink work identically.
-- `flash.method = "zephyr_west"` in test plans is now wired end-to-end through `strategy_resolver.py` → `flash_zephyr.py` → `ZephyrBackend.flash()`. Previously this path was dead code — `gdbmi` was always used. Fixed in commit `57c9a30`.
-- DAPLink FW 1.0 (c251:f001) has an AP bank-switching bug: pyocd 0.43.1 gets FAULT ACK reading CSW after IDR. Workaround: use `gdbmi` (OpenOCD) for all flashing on DAPLink FW 1.0 benches.
-- Zephyr 4.4.0-rc2 requires Python ≥ 3.12 (Ubuntu 22.04 ships 3.10). Solved with `uv` + `~/zephyr-venv/` — no root required.
-- `samples/philosophers` emits VT100 cursor codes (`\x1b[N;1H`) in raw UART — AEL substring match is unaffected.
-- `stm32f4_disco` console is PA2/USART2, not PA9 — PA9/PA10 are hardwired to the onboard ST-Link USB-UART bridge.
-- DAPLink has a built-in USB-UART bridge: no separate adapter needed when DAPLink is already wired for SWD.
+`packs/stm32f103rct6_hybrid.json` runs 3 bare-metal mailbox tests and 2 Zephyr UART observe tests interleaved on the same board, all PASS in a single `ael pack` run. AEL's pack runner is firmware-class-agnostic: Zephyr and bare-metal firmware coexist in the same suite without conflict.
 
 **Canonical assets:**
 
@@ -163,7 +159,6 @@ AEL now supports **Zephyr RTOS** as a first-class build/flash/verify target. Any
 | Test plan template | [`tests/plans/templates/zephyr_uart_observe_template.json`](tests/plans/templates/zephyr_uart_observe_template.json) |
 | Firmware template | [`firmware/templates/zephyr_hello_loop_template/`](firmware/templates/zephyr_hello_loop_template/) |
 | Board onboarding guide | [`docs/guides/zephyr_ael_board_onboarding.md`](docs/guides/zephyr_ael_board_onboarding.md) |
-| Regression test | [`tests/zephyr/test_zephyr_backend_hello_world.py`](tests/zephyr/test_zephyr_backend_hello_world.py) — 2/2 PASS |
 | Hybrid pack | [`packs/stm32f103rct6_hybrid.json`](packs/stm32f103rct6_hybrid.json) — 5/5 PASS (3 bare-metal + 2 Zephyr) |
 
 ---
