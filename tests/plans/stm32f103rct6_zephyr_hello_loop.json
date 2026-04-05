@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "zephyr_uart_observe",
+  "name": "stm32f103rct6_zephyr_hello_loop",
+  "board": "stm32f103rct6",
+  "supported_instruments": ["daplink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_swd"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["zephyr", "uart_observe", "regression", "portability"],
+  "covers": ["zephyr_backend", "observe_uart", "verify", "second_board_portability"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "Portability validation: ZephyrBackend on STM32F103RCT6 (stm32f103_mini) via DAPLink/CMSIS-DAP — different chip family (F1 vs F4) and different instrument than the F4 Discovery pilot. Console on PA9 (USART1 TX) captured via DAPLink built-in UART bridge on /dev/ttyACM0. Custom openocd_cmsis_dap.cfg overrides stm32f103_mini default stlink-dap interface. Existing golden suite bench wiring reused (no changes needed).",
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "stm32f103_mini",
+    "project_dir": "firmware/targets/stm32f103rct6_zephyr_hello_loop",
+    "build_dir": "artifacts/build_stm32f103rct6_zephyr_hello_loop"
+  },
+  "flash": {
+    "method": "zephyr_west",
+    "runner": "openocd",
+    "build_dir": "artifacts/build_stm32f103rct6_zephyr_hello_loop",
+    "openocd_config": "firmware/targets/stm32f103rct6_zephyr_hello_loop/openocd_cmsis_dap.cfg",
+    "post_load_settle_s": 1.5
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_ZEPHYR_IDLE"
+    ]
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "daplink_f103_rct6",
+        "required": true,
+        "notes": "DAPLink CMSIS-DAP via USB. SWD flash + built-in UART bridge for console capture."
+      }
+    ],
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true,
+      "notes": "DAPLink built-in USB UART bridge. PA9 (USART1_TX) → DAPLink RX. No separate USB-UART adapter needed."
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Zephyr console UART on stm32f103_mini DTS. Connected to DAPLink RX (existing golden suite wiring)."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "STM32F103RCT6 PA9 (USART1_TX)",
+        "to": "DAPLink RX"
+      },
+      {
+        "from": "STM32F103RCT6 PA10 (USART1_RX)",
+        "to": "DAPLink TX"
+      },
+      {
+        "from": "DAPLink SWDIO",
+        "to": "STM32F103RCT6 PA13 (SWDIO)"
+      },
+      {
+        "from": "DAPLink SWDCK",
+        "to": "STM32F103RCT6 PA14 (SWDCK)"
+      },
+      {
+        "from": "DAPLink GND",
+        "to": "STM32F103RCT6 GND"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": true,
+    "_note": "This is the existing stm32f103rct6 golden suite wiring. No changes needed from the last golden run."
+  }
+}
