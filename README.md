@@ -141,9 +141,15 @@ AEL now supports **Zephyr RTOS** as a first-class build/flash/verify target. Any
 | `samples/synchronization` | Kernel scheduler + semaphore: two threads alternate every 500ms |
 | `samples/philosophers` | 6 threads (preemptible + cooperative) compete for mutexes — EATING/THINKING/STARVING confirmed |
 
+**Hybrid Mode — Zephyr + bare-metal in one pack run (2026-04-05):**
+
+`packs/stm32f103rct6_hybrid.json` runs 3 bare-metal mailbox tests and 2 Zephyr UART observe tests interleaved on the same board, all PASS in a single `ael pack` run. Each test re-flashes the board independently — no jumper changes, no operator intervention. This proves AEL's pack runner is firmware-class-agnostic: Zephyr and bare-metal firmware coexist in the same suite without conflict.
+
 **Key engineering findings:**
 
 - AEL uses the board profile's existing GDB flash path (`load.gdbmi`) for Zephyr ELFs — no `west flash` needed in the pipeline. ST-Link and DAPLink work identically.
+- `flash.method = "zephyr_west"` in test plans is now wired end-to-end through `strategy_resolver.py` → `flash_zephyr.py` → `ZephyrBackend.flash()`. Previously this path was dead code — `gdbmi` was always used. Fixed in commit `57c9a30`.
+- DAPLink FW 1.0 (c251:f001) has an AP bank-switching bug: pyocd 0.43.1 gets FAULT ACK reading CSW after IDR. Workaround: use `gdbmi` (OpenOCD) for all flashing on DAPLink FW 1.0 benches.
 - Zephyr 4.4.0-rc2 requires Python ≥ 3.12 (Ubuntu 22.04 ships 3.10). Solved with `uv` + `~/zephyr-venv/` — no root required.
 - `samples/philosophers` emits VT100 cursor codes (`\x1b[N;1H`) in raw UART — AEL substring match is unaffected.
 - `stm32f4_disco` console is PA2/USART2, not PA9 — PA9/PA10 are hardwired to the onboard ST-Link USB-UART bridge.
@@ -158,6 +164,7 @@ AEL now supports **Zephyr RTOS** as a first-class build/flash/verify target. Any
 | Firmware template | [`firmware/templates/zephyr_hello_loop_template/`](firmware/templates/zephyr_hello_loop_template/) |
 | Board onboarding guide | [`docs/guides/zephyr_ael_board_onboarding.md`](docs/guides/zephyr_ael_board_onboarding.md) |
 | Regression test | [`tests/zephyr/test_zephyr_backend_hello_world.py`](tests/zephyr/test_zephyr_backend_hello_world.py) — 2/2 PASS |
+| Hybrid pack | [`packs/stm32f103rct6_hybrid.json`](packs/stm32f103rct6_hybrid.json) — 5/5 PASS (3 bare-metal + 2 Zephyr) |
 
 ---
 
