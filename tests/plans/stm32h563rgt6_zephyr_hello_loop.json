@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "zephyr_uart_observe",
+  "name": "stm32h563rgt6_zephyr_hello_loop",
+  "board": "stm32h563rgt6",
+  "supported_instruments": ["daplink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_swd"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["zephyr", "uart_observe", "regression"],
+  "covers": ["zephyr_backend", "observe_uart", "verify"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "Builds and flashes a minimal Zephyr app that prints AEL_ZEPHYR_IDLE every 500ms on USART1/PA9 (115200 8N1). DTS overlay remaps console from nucleo_h563zi default USART3/PD8 to USART1/PA9. PA9 is bridged by DAPLink UART → /dev/ttyACM0. AEL observe_uart captures the pattern. Validated on STM32H563RGT6 with Zephyr 4.x.",
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nucleo_h563zi",
+    "project_dir": "firmware/targets/stm32h563rgt6_zephyr_hello_loop",
+    "build_dir": "artifacts/build_stm32h563rgt6_zephyr_hello_loop"
+  },
+  "flash": {
+    "method": "zephyr_west",
+    "runner": "pyocd",
+    "build_dir": "artifacts/build_stm32h563rgt6_zephyr_hello_loop",
+    "post_load_settle_s": 1.5
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_ZEPHYR_IDLE"
+    ]
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "daplink_h563rgt6_local",
+        "required": true,
+        "notes": "Onboard CMSIS-DAP (DAPLink) used for SWD flash via west flash --runner pyocd."
+      }
+    ],
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true,
+      "notes": "DAPLink USB CDC: STM32 PA9 (USART1_TX, AF7) bridged to /dev/ttyACM0."
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Zephyr console UART. AF7, 115200 8N1. Wired to DAPLink UART RX."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "STM32 PA9 (USART1_TX)",
+        "to": "DAPLink UART RX → /dev/ttyACM0"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

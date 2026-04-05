@@ -2874,8 +2874,8 @@
   "stm32h563rgt6|stm32h563rgt6_freertos_uart": {
     "exp_id": "517637ee-5b36-4a72-826f-60466775d10f",
     "success_count": 4,
-    "failure_count": 4,
-    "last_seen": 1775407754.090851,
+    "failure_count": 6,
+    "last_seen": 1775412595.3253005,
     "confidence": 0.8,
     "known_failures": {
       "check_uart": {
@@ -2885,7 +2885,7 @@
       },
       "load": {
         "exp_id": "73b9259a-7610-478f-a07a-5de43fec0f73",
-        "count": 1,
+        "count": 3,
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_freertos_uart: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
@@ -2957,5 +2957,47 @@
     "last_seen": 1775410966.9928215,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "stm32h563rgt6|stm32h563rgt6_zephyr_hello_loop": {
+    "exp_id": "f04daa28-1808-4037-9157-f07c01d883f5",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1775412920.938977,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "bd9a0308-c5c4-4efb-bc13-91570680c2b0",
+        "count": 1,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_hello_loop: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
+  },
+  "stm32h563rgt6|stm32h563rgt6_zephyr_philosophers": {
+    "exp_id": "65c1935d-6205-455b-9122-3615e4fcb28c",
+    "success_count": 2,
+    "failure_count": 5,
+    "last_seen": 1775414537.450492,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "4d8ba8e8-5cae-44e3-8d41-22206519551b",
+        "count": 5,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_philosophers: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
+  },
+  "stm32h563rgt6|stm32h563rgt6_zephyr_synchronization": {
+    "exp_id": "9a6f514f-7f2a-4e2c-be79-d9e13cd53863",
+    "success_count": 3,
+    "failure_count": 2,
+    "last_seen": 1775414493.3503864,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "f7459446-ae12-4626-8cf0-af6ed8ffb754",
+        "count": 2,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_synchronization: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
   }
 }

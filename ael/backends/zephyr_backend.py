@@ -116,11 +116,13 @@ class ZephyrBackend(AELBackend):
 
     def build(
         self,
-        board:       str,
-        sample_dir:  str,
-        build_dir:   Path = None,
-        config_args: list = None,
-        pristine:    bool = True,
+        board:            str,
+        sample_dir:       str,
+        build_dir:        Path = None,
+        config_args:      list = None,
+        pristine:         bool = True,
+        extra_conf:       Path = None,
+        extra_dtc_overlay: Path = None,
     ) -> Path:
         """
         Run: west build [-p always] -b <board> <sample_dir> [-- <config_args>]
@@ -131,8 +133,12 @@ class ZephyrBackend(AELBackend):
         cmd = [self.west_bin, "build"]
         if pristine:
             cmd += ["-p", "always"]
-        cmd += ["-b", board, str(self.workspace / sample_dir),
-                "--build-dir", str(build_dir)]
+        cmd += ["-b", board, "--build-dir", str(build_dir)]
+        if extra_conf:
+            cmd += ["--extra-conf", str(extra_conf)]
+        if extra_dtc_overlay:
+            cmd += ["--extra-dtc-overlay", str(extra_dtc_overlay)]
+        cmd += [str(self.workspace / sample_dir)]
         if config_args:
             cmd += ["--"] + config_args
 

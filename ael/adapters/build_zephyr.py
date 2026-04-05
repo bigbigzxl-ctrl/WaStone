@@ -6,11 +6,13 @@ Delegates to ZephyrBackend.build() and returns the ELF path string,
 matching the contract of the other build_* adapters.
 
 board_cfg["build"] fields consumed:
-  zephyr_board  — Zephyr board name (e.g. "stm32f4_disco")
-  project_dir   — path to the Zephyr app directory (absolute or repo-relative)
-  build_dir     — output directory (absolute or repo-relative)
-  config_args   — list of extra CMake args  (e.g. ["-DCONFIG_UART_CONSOLE=y"])
-  pristine      — bool, default True (always clean build)
+  zephyr_board       — Zephyr board name (e.g. "stm32f4_disco")
+  project_dir        — path to the Zephyr app directory (absolute or repo-relative)
+  build_dir          — output directory (absolute or repo-relative)
+  config_args        — list of extra CMake args  (e.g. ["-DCONFIG_UART_CONSOLE=y"])
+  pristine           — bool, default True (always clean build)
+  extra_conf_file    — extra .conf file (absolute or repo-relative); passed as --extra-conf
+  extra_overlay_file — extra .overlay file (absolute or repo-relative); passed as --extra-dtc-overlay
 """
 
 from __future__ import annotations
@@ -49,6 +51,16 @@ def run(board_cfg: Dict[str, Any]) -> str | None:
     config_args = list(build_cfg.get("config_args") or [])
     pristine    = bool(build_cfg.get("pristine", True))
 
+    def _resolve_optional(key: str) -> "Path | None":
+        raw = str(build_cfg.get(key) or "").strip()
+        if not raw:
+            return None
+        p = Path(raw)
+        return p if p.is_absolute() else _REPO_ROOT / p
+
+    extra_conf        = _resolve_optional("extra_conf_file")
+    extra_dtc_overlay = _resolve_optional("extra_overlay_file")
+
     backend = ZephyrBackend()
 
     # build() takes a sample_dir relative to the workspace; for external apps
@@ -59,6 +71,8 @@ def run(board_cfg: Dict[str, Any]) -> str | None:
         build_dir=build_dir,
         config_args=config_args if config_args else None,
         pristine=pristine,
+        extra_conf=extra_conf,
+        extra_dtc_overlay=extra_dtc_overlay,
     )
 
     return str(elf) if elf and elf.exists() else None

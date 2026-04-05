@@ -1,0 +1,54 @@
+/*
+ * DTS overlay for STM32H563RGT6 (no external HSE crystal):
+ *   1. Switch system clock from HSE-PLL to HSI 64 MHz.
+ *   2. Remap Zephyr console from USART3/PD8-PD9 to USART1/PA9.
+ *      PA9 (USART1_TX, AF7) is wired to the DAPLink UART RX → /dev/ttyACM0.
+ */
+
+/* ── Clock: disable HSE/PLL, use HSI 64 MHz ─────────────────────────── */
+
+&clk_hse {
+    status = "disabled";
+};
+
+&pll {
+    status = "disabled";
+};
+
+&pll2 {
+    status = "disabled";
+};
+
+&clk_hsi {
+    status = "okay";
+    hsi-div = <1>;   /* 64 MHz, no division */
+};
+
+&rcc {
+    clocks = <&clk_hsi>;
+    clock-frequency = <DT_FREQ_M(64)>;
+    ahb-prescaler  = <1>;
+    apb1-prescaler = <1>;
+    apb2-prescaler = <1>;
+    apb3-prescaler = <1>;
+};
+
+/* ── Console: USART1 PA9 instead of USART3 PD8 ──────────────────────── */
+
+/ {
+    chosen {
+        zephyr,console    = &usart1;
+        zephyr,shell-uart = &usart1;
+    };
+};
+
+&usart1 {
+    pinctrl-0 = <&usart1_tx_pa9>;
+    pinctrl-names = "default";
+    current-speed = <115200>;
+    status = "okay";
+};
+
+&usart3 {
+    status = "disabled";
+};
