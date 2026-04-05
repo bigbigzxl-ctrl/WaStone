@@ -204,6 +204,89 @@ class ZephyrBackend(AELBackend):
             f"west debugserver did not become ready within {timeout_s}s"
         )
 
-    # observe() and verify() intentionally not overridden:
-    # AEL's existing observe_uart + verify layers handle all serial capture
-    # and pattern matching without modification.
+    def observe(
+        self,
+        port:            str,
+        baud:            int   = 115200,
+        duration_s:      float = 6.0,
+        expect_patterns: list  = None,
+        forbid_patterns: list  = None,
+        profile:         str   = "stm32",
+        raw_log_path:    str   = None,
+    ) -> dict:
+        """
+        Capture serial output from a Zephyr board and check expected patterns.
+
+        Delegates entirely to AEL's existing observe_uart_log layer — no
+        custom transport code needed.  The 'stm32' profile is the right
+        default for Zephyr on STM32 targets (no ESP32-style boot ROM noise).
+
+        Returns the raw observe result dict from observe_uart_log.run().
+        The dict includes an extra '_cfg' key so that verify() can reconstruct
+        the observation context without the caller having to pass it again.
+
+        Typical usage:
+            obs = backend.observe(port='/dev/ttyUSB0', baud=115200,
+                                  duration_s=6, expect_patterns=['Hello World'])
+            verdict = backend.verify(obs)
+        """
+        import os
+        import tempfile
+        from ael.adapters import observe_log
+
+        cfg = {
+            "enabled":         True,
+            "port":            port,
+            "baud":            baud,
+            "duration_s":      duration_s,
+            "profile":         profile,
+            "expect_patterns": expect_patterns or [],
+            "forbid_patterns": forbid_patterns or [],
+            "reset_strategy":  "none",
+        }
+
+        # Provide a writable log path; create a temp file if caller didn't supply one
+        if raw_log_path is None:
+            fd, raw_log_path = tempfile.mkstemp(
+                suffix=".log", prefix="zephyr_uart_"
+            )
+            os.close(fd)
+
+        result = observe_log.run_serial_log(cfg, raw_log_path=raw_log_path)
+
+        # Stash cfg inside the result so verify() has full context
+        result["_cfg"] = cfg
+        result["_raw_log_path"] = raw_log_path
+        return result
+
+    def verify(self, observation: dict, expectations: dict = None) -> dict:
+        """
+        Verify a serial observation against expected patterns.
+
+        Delegates to AEL's check_eval.evaluate_uart_facts().
+        'observation' should be the dict returned by observe().
+
+        Returns:
+            {
+                "ok":            bool,
+                "failure_kind":  str,   # empty string when ok
+                "failure_class": str,
+                "error_summary": str,
+                "recovery_hint": dict | None,
+                "verify_substage": "uart.verify",
+            }
+        """
+        from ael import check_eval
+
+        cfg = observation.get("_cfg", {})
+        if expectations:
+            # Allow caller to override/supplement cfg fields
+            cfg = {**cfg, **expectations}
+
+        # evaluate_uart_facts needs firmware_ready_seen derived from missing_expect
+        facts = {
+            **observation,
+            "firmware_ready_seen": not bool(observation.get("missing_expect", [])),
+        }
+
+        return check_eval.evaluate_uart_facts(facts, cfg)
