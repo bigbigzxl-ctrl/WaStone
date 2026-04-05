@@ -11,6 +11,7 @@ import subprocess
 import time
 from typing import Optional
 
+from ael import gdb_server_registry
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _STLINK_GDB_SERVER_SCRIPT = _REPO_ROOT / "instruments" / "STLinkInstrument" / "scripts" / "gdb_server.sh"
@@ -497,6 +498,10 @@ def _cleanup_managed_local_stlink_server(bootstrap: dict | None, emit) -> None:
     state = bootstrap if isinstance(bootstrap, dict) else {}
     if not state.get("managed"):
         return
+    # Persistent servers (e.g. pyocd --persist) are intentionally kept alive
+    # between tests so that the next test can reuse them without restart.
+    if state.get("persistent"):
+        return
     kind = str(state.get("kind") or "stlink").strip().lower()
     pid = int(state.get("pid") or 0)
     if pid <= 0 or not _pid_exists(pid):
@@ -566,26 +571,140 @@ def _ensure_local_daplink_gdb_server(
     flash_log_path: str = "",
     startup_timeout_s: float = 5.0,
 ):
-    ip = str(probe_cfg.get("ip") or "").strip()
-    port = int(probe_cfg.get("gdb_port") or 0)
+    ip            = str(probe_cfg.get("ip") or "").strip()
+    preferred_port = int(probe_cfg.get("gdb_port") or 0)
+    instrument_id  = str(probe_cfg.get("id") or "").strip()
+    gdb_server_type = str((probe_cfg or {}).get("gdb_server") or "openocd").strip().lower()
+
     result = {
         "ok": True,
         "managed": False,
+        "persistent": False,
         "kind": "daplink",
-        "port_checked": bool(_is_local_host(ip) and port > 0),
+        "port_checked": bool(_is_local_host(ip) and preferred_port > 0),
         "server_log_path": _openocd_server_log_path(flash_log_path),
         "error": "",
         "diagnostic_code": "",
         "skip_port_probe": False,
         "pid": 0,
-        "backend": "",
+        "backend": gdb_server_type,
     }
     if not result["port_checked"]:
         return result
-    if _port_is_listening(ip, port):
-        emit(f"Flash: local DAPLink/OpenOCD GDB server already listening at {ip}:{port}; reusing it")
+
+    # ── registry: get conflict-free port ────────────────────────────────────
+    try:
+        port = gdb_server_registry.allocate(ip, preferred_port, gdb_server_type, instrument_id)
+    except Exception as exc:
+        result["ok"] = False
+        result["error"] = f"Flash: GDB registry allocation failed: {exc}"
+        emit(result["error"])
         return result
 
+    if port != preferred_port:
+        emit(f"Flash: port {preferred_port} taken by another instrument; using {port} instead")
+
+    result["actual_port"] = port   # caller must use this port for GDB connection
+
+    if _port_is_listening(ip, port):
+        emit(f"Flash: GDB server already listening at {ip}:{port}; reusing")
+        return result
+
+    # ── dispatch to pyocd or OpenOCD ─────────────────────────────────────────
+    if gdb_server_type == "pyocd":
+        return _start_pyocd_gdb_server(
+            probe_cfg, flash_cfg, emit, result, ip, port, flash_log_path, startup_timeout_s
+        )
+    return _start_openocd_gdb_server(
+        probe_cfg, flash_cfg, emit, result, ip, port, flash_log_path, startup_timeout_s
+    )
+
+
+def _start_pyocd_gdb_server(
+    probe_cfg,
+    flash_cfg,
+    emit,
+    result: dict,
+    ip: str,
+    port: int,
+    flash_log_path: str,
+    startup_timeout_s: float,
+) -> dict:
+    """Start pyocd gdbserver as a persistent GDB remote target."""
+    pyocd_target = str(
+        (probe_cfg or {}).get("pyocd_target")
+        or (flash_cfg or {}).get("target")
+        or ""
+    ).strip()
+    if not pyocd_target:
+        msg = "Flash: pyocd gdbserver target not specified (set pyocd_target in instrument config)"
+        result["ok"] = False
+        result["error"] = msg
+        emit(msg)
+        return result
+
+    emit(f"Flash: starting pyocd gdbserver -t {pyocd_target} --port {port} --persist")
+    cmd = ["pyocd", "gdbserver", "-t", pyocd_target, "--port", str(port), "--persist"]
+    log_handle: Optional[object] = None
+    try:
+        if result["server_log_path"]:
+            log_handle = open(result["server_log_path"], "a", encoding="utf-8")
+        proc = subprocess.Popen(
+            cmd,
+            stdout=log_handle or subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+    except Exception as exc:
+        if log_handle:
+            log_handle.close()
+        msg = f"Flash: failed to start pyocd gdbserver ({exc})"
+        result["ok"] = False
+        result["error"] = msg
+        emit(msg)
+        return result
+    finally:
+        if log_handle:
+            log_handle.close()
+
+    if _wait_for_port(ip, port, startup_timeout_s):
+        gdb_server_registry.update_pid(ip, port, proc.pid)
+        result["managed"]    = True
+        result["persistent"] = True   # do NOT kill between tests
+        result["skip_port_probe"] = True
+        result["pid"]        = proc.pid
+        result["backend"]    = "pyocd"
+        emit(f"Flash: pyocd gdbserver ready at {ip}:{port} (pid {proc.pid})")
+        return result
+
+    exit_code = proc.poll()
+    msg = (
+        f"Flash: pyocd gdbserver exited during startup with code {exit_code}"
+        if exit_code is not None
+        else "Flash: pyocd gdbserver did not start listening in time"
+    )
+    if _pid_exists(proc.pid):
+        try:
+            os.kill(proc.pid, signal.SIGKILL)
+        except Exception:
+            pass
+    diagnostic = _emit_daplink_server_failure(emit, msg, result["server_log_path"])
+    result["ok"] = False
+    result["error"] = diagnostic.get("summary") or msg
+    return result
+
+
+def _start_openocd_gdb_server(
+    probe_cfg,
+    flash_cfg,
+    emit,
+    result: dict,
+    ip: str,
+    port: int,
+    flash_log_path: str,
+    startup_timeout_s: float,
+) -> dict:
+    """Start OpenOCD as a GDB remote for DAPLink instruments."""
     target_cfg = _openocd_target_cfg(str((flash_cfg or {}).get("target") or ""))
     if not target_cfg:
         msg = "Flash: local DAPLink/OpenOCD target config could not be resolved from board target."
@@ -600,14 +719,10 @@ def _ensure_local_daplink_gdb_server(
         emit(f"Flash: starting local DAPLink/OpenOCD GDB server via CMSIS-DAP backend '{backend}'")
         cmd = [
             _OPENOCD_BIN,
-            "-f",
-            "interface/cmsis-dap.cfg",
-            "-c",
-            f"cmsis_dap_backend {backend}; adapter speed 50; gdb_port {int(port)}; tcl_port disabled; telnet_port disabled",
-            "-f",
-            target_cfg,
-            "-c",
-            "init",
+            "-f", "interface/cmsis-dap.cfg",
+            "-c", f"cmsis_dap_backend {backend}; adapter speed 50; gdb_port {int(port)}; tcl_port disabled; telnet_port disabled",
+            "-f", target_cfg,
+            "-c", "init",
         ]
         log_handle: Optional[object] = None
         try:
@@ -630,9 +745,10 @@ def _ensure_local_daplink_gdb_server(
                 log_handle.close()
 
         if _wait_for_port(ip, port, startup_timeout_s):
+            gdb_server_registry.update_pid(ip, port, proc.pid)
             result["managed"] = True
             result["skip_port_probe"] = True
-            result["pid"] = proc.pid
+            result["pid"]    = proc.pid
             result["backend"] = backend
             emit(f"Flash: local DAPLink/OpenOCD GDB server ready at {ip}:{port} (pid {proc.pid}, backend {backend})")
             return result
@@ -649,7 +765,11 @@ def _ensure_local_daplink_gdb_server(
                 pass
         time.sleep(0.2)
 
-    diagnostic = _emit_daplink_server_failure(emit, last_msg or "Flash: failed to start local DAPLink/OpenOCD GDB server", result["server_log_path"])
+    diagnostic = _emit_daplink_server_failure(
+        emit,
+        last_msg or "Flash: failed to start local DAPLink/OpenOCD GDB server",
+        result["server_log_path"],
+    )
     result["ok"] = False
     result["error"] = diagnostic.get("summary") or last_msg or "failed to start local DAPLink/OpenOCD GDB server"
     return result
@@ -840,6 +960,9 @@ def run(probe_cfg, firmware_path, flash_cfg=None, flash_json_path=None):
             last_error = stlink_bootstrap.get("error") or "local DAPLink/OpenOCD GDB server startup failed"
             if last_error:
                 emit(f"Flash: {last_error}")
+        # Use the registry-assigned port (may differ from preferred if conflict)
+        if stlink_bootstrap.get("actual_port"):
+            port = int(stlink_bootstrap["actual_port"])
     elif _is_local_host(ip) and port and not _uses_external_local_gdb_server(probe_cfg):
         stlink_bootstrap = _ensure_local_stlink_gdb_server(probe_cfg, emit, flash_log_path=flash_log_path)
         if not stlink_bootstrap.get("ok", True):

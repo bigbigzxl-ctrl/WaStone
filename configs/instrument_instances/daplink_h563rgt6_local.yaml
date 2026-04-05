@@ -9,6 +9,8 @@ connection:
   ip: "127.0.0.1"
   gdb_port: 3333
   gdb_cmd: "arm-none-eabi-gdb"
+  gdb_server: pyocd
+  pyocd_target: stm32h563rgtx
 
 communication:
   primary: gdb_remote

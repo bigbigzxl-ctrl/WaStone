@@ -42,11 +42,17 @@ def normalize_probe_cfg(raw: Dict[str, Any] | Any) -> Dict[str, Any]:
         cfg["gdb_port"] = connection["gdb_port"]
     if "gdb_cmd" not in cfg and "gdb_cmd" in connection:
         cfg["gdb_cmd"] = connection["gdb_cmd"]
+    if "gdb_server" not in cfg and "gdb_server" in connection:
+        cfg["gdb_server"] = connection["gdb_server"]
+    if "pyocd_target" not in cfg and "pyocd_target" in connection:
+        cfg["pyocd_target"] = connection["pyocd_target"]
     if "gdb_cmd" not in cfg:
         cfg["gdb_cmd"] = raw.get("gdb_cmd") if isinstance(raw, dict) else None
     if isinstance(instance, dict):
         if "instance_id" not in cfg and instance.get("id") is not None:
             cfg["instance_id"] = instance.get("id")
+        if "id" not in cfg and instance.get("id") is not None:
+            cfg["id"] = instance.get("id")
         if "type_id" not in cfg and instance.get("type") is not None:
             cfg["type_id"] = instance.get("type")
         if "name" not in cfg:

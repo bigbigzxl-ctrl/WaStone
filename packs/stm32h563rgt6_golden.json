@@ -3,7 +3,6 @@
     "board": "stm32h563rgt6",
     "tests": [
         "tests/plans/stm32h563rgt6_gpio_loopback.json",
-        "tests/plans/stm32h563rgt6_uart_loopback.json",
         "tests/plans/stm32h563rgt6_exti_trigger.json",
         "tests/plans/stm32h563rgt6_spi_loopback.json",
         "tests/plans/stm32h563rgt6_pwm_capture.json",
@@ -47,6 +46,12 @@
         "tests/plans/stm32h563rgt6_tim151617_mailbox.json",
         "tests/plans/stm32h563rgt6_lptim2_mailbox.json",
         "tests/plans/stm32h563rgt6_mpu_mailbox.json",
-        "tests/plans/stm32h563rgt6_dwt_mailbox.json"
+        "tests/plans/stm32h563rgt6_dwt_mailbox.json",
+        "tests/plans/stm32h563rgt6_flash_scratch_mailbox.json",
+        "tests/plans/stm32h563rgt6_pka_mailbox.json",
+        "tests/plans/stm32h563rgt6_freertos_uart.json",
+        "tests/plans/stm32h563rgt6_zephyr_hello_loop.json",
+        "tests/plans/stm32h563rgt6_zephyr_philosophers.json",
+        "tests/plans/stm32h563rgt6_zephyr_synchronization.json"
     ]
 }

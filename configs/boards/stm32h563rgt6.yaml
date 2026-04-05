@@ -22,7 +22,7 @@ board:
       - "monitor reset halt"
       - "file {firmware}"
       - "load"
-      - "monitor reset hardware"
+      - "monitor reset"
       - "detach"
   mailbox_verify_defaults:
     skip_attach: true
