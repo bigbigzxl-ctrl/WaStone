@@ -1,0 +1,119 @@
+{
+  "_template_instructions": [
+    "Copy this file to tests/plans/<board>_zephyr_<sample>.json",
+    "Replace every <PLACEHOLDER> value with board-specific data.",
+    "See docs/guides/zephyr_ael_board_onboarding.md for the full checklist."
+  ],
+
+  "schema_version": "1.0",
+  "test_kind": "zephyr_uart_observe",
+
+  "name": "<board_id>_zephyr_<sample_name>",
+  "board": "<ael_board_id>",
+
+  "supported_instruments": ["stlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_swd"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+
+  "labels": ["zephyr", "uart_observe", "rtos"],
+  "covers": ["zephyr_backend", "observe_uart", "verify"],
+
+  "preflight": {
+    "enabled": false,
+    "_note": "MUST be false — Zephyr uses west/OpenOCD directly, not the AEL instrument stack"
+  },
+
+  "notes": "<Describe what this sample proves, which peripheral/pin is used, Zephyr version>",
+
+  "build": {
+    "type": "zephyr",
+    "_note_type": "Tells AEL to use ZephyrBackend via build_zephyr adapter",
+
+    "zephyr_board": "<west board name, e.g. stm32f4_disco>",
+    "_note_zephyr_board": "Run: west boards | grep <chip_family> to find this",
+
+    "project_dir": "<absolute path OR repo-relative path to Zephyr app dir>",
+    "_note_project_dir": "For upstream samples use absolute path: /home/aes/zephyrproject/zephyr/samples/<name>. For AEL firmware use repo-relative: firmware/targets/<target>/",
+
+    "build_dir": "artifacts/build_<board_id>_zephyr_<sample_name>",
+    "_note_build_dir": "Repo-relative; will be created under repo root"
+  },
+
+  "flash": {
+    "method": "zephyr_west",
+    "_note_method": "Routes to load.zephyr_west in adapter_registry → flash_zephyr.run()",
+
+    "runner": "openocd",
+    "_note_runner": "From board.cmake: openocd (most STM32) | jlink | pyocd. Check boards/<arch>/<board>/board.cmake",
+
+    "build_dir": "artifacts/build_<board_id>_zephyr_<sample_name>",
+    "_note_build_dir": "Must match build.build_dir exactly",
+
+    "post_load_settle_s": 1.5,
+
+    "_optional_openocd_config": "Uncomment if board's openocd.cfg hardcodes ST-Link but you have CMSIS-DAP:",
+    "_openocd_config_example": "firmware/targets/<target>/openocd_cmsis_dap.cfg"
+  },
+
+  "observe_uart": {
+    "enabled": true,
+
+    "port": "/dev/ttyUSB0",
+    "_note_port": "Confirm with: ls /dev/ttyUSB* /dev/ttyACM*",
+
+    "baud": 115200,
+    "_note_baud": "115200 is the Zephyr default for all STM32 boards",
+
+    "profile": "stm32",
+    "_note_profile": "stm32 = no boot ROM noise filtering. Use esp32 for ESP32 targets.",
+
+    "duration_s": 8,
+    "_note_duration_s": "Must be long enough to capture at least 2 pattern occurrences. 8s = ~8 prints at 500ms cadence",
+
+    "expect_patterns": [
+      "<pattern_1>",
+      "_note: see docs/guides/zephyr_ael_board_onboarding.md Quick Reference table"
+    ]
+  },
+
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "<instrument_id, e.g. stlink_f407_discovery>",
+        "required": true,
+        "notes": "<Flash method and probe type>"
+      }
+    ],
+    "serial_console": {
+      "port": "/dev/ttyUSB0",
+      "baud": 115200,
+      "required": true,
+      "notes": "USB-UART adapter: DUT <CONSOLE_TX_PIN> -> RXD, GND -> GND"
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "<PA2/USART2_TX or PA9/USART1_TX — check DTS chosen node>",
+        "direction": "output",
+        "notes": "Zephyr console UART TX. Connect to USB-UART adapter RXD."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "DUT <CONSOLE_TX_PIN>",
+        "to": "USB-UART adapter RXD"
+      },
+      {
+        "from": "DUT GND",
+        "to": "USB-UART adapter GND"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

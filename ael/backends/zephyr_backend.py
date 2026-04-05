@@ -145,15 +145,21 @@ class ZephyrBackend(AELBackend):
 
     def flash(
         self,
-        artifact:  Path  = None,
-        runner:    str   = "openocd",
-        build_dir: Path  = None,
+        artifact:       Path  = None,
+        runner:         str   = "openocd",
+        build_dir:      Path  = None,
+        openocd_config: Path  = None,
     ) -> None:
         """
-        Run: west flash --runner <runner> [--build-dir <build_dir>]
+        Run: west flash --runner <runner> [--build-dir <build_dir>] [--config <cfg>]
 
         artifact is unused (west locates the hex from the build dir),
         kept for interface compatibility with AELBackend.
+
+        openocd_config: optional path to a custom OpenOCD config file.
+        Use when the board's default openocd.cfg hardcodes a different interface
+        (e.g. stlink) but the bench uses a CMSIS-DAP probe (DAPLink).
+        Passed to the openocd runner as: west flash --runner openocd --config <path>
         """
         build_dir = Path(build_dir) if build_dir else self.workspace / "build"
         # Release the ST-Link from any AEL-managed gdbserver before OpenOCD takes it
@@ -161,6 +167,8 @@ class ZephyrBackend(AELBackend):
         self._release_port(4242)
         cmd = [self.west_bin, "flash", "--runner", runner,
                "--build-dir", str(build_dir)]
+        if openocd_config:
+            cmd += ["--config", str(openocd_config)]
         self._run(cmd)
 
     def start_debugserver(

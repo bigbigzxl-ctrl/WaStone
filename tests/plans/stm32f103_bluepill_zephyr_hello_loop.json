@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "zephyr_uart_observe",
+  "name": "stm32f103_bluepill_zephyr_hello_loop",
+  "board": "stm32f103c6t6_bluepill_like",
+  "supported_instruments": ["daplink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_swd"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["zephyr", "uart_observe", "regression", "portability"],
+  "covers": ["zephyr_backend", "observe_uart", "verify", "second_board_portability"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "Portability validation: runs ZephyrBackend on STM32F103C6T6 Blue Pill (stm32_min_dev) via DAPLink/CMSIS-DAP — different chip family (F1 vs F4) and different instrument than the F4 Discovery pilot. Console on PA9 (USART1 TX) at 115200 8N1. Custom openocd_cmsis_dap.cfg overrides stm32_min_dev's default ST-Link interface config.",
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "stm32_min_dev",
+    "project_dir": "firmware/targets/stm32f103_bluepill_zephyr_hello_loop",
+    "build_dir": "artifacts/build_stm32f103_bluepill_zephyr_hello_loop"
+  },
+  "flash": {
+    "method": "zephyr_west",
+    "runner": "openocd",
+    "build_dir": "artifacts/build_stm32f103_bluepill_zephyr_hello_loop",
+    "openocd_config": "firmware/targets/stm32f103_bluepill_zephyr_hello_loop/openocd_cmsis_dap.cfg",
+    "post_load_settle_s": 1.5
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyUSB0",
+    "baud": 115200,
+    "profile": "stm32",
+    "duration_s": 6,
+    "expect_patterns": [
+      "AEL_ZEPHYR_IDLE"
+    ]
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "daplink1",
+        "required": true,
+        "notes": "DAPLink CMSIS-DAP probe connected via USB. SWD: SWDIO→PA13, SWDCK→PA14, GND→GND, 3.3V→3.3V."
+      }
+    ],
+    "serial_console": {
+      "port": "/dev/ttyUSB0",
+      "baud": 115200,
+      "required": true,
+      "notes": "USB-UART adapter: Blue Pill PA9 (USART1_TX) -> RXD, GND -> GND."
+    },
+    "peripheral_signals": [
+      {
+        "role": "uart_tx",
+        "dut_signal": "PA9/USART1_TX",
+        "direction": "output",
+        "notes": "Zephyr console UART on stm32_min_dev DTS. Connect to USB-UART adapter RXD."
+      }
+    ],
+    "bench_connections": [
+      {
+        "from": "Blue Pill PA9 (USART1_TX)",
+        "to": "USB-UART adapter RXD"
+      },
+      {
+        "from": "Blue Pill GND",
+        "to": "USB-UART adapter GND"
+      },
+      {
+        "from": "DAPLink SWDIO",
+        "to": "Blue Pill PA13 (SWDIO)"
+      },
+      {
+        "from": "DAPLink SWDCK",
+        "to": "Blue Pill PA14 (SWDCK)"
+      },
+      {
+        "from": "DAPLink GND",
+        "to": "Blue Pill GND"
+      },
+      {
+        "from": "DAPLink 3.3V",
+        "to": "Blue Pill 3.3V"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
