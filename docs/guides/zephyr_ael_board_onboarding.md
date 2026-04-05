@@ -6,13 +6,16 @@ Bring any Zephyr-supported board under AEL closed-loop UART validation in six st
 
 ## Overview
 
-AEL's Zephyr pipeline (`build.type = "zephyr"` + `flash.method = "zephyr_west"`) wraps the standard `west build → west flash → observe_uart → verify` workflow.  Once a board passes the smoke test here, every Zephyr upstream sample (synchronization, philosophers, …) can be added as an `ael run` test plan with no firmware changes.
+AEL's Zephyr pipeline uses `build.type = "zephyr"` to build with `west build`, then flashes via the board's existing AEL instrument path (ST-Link, DAPLink, etc.) — the same GDB-based `load.gdbmi` stage used for bare-metal firmware.  Once a board passes the smoke test here, every Zephyr upstream sample (synchronization, philosophers, …) can be added as an `ael run` test plan with no firmware changes.
+
+> **Flash path clarification:** `flash.method = "zephyr_west"` in a test plan is currently a no-op — the AEL pipeline uses the board profile's GDB flash path (`load.gdbmi`) to program the Zephyr ELF, not `west flash`. The `runner` and `openocd_config` fields in the test plan's `flash` section are therefore informational only. `west flash` is only called if you invoke `ZephyrBackend.flash()` directly (e.g. from a regression test or standalone script).
 
 **Validated boards:**
 
-| Board | Zephyr board name | Console pin | Instrument | Date |
-|-------|-------------------|-------------|------------|------|
-| STM32F4 Discovery | `stm32f4_disco` | PA2 (USART2 TX) | ST-Link onboard | 2026-04-05 |
+| Board | Zephyr board name | Console pin | Instrument | UART path | Date |
+|-------|-------------------|-------------|------------|-----------|------|
+| STM32F4 Discovery | `stm32f4_disco` | PA2 (USART2 TX) | ST-Link onboard | USB-UART `/dev/ttyUSB0` | 2026-04-05 |
+| STM32F103RCT6 | `stm32f103_mini` | PA9 (USART1 TX) | DAPLink CMSIS-DAP | DAPLink bridge `/dev/ttyACM0` | 2026-04-05 |
 
 ---
 
@@ -51,10 +54,11 @@ grep "usart1_tx\|usart2_tx\|lpuart1_tx" ~/zephyrproject/zephyr/boards/<arch>/<bo
 
 **Common mappings (confirmed):**
 
-| Board | Console UART | TX pin | Notes |
-|-------|-------------|--------|-------|
-| `stm32f4_disco` | USART2 | PA2 | PA9/PA10 occupied by ST-Link UART bridge — do NOT use |
-| `stm32_min_dev` | USART1 | PA9 | Standard Blue Pill console |
+| Board | Console UART | TX pin | UART capture path | Notes |
+|-------|-------------|--------|-------------------|-------|
+| `stm32f4_disco` | USART2 | PA2 | USB-UART adapter RXD | PA9/PA10 occupied by ST-Link UART bridge — do NOT use |
+| `stm32f103_mini` | USART1 | PA9 | DAPLink UART bridge (`/dev/ttyACM0`) | DAPLink has built-in USB-UART; no separate adapter needed |
+| `stm32_min_dev` | USART1 | PA9 | USB-UART adapter RXD | Blue Pill variant (F103xb) |
 
 > **Caution:** On STM32F4 Discovery, PA9/PA10 are bridged to the onboard ST-Link UART chip and are not wired to the MCU USART in the typical hardware configuration. Zephyr's DTS correctly maps the console to USART2/PA2.
 
@@ -80,23 +84,29 @@ The first `include(...)` after the `board_runner_args` lines shows the default r
 
 ### 4 — Register the board in AEL (if not already present)
 
-Create `configs/boards/<board_id>.yaml` with the minimal Zephyr profile:
+If the board already has an AEL board profile (it was previously used for bare-metal tests), no changes are needed — the existing GDB flash path works for Zephyr ELFs too.
+
+If registering a new board, create `configs/boards/<board_id>.yaml`. The `flash` section should match whatever GDB/SWD instrument is on the bench (same as bare-metal):
 
 ```yaml
 board:
   name: "<Human-readable name>"
-  target: "<board_id>"               # AEL internal target name
+  target: "<board_id>"
   instrument_instance: "<instrument_id>"
-  kind: zephyr_mcu
+  kind: bare_mcu                     # or zephyr_mcu; both work
   features:
     - programmable_via_swd
   flash:
-    method: zephyr_west
-    runner: openocd                  # or jlink / pyocd
+    reset_strategy: none             # adjust per board
     post_load_settle_s: 1.5
+    gdb_launch_cmds:
+      - "file {firmware}"
+      - "load"
+      - "monitor reset run"
+      - "detach"
 ```
 
-For the `bench_setup` section of the test plan, set `preflight.enabled = false` — Zephyr uses west/OpenOCD directly; the AEL instrument stack is not involved in flash.
+Set `preflight.enabled = false` in every Zephyr test plan — preflight probes the AEL mailbox, which Zephyr firmware does not implement.
 
 ---
 
@@ -120,34 +130,17 @@ ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
 
 Start from `tests/plans/templates/zephyr_uart_observe_template.json`.
 
-**The six board-specific variables:**
+**The five board-specific variables that actually matter:**
 
 | Field | Where to get it | Example |
 |-------|----------------|---------|
-| `build.zephyr_board` | Step 1 output | `stm32f4_disco` |
+| `build.zephyr_board` | Step 1 output | `stm32f103_mini` |
 | `build.project_dir` | Path to firmware source | `/home/aes/zephyrproject/zephyr/samples/synchronization` or `firmware/targets/...` |
 | `build.build_dir` | Artifact output dir (relative to repo) | `artifacts/build_<board>_<test>` |
-| `flash.runner` | Step 3 output | `openocd` |
-| `observe_uart.port` | Step 5 confirmed port | `/dev/ttyUSB0` |
+| `observe_uart.port` | Step 5 confirmed port | `/dev/ttyUSB0` or `/dev/ttyACM0` |
 | `observe_uart.expect_patterns` | Known console output | `["thread_a: Hello World", "thread_b: Hello World"]` |
 
-If your board uses CMSIS-DAP but the board's `openocd.cfg` hardcodes ST-Link, add:
-
-```json
-"flash": {
-  "method": "zephyr_west",
-  "runner": "openocd",
-  "openocd_config": "firmware/targets/<board_target>/openocd_cmsis_dap.cfg"
-}
-```
-
-And create `firmware/targets/<board_target>/openocd_cmsis_dap.cfg`:
-
-```tcl
-source [find interface/cmsis-dap.cfg]
-transport select swd
-source [find target/stm32f1x.cfg]   # or stm32f4x.cfg, stm32h7x.cfg, etc.
-```
+> `flash.runner` and `flash.openocd_config` in the test plan are informational only — the AEL pipeline uses the board profile's GDB flash path, not `west flash`. You can omit them or leave them as documentation.
 
 ---
 
@@ -166,7 +159,8 @@ python3 -m ael run --board <ael_board_id> --test tests/plans/<your_plan>.json
 | Symptom | Root cause | Fix |
 |---------|-----------|-----|
 | `west build` fails: Python < 3.12 | System Python is 3.10 | Use `~/zephyr-venv/` (Python 3.12) |
-| `west flash` fails: "Address already in use :3333/:4242" | AEL pyocd / st-util holding port | `ZephyrBackend._release_port()` handles this automatically |
+| `west flash` fails: "Address already in use :3333/:4242" | AEL pyocd / st-util holding port | Only relevant if calling `ZephyrBackend.flash()` directly; `ZephyrBackend._release_port()` handles it |
+| `zephyr_board` ignored, build uses wrong board | `zephyr_board` not in strategy_resolver merge list | Fixed in `de4b4d7`; `zephyr_board` is now correctly propagated from test plan to build |
 | UART captures 0 bytes | Wrong TX pin wired | Check DTS `chosen` node; on F4 Discovery use PA2 not PA9 |
 | Patterns not found | Single-print firmware (like hello_world) printed before observe_uart opened | Use `firmware/templates/zephyr_hello_loop_template/` which prints every 500 ms |
 | `preflight` stage fails | AEL trying to use instrument stack for Zephyr board | Add `"preflight": {"enabled": false}` to test plan |
