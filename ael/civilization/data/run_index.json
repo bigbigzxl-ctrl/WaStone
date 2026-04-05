@@ -2726,14 +2726,84 @@
   "stm32f407_discovery|stm32f407_zephyr_hello_loop": {
     "exp_id": "ad5eeaf5-ed00-40d9-9046-59709378b857",
     "success_count": 1,
-    "failure_count": 1,
-    "last_seen": 1775379308.3533113,
+    "failure_count": 3,
+    "last_seen": 1775385020.6918836,
     "confidence": 0.5,
     "known_failures": {
       "preflight": {
         "exp_id": "3ff4b2a1-ef41-46b8-b329-1de4ca79f8a7",
         "count": 1,
         "last_raw": "[stm32f407_discovery] stm32f407_zephyr_hello_loop: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      },
+      "load": {
+        "exp_id": "5d63996e-b4a6-4cd5-a131-4fe5eb1de984",
+        "count": 2,
+        "last_raw": "[stm32f407_discovery] stm32f407_zephyr_hello_loop: failed — stages: preflight, build, run, check — failure: load — adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'flash', '--runner', 'openocd', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_stm32f407_zephyr_hello_loop']' returned non-zero exit status 1."
+      }
+    }
+  },
+  "stm32f407_discovery|stm32f407_zephyr_synchronization": {
+    "exp_id": "bdfffcf8-603d-42cc-9ff1-c860df75d13e",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775380875.1784325,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f407_discovery|stm32f407_zephyr_philosophers": {
+    "exp_id": "d8132b12-b009-4e32-bad5-436cd3ed42f7",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775380995.8594513,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f103rct6|stm32f103rct6_zephyr_hello_loop": {
+    "exp_id": "42f0e7ae-9722-4e6b-ac5f-ff6893c8c987",
+    "success_count": 2,
+    "failure_count": 7,
+    "last_seen": 1775387300.3381371,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "0ee20fdf-a032-4bee-ae8c-35eeb506f8fd",
+        "count": 1,
+        "last_raw": "[stm32f103rct6] stm32f103rct6_zephyr_hello_loop: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      },
+      "load": {
+        "exp_id": "3c07e9aa-16a3-4718-87d8-3c8cbc5418ef",
+        "count": 6,
+        "last_raw": "[stm32f103rct6] stm32f103rct6_zephyr_hello_loop: failed — stages: preflight, build, run, check — failure: load — adapter execute failed: Command '['pyocd', 'flash', '--target', 'stm32f103rc', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_stm32f103rct6_zephyr_hello_loop/zephyr/zephyr.elf']' returned non-zero exit status 1."
+      }
+    }
+  },
+  "stm32f103rct6|stm32f103rct6_zephyr_synchronization": {
+    "exp_id": "032c9a01-0a12-442b-9a68-6220ced8ab75",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775387600.0399928,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32f103rct6|stm32f103rct6_zephyr_philosophers": {
+    "exp_id": "0547240f-5101-4725-93fc-1f8b95a81bc4",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1775387564.4602284,
+    "confidence": 0.7,
+    "known_failures": {}
+  },
+  "stm32f103rct6|unknown": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1775385883.5564666,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "1715c1c4-0e25-4579-acae-554aa203fd88",
+        "count": 1,
+        "last_raw": "[stm32f103rct6] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
       }
     }
   }

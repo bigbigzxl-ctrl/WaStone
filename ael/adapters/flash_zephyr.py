@@ -14,6 +14,11 @@ flash_cfg fields consumed:
                     config file. Use when the board's default openocd.cfg hardcodes
                     a different interface (e.g. stlink) but you have a CMSIS-DAP
                     probe. Passed to west flash as: --config <path>
+  openocd_exe     — (optional) path to a specific openocd binary.
+                    OpenOCD 0.11 misidentifies CMSIS-DAPv2 on Keil DAPLink (c251:f001)
+                    and fails with "Resource busy".  Set to the esp32 OpenOCD 0.12+
+                    binary path to work around this.
+                    Passed to west flash as: --openocd <path>
 
 Note: firmware_path is ignored — west flash finds the artefact itself
 from the build directory's CMakeCache.
@@ -41,6 +46,24 @@ def run(flash_cfg: Dict[str, Any]) -> bool:
         p = Path(openocd_cfg_raw)
         openocd_config = p if p.is_absolute() else _REPO_ROOT / p
 
+    # Optional: override the openocd binary (e.g. use esp32 OpenOCD 0.12 when
+    # system OpenOCD 0.11 has the CMSIS-DAPv2/DAPLink "Resource busy" bug)
+    openocd_exe_raw = str(flash_cfg.get("openocd_exe") or "").strip()
+    openocd_exe: Path | None = Path(openocd_exe_raw) if openocd_exe_raw else None
+
+    # Optional: pyocd_direct runner parameters
+    # Use runner="pyocd_direct" when the openocd runner cannot halt the MCU
+    # without a hardware RESET line (e.g. DAPLink + STM32F1 with no nRESET).
+    pyocd_target = str(flash_cfg.get("pyocd_target") or "").strip() or None
+    pyocd_uid    = str(flash_cfg.get("pyocd_uid")    or "").strip() or None
+
     backend = ZephyrBackend()
-    backend.flash(runner=runner, build_dir=build_dir, openocd_config=openocd_config)
+    backend.flash(
+        runner=runner,
+        build_dir=build_dir,
+        openocd_config=openocd_config,
+        openocd_exe=openocd_exe,
+        pyocd_target=pyocd_target,
+        pyocd_uid=pyocd_uid,
+    )
     return True

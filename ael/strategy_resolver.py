@@ -257,6 +257,21 @@ def resolve_run_strategy(
                 build_cfg[key] = value
         board_cfg["build"] = build_cfg
 
+    # Merge test-plan flash overrides into board_cfg["flash"].
+    # Bare-metal test plans have no flash section; only Zephyr plans set
+    # flash.method = "zephyr_west".  This makes load.zephyr_west actually
+    # reachable in the pipeline (previously flash.method was ignored).
+    test_flash = test_raw.get("flash", {}) if isinstance(test_raw, dict) and isinstance(test_raw.get("flash"), dict) else {}
+    if test_flash:
+        flash_board = board_cfg.get("flash", {}) if isinstance(board_cfg.get("flash"), dict) else {}
+        flash_merged = dict(flash_board)
+        for key in ("method", "runner", "build_dir", "openocd_config", "openocd_exe",
+                    "pyocd_target", "pyocd_uid", "post_load_settle_s"):
+            value = test_flash.get(key)
+            if value not in (None, ""):
+                flash_merged[key] = value
+        board_cfg["flash"] = flash_merged
+
     connection_ctx = normalize_connection_context(
         board_cfg,
         test_raw,
@@ -414,6 +429,18 @@ def resolve_load_stage(
                 flash_cfg["build_dir"] = os.path.join(str(repo_root), build_dir_override)
             else:
                 flash_cfg["build_dir"] = os.path.join(str(repo_root), "artifacts", f"build_{target}")
+    elif method == "zephyr_west":
+        # Resolve build_dir to absolute path so ZephyrBackend.flash() can locate
+        # the west build artefacts.  Priority: flash_cfg["build_dir"] (from test
+        # plan merge) > board_cfg["build"]["build_dir"] > default artifacts/<target>.
+        build_dir_raw = str(flash_cfg.get("build_dir") or "").strip()
+        if not build_dir_raw:
+            build_dir_raw = str((board_cfg.get("build") or {}).get("build_dir") or "").strip()
+        if build_dir_raw:
+            bd = Path(build_dir_raw)
+            flash_cfg["build_dir"] = str(bd if bd.is_absolute() else repo_root / bd)
+        elif target:
+            flash_cfg["build_dir"] = str(repo_root / "artifacts" / f"build_{target}")
     step = {
         "name": "load",
         "type": (

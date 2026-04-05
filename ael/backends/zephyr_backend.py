@@ -145,13 +145,25 @@ class ZephyrBackend(AELBackend):
 
     def flash(
         self,
-        artifact:       Path  = None,
-        runner:         str   = "openocd",
-        build_dir:      Path  = None,
-        openocd_config: Path  = None,
+        artifact:        Path  = None,
+        runner:          str   = "openocd",
+        build_dir:       Path  = None,
+        openocd_config:  Path  = None,
+        openocd_exe:     Path  = None,
+        pyocd_target:    str   = None,
+        pyocd_uid:       str   = None,
     ) -> None:
         """
-        Run: west flash --runner <runner> [--build-dir <build_dir>] [--config <cfg>]
+        Run: west flash --runner <runner> [--build-dir <build_dir>]
+                        [--openocd <exe>] [--config <cfg>]
+
+        Special runner "pyocd_direct":
+          Uses pyocd directly (not via west flash) to program the ELF from
+          <build_dir>/zephyr/zephyr.elf.  Required for boards where
+          west's openocd runner cannot halt the MCU without a hardware RESET
+          line (e.g. STM32F103RCT6 + DAPLink with no nRESET wired).
+          pyocd_target: pyOCD target name (e.g. "stm32f103rc")
+          pyocd_uid:    probe unique ID (optional, selects a specific probe)
 
         artifact is unused (west locates the hex from the build dir),
         kept for interface compatibility with AELBackend.
@@ -160,13 +172,46 @@ class ZephyrBackend(AELBackend):
         Use when the board's default openocd.cfg hardcodes a different interface
         (e.g. stlink) but the bench uses a CMSIS-DAP probe (DAPLink).
         Passed to the openocd runner as: west flash --runner openocd --config <path>
+
+        openocd_exe: optional path to a specific openocd binary.
+        OpenOCD 0.11 misidentifies the CMSIS-DAPv2 interface on DAPLink
+        (c251:f001) and fails with "Resource busy".  Pass the esp32 OpenOCD 0.12+
+        binary to work around this bug.
+        Passed as: west flash --runner openocd --openocd <path>
         """
         build_dir = Path(build_dir) if build_dir else self.workspace / "build"
+
+        if runner == "pyocd_direct":
+            # Use pyocd directly — required when the openocd runner can't halt
+            # the MCU without a hardware RESET line (e.g. DAPLink + STM32F1
+            # with no nRESET wired).  pyocd halts via DHCSR (software debug
+            # halt) which works regardless of RESET wiring.
+            elf = build_dir / "zephyr" / "zephyr.elf"
+            if not elf.exists():
+                raise FileNotFoundError(f"pyocd_direct: ELF not found: {elf}")
+            cmd = ["pyocd", "flash"]
+            if pyocd_target:
+                cmd += ["--target", pyocd_target]
+            if pyocd_uid:
+                cmd += ["--uid", pyocd_uid]
+            cmd.append(str(elf))
+            result = subprocess.run(
+                cmd, capture_output=True, text=True
+            )
+            # pyocd exits non-zero on "WAIT ACK" during uninit (MCU resets and
+            # disconnects — expected and harmless).  Check output instead.
+            output = (result.stdout or "") + (result.stderr or "")
+            if result.returncode != 0 and "programmed" not in output.lower():
+                raise subprocess.CalledProcessError(result.returncode, cmd, result.stdout, result.stderr)
+            return
+
         # Release the ST-Link from any AEL-managed gdbserver before OpenOCD takes it
         self._release_port(3333)
         self._release_port(4242)
         cmd = [self.west_bin, "flash", "--runner", runner,
                "--build-dir", str(build_dir)]
+        if openocd_exe:
+            cmd += ["--openocd", str(openocd_exe)]
         if openocd_config:
             cmd += ["--config", str(openocd_config)]
         self._run(cmd)

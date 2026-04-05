@@ -24,10 +24,11 @@
   },
   "flash": {
     "method": "zephyr_west",
-    "runner": "openocd",
+    "runner": "pyocd_direct",
     "build_dir": "artifacts/build_stm32f103rct6_zephyr_hello_loop",
-    "openocd_config": "firmware/targets/stm32f103rct6_zephyr_hello_loop/openocd_cmsis_dap.cfg",
-    "post_load_settle_s": 1.5
+    "pyocd_target": "stm32f103rc",
+    "post_load_settle_s": 1.5,
+    "_note": "pyocd_direct requires a probe without the DAPLink FW 1.0 AP bank-switching bug (pyocd fails FAULT ACK on CSW after IDR read). On this bench, load.gdbmi via AEL is more reliable. pyocd_direct is provided as the correct mechanism for probes that support it."
   },
   "observe_uart": {
     "enabled": true,

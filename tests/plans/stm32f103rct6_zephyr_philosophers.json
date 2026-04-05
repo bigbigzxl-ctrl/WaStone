@@ -23,9 +23,7 @@
     "build_dir": "artifacts/build_stm32f103rct6_zephyr_philosophers"
   },
   "flash": {
-    "method": "zephyr_west",
-    "runner": "openocd",
-    "build_dir": "artifacts/build_stm32f103rct6_zephyr_philosophers",
+    "method": "gdbmi",
     "post_load_settle_s": 1.5
   },
   "observe_uart": {
