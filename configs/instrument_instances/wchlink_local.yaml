@@ -1,0 +1,33 @@
+instance:
+  id: wchlink_local
+  type: wchlink
+  label: WCHLink — CH32V003 (USB SDI debug probe)
+
+connection:
+  endpoint: "local:wchlink"
+  ip: "127.0.0.1"
+  gdb_port: 3334
+  gdb_cmd: "/nvme1t/wch-riscv-gcc/bin/riscv-none-embed-gdb"
+  openocd_bin: "/nvme1t/wch-riscv-gcc/openocd/bin/openocd"
+  openocd_cfg: "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+
+communication:
+  primary: gdb_remote
+  surfaces:
+    - name: gdb_remote
+      transport: usb_local
+      endpoint: "127.0.0.1:3333"
+      protocol: gdb_remote
+      invocation_style: request_response
+
+capability_surfaces:
+  sdi: gdb_remote
+
+# GDB server started automatically by flash_wch_openocd adapter:
+#   /nvme1t/wch-riscv-gcc/openocd/bin/openocd \
+#     -f /nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg \
+#     -c "gdb_port 3334; tcl_port disabled; telnet_port disabled"
+#
+# Wiring: WCHLink SWDIO → CH32V003 SWDIO pin (PD1/SDI)
+#         WCHLink GND   → CH32V003 GND
+#         WCHLink 3.3V  → CH32V003 VDD (if bus-powered)

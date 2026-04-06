@@ -1,0 +1,19 @@
+bench_profile:
+  id: ch32v003xxx__default
+  board_id: ch32v003xxx
+  description: "Minimal mailbox — no LA wiring required; only WCHLink SDI + GND"
+
+  bench_connections:
+    - from: WCHLink SWDIO
+      to: CH32V003 PD1 (SDI)
+    - from: WCHLink GND
+      to: CH32V003 GND
+
+  observe_map: {}
+
+  verification_views: {}
+
+  default_wiring:
+    sdi: "WCHLink SWDIO"
+
+  safe_pins: []

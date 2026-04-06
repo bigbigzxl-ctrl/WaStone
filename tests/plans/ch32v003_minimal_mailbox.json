@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_minimal_mailbox",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "ch32v003", "wchlink"],
+  "covers": ["ch32v003_bringup", "wch_openocd", "mailbox_verify"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "Minimal mailbox test for CH32V003. Firmware writes AEL_MAILBOX_MAGIC + STATUS_PASS to SRAM at 0x20000600. wch-openocd GDB server started automatically. Mailbox verified via riscv-none-embed-gdb halt+read. Zero external wiring required beyond WCHLink SDI connection.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_minimal_mailbox",
+    "artifact_stem": "ch32v003_minimal_mailbox"
+  },
+  "flash": {
+    "method": "wch_openocd",
+    "post_load_settle_s": 1.0
+  },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "wchlink_local",
+        "required": true,
+        "notes": "WCHLink probe connected via USB; SDI single-wire debug to CH32V003."
+      }
+    ],
+    "peripheral_signals": [],
+    "bench_connections": [
+      {
+        "from": "WCHLink SWDIO",
+        "to": "CH32V003 PD1 (SDI)"
+      },
+      {
+        "from": "WCHLink GND",
+        "to": "CH32V003 GND"
+      }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false,
+    "notes": "Zero-wiring mailbox test. Only WCHLink SDI + GND + VDD required."
+  }
+}

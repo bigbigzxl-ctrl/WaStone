@@ -1,0 +1,25 @@
+board:
+  name: CH32V003
+  target: ch32v003xxx
+  instrument_instance: wchlink_local
+  clock_hz: 24000000        # Default HSI 24 MHz
+  kind: board
+  features:
+    - programmable_via_sdi
+  default_bench_profile: ch32v003xxx__default
+  build:
+    type: arm_debug          # custom Makefile — build step not used by AEL
+    project_dir: firmware/targets/ch32v003_minimal_mailbox
+    artifact_stem: ch32v003_minimal_mailbox
+  flash:
+    method: wch_openocd
+    post_load_settle_s: 1.0
+  mailbox_verify_defaults:
+    skip_attach: true
+    halt_before_read: true
+    address: "0x20000600"
+  power_and_boot:
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3

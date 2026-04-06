@@ -16,6 +16,7 @@ from ael.adapters import (
     control_reset_serial,
     flash_bmda_gdbmi,
     flash_idf,
+    flash_wch_openocd,
     instrument_aip_http,
     instrument_sim_http,
     observe_log,
@@ -311,6 +312,9 @@ class _LoadAdapter:
         if self.method == "zephyr_west":
             flash_cfg_copy = dict(flash_cfg) if isinstance(flash_cfg, dict) else {}
             ok = flash_zephyr.run(flash_cfg_copy)
+            return {"ok": bool(ok)}
+        elif self.method == "wch_openocd":
+            ok = flash_wch_openocd.run(probe_cfg, firmware_path, flash_cfg=flash_cfg)
             return {"ok": bool(ok)}
         elif log_path and self.method == "idf_esptool":
             with _tee_output(log_path, output_mode):
@@ -1752,6 +1756,7 @@ class AdapterRegistry:
             "load.zephyr_west": _LoadAdapter("zephyr_west"),
             "load.idf_esptool": _LoadAdapter("idf_esptool"),
             "load.gdbmi": _LoadAdapter("gdbmi"),
+            "load.wch_openocd": _LoadAdapter("wch_openocd"),
             "check.uart_log": _UartCheckAdapter(),
             "check.uart_roundtrip": _HostUartRoundtripAdapter(),
             "check.instrument_signature": _InstrumentSignatureAdapter(self._instrument_backends),

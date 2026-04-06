@@ -46,6 +46,10 @@ def normalize_probe_cfg(raw: Dict[str, Any] | Any) -> Dict[str, Any]:
         cfg["gdb_server"] = connection["gdb_server"]
     if "pyocd_target" not in cfg and "pyocd_target" in connection:
         cfg["pyocd_target"] = connection["pyocd_target"]
+    if "openocd_bin" not in cfg and "openocd_bin" in connection:
+        cfg["openocd_bin"] = connection["openocd_bin"]
+    if "openocd_cfg" not in cfg and "openocd_cfg" in connection:
+        cfg["openocd_cfg"] = connection["openocd_cfg"]
     if "gdb_cmd" not in cfg:
         cfg["gdb_cmd"] = raw.get("gdb_cmd") if isinstance(raw, dict) else None
     if isinstance(instance, dict):
@@ -273,7 +277,7 @@ def resolve_run_strategy(
         flash_board = board_cfg.get("flash", {}) if isinstance(board_cfg.get("flash"), dict) else {}
         flash_merged = dict(flash_board)
         for key in ("method", "runner", "build_dir", "openocd_config", "openocd_exe",
-                    "pyocd_target", "pyocd_uid", "post_load_settle_s"):
+                    "pyocd_target", "pyocd_uid", "post_load_settle_s", "gdb_launch_cmds"):
             value = test_flash.get(key)
             if value not in (None, ""):
                 flash_merged[key] = value
@@ -453,6 +457,7 @@ def resolve_load_stage(
         "type": (
             "load.idf_esptool"  if method == "idf_esptool"  else
             "load.zephyr_west"  if method == "zephyr_west"  else
+            "load.wch_openocd"  if method == "wch_openocd"  else
             "load.gdbmi"
         ),
         "inputs": {

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_led_blink_mailbox",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "ch32v003", "wchlink", "led", "gpio"],
+  "covers": ["ch32v003_gpio", "led_blink", "systick"],
+  "preflight": {
+    "enabled": false
+  },
+  "notes": "PA1 blinks at 1 Hz, PA2 blinks at 2 Hz using SysTick 1 ms interrupt. Mailbox PASS written after GPIO and SysTick init.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_led_blink_mailbox",
+    "artifact_stem": "ch32v003_led_blink_mailbox"
+  },
+  "flash": {
+    "method": "wch_openocd",
+    "post_load_settle_s": 1.0
+  },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true
+  },
+  "bench_setup": {
+    "instrument_roles": [
+      {
+        "role": "control_instrument",
+        "instrument_id": "wchlink_local",
+        "required": true,
+        "notes": "WCHLink probe via USB; SDI single-wire debug to CH32V003."
+      }
+    ],
+    "peripheral_signals": [],
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" },
+      { "from": "LED1 anode",    "to": "CH32V003 PA1 (via 330 Ω)" },
+      { "from": "LED2 anode",    "to": "CH32V003 PA2 (via 330 Ω)" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
