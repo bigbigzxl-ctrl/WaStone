@@ -63,6 +63,33 @@ ESP32JTAG BMDA 固件有 bug —— 任何一次 GDB 连接失败（SWD scan 失
 - cleanup 只回收当前 run 自己启动的会话
 - DAPLink/OpenOCD 启动时增加精确 probe 选择，避免“first CMSIS-DAP wins”
 
+### TASK-003 — firmware/targets/ 历史遗留无 board_id 目录清理
+
+**Status:** [ ] 待实现（与 tests/plans 清理一并进行）
+
+**背景：**
+`firmware/targets/` 目前有 398 个目录，其中存在大量无具体 board_id 的历史遗留版本，
+已被带型号的具体版本取代，但尚未清除：
+
+| 待删目录前缀 | 已被取代为 |
+|------------|----------|
+| `stm32f103/` | `stm32f103c6/` + `stm32f103rct6/` |
+| `stm32f407/` | `stm32f407vet6/` |
+| `stm32f401/` | `stm32f401rct6/` |
+| `stm32f411/` | `stm32f411ceu6/` |
+| `stm32g431/` | `stm32g431cbu6/` |
+
+**执行时机：**
+与 `tests/plans/` 的对应清理一并进行，确保两侧同步删除，不留悬空引用。
+
+**执行步骤：**
+1. 确认上述目录在 `tests/plans/` 和 `packs/` 中均无有效引用
+2. `git rm -r firmware/targets/stm32f103/ firmware/targets/stm32f407/` 等
+3. 同步删除对应的 `tests/plans/stm32f103_*.json` 等
+4. 验证所有现有 pack 仍可正常运行
+
+---
+
 ### TASK-001 — ESP32JTAG Web UI / CLI 直接重启按钮
 
 **Status:** [ ] 待实现
