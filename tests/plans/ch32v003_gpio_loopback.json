@@ -8,9 +8,9 @@
   "requires_dut_features": ["programmable_via_sdi"],
   "requires": { "mailbox": true, "datacapture": false },
   "labels": ["mailbox", "ch32v003", "gpio", "loopback"],
-  "covers": ["ch32v003_gpio_pc6_pc7", "loopback_connectivity"],
+  "covers": ["ch32v003_gpio_pc6_pc7", "ch32v003_gpio_pc4_pc5", "loopback_connectivity"],
   "preflight": { "enabled": false },
-  "notes": "PC6 drives HIGH/LOW, PC7 reads back. PASS = both match. After test PC6 blinks for LED verification.",
+  "notes": "PC6→PC7 AND PC4→PC5 dual loopback. PASS = all four reads match. After test only PC6 blinks. Observation: if PC4/PC5 wire is removed and PC4 connected to LED D2, D2 also blinks — under study.",
   "build": {
     "type": "arm_debug",
     "project_dir": "firmware/targets/ch32v003_gpio_loopback",
@@ -31,6 +31,7 @@
   "bench_setup": {
     "bench_connections": [
       { "from": "CH32V003 PC6", "to": "CH32V003 PC7 (loopback wire)" },
+      { "from": "CH32V003 PC4", "to": "CH32V003 PC5 (loopback wire)" },
       { "from": "LED anode",    "to": "CH32V003 PC6 (via 330 Ω)" },
       { "from": "WCHLink SWDIO","to": "CH32V003 PD1 (SDI)" },
       { "from": "WCHLink GND",  "to": "CH32V003 GND" }
