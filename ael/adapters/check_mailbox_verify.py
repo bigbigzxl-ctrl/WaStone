@@ -46,26 +46,27 @@ def _gdb_read_mailbox(
     skip_attach: bool = False,
     halt_before_read: bool = False,
     attach_monitor_cmd: str = "monitor swdp_scan",
+    detach_resume_target: str = "",
 ) -> Dict[str, Any]:
     """Run arm-none-eabi-gdb in batch mode and parse x/4xw output.
 
     skip_attach=True: omit 'monitor swdp_scan' + 'attach' (for st-util / non-BMDA servers).
-    halt_before_read=True: send 'monitor halt' before the memory read.  Required when the
-        target is still running after the flash session disconnects (st-util + monitor reset run).
+    halt_before_read=True: send 'monitor halt' before the memory read.
+    detach_resume_target: if set (e.g. 'wch_riscv.cpu.0'), configure the OpenOCD
+        gdb-detach event to call resume so the MCU keeps running after disconnect.
     """
     cmds = [
         "set pagination off",
         "set confirm off",
         f"target extended-remote {endpoint}",
     ]
+    if detach_resume_target:
+        cmds += [f"monitor {detach_resume_target} configure -event gdb-detach {{resume}}"]
     if not skip_attach:
         cmds += [attach_monitor_cmd, f"attach {target_id}"]
     if halt_before_read:
         cmds += ["monitor halt"]
     disconnect_cmd = "disconnect" if skip_attach else "detach"
-    # Always resume before disconnect: wch-openocd fires a gdb-detach halt event
-    # on disconnect regardless of halt_before_read, so we must send monitor resume
-    # unconditionally to ensure the target keeps running after the GDB session ends.
     cmds += [
         f"x/4xw {addr:#010x}",
         "monitor resume",
@@ -132,6 +133,7 @@ def _execute_detail0_increment(
     post_resume_openocd_bin: str | None = None,
     post_resume_openocd_cfg: str | None = None,
     probe_port: int = 4242,
+    detach_resume_target: str = "",
 ) -> Dict[str, Any]:
     """Verify detail0.toggle_count increments between two reads.
 
@@ -145,6 +147,8 @@ def _execute_detail0_increment(
         "set confirm off",
         f"target extended-remote {endpoint}",
     ]
+    if detach_resume_target:
+        cmds += [f"monitor {detach_resume_target} configure -event gdb-detach {{resume}}"]
     if not skip_attach:
         cmds += [attach_monitor_cmd, f"attach {target_id}"]
     if halt_before_read:
@@ -269,6 +273,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
     check_mode  = inputs.get("check_mode", "pass")
     post_resume_openocd_bin = inputs.get("post_resume_openocd_bin")
     post_resume_openocd_cfg = inputs.get("post_resume_openocd_cfg")
+    detach_resume_target    = str(inputs.get("detach_resume_target") or "")
 
     if not probe_ip:
         return {"ok": False, "error_summary": "check.mailbox_verify: probe_ip not set"}
@@ -286,6 +291,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
             post_resume_openocd_bin=post_resume_openocd_bin,
             post_resume_openocd_cfg=post_resume_openocd_cfg,
             probe_port=probe_port,
+            detach_resume_target=detach_resume_target,
         )
 
     raw      = _gdb_read_mailbox(
@@ -296,6 +302,7 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
         skip_attach=skip_attach,
         halt_before_read=halt_before_read,
         attach_monitor_cmd=attach_monitor_cmd,
+        detach_resume_target=detach_resume_target,
     )
 
     if not raw.get("ok"):

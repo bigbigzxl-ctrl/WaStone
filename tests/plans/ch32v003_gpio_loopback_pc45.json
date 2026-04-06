@@ -1,20 +1,20 @@
 {
   "schema_version": "1.0",
   "test_kind": "baremetal_mailbox",
-  "name": "ch32v003_gpio_loopback",
+  "name": "ch32v003_gpio_loopback_pc45",
   "board": "ch32v003xxx",
   "supported_instruments": ["wchlink"],
   "applies_to": ["board"],
   "requires_dut_features": ["programmable_via_sdi"],
   "requires": { "mailbox": true, "datacapture": false },
   "labels": ["mailbox", "ch32v003", "gpio", "loopback"],
-  "covers": ["ch32v003_gpio_pc6_pc7", "loopback_connectivity"],
+  "covers": ["ch32v003_gpio_pc4_pc5", "loopback_connectivity"],
   "preflight": { "enabled": false },
-  "notes": "PC6 drives HIGH/LOW, PC7 reads back. PASS = both match. After test PC6 blinks for LED verification.",
+  "notes": "PC4 drives HIGH/LOW, PC5 reads back. PASS = both match. After test PC4 blinks.",
   "build": {
     "type": "arm_debug",
-    "project_dir": "firmware/targets/ch32v003_gpio_loopback",
-    "artifact_stem": "ch32v003_gpio_loopback"
+    "project_dir": "firmware/targets/ch32v003_gpio_loopback_pc45",
+    "artifact_stem": "ch32v003_gpio_loopback_pc45"
   },
   "flash": { "method": "wch_openocd", "post_load_settle_s": 1.0 },
   "mailbox_verify": {
@@ -30,8 +30,8 @@
   },
   "bench_setup": {
     "bench_connections": [
-      { "from": "CH32V003 PC6", "to": "CH32V003 PC7 (loopback wire)" },
-      { "from": "LED anode",    "to": "CH32V003 PC6 (via 330 Ω)" },
+      { "from": "CH32V003 PC4", "to": "CH32V003 PC5 (loopback wire)" },
+      { "from": "LED anode",    "to": "CH32V003 PC4 (via 330 Ω)" },
       { "from": "WCHLink SWDIO","to": "CH32V003 PD1 (SDI)" },
       { "from": "WCHLink GND",  "to": "CH32V003 GND" }
     ],

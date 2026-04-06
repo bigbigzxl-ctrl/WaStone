@@ -3357,9 +3357,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 29,
+    "success_count": 36,
     "failure_count": 5,
-    "last_seen": 1775493712.6639743,
+    "last_seen": 1775494084.3154857,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
@@ -3376,6 +3376,20 @@
         "exp_id": "e42e8881-4a8f-4c6d-a6b7-06dd3d3cabfe",
         "count": 1,
         "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, load, run, check — failure: build — build failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_gpio_loopback_pc45": {
+    "exp_id": "9e9b58d9-8346-4f9a-ac92-a636f75cbc78",
+    "success_count": 6,
+    "failure_count": 1,
+    "last_seen": 1775494240.940472,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "7956cd7a-c869-429c-8787-7ab30139b58c",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback_pc45: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   }
