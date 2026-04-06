@@ -115,6 +115,38 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### CH32V003F4U6 — First RISC-V Board Validated with AEL: 14/14 PASS (2026-04-06)
+
+AEL has been successfully validated on a **RISC-V architecture** for the first time. The CH32V003F4U6 (WCH RV32EC, 24 MHz HSI, 16 KB Flash, 2 KB SRAM) completed a 14-test golden suite via WCH-LinkE SDI (1-wire debug), covering nearly the full peripheral set of this ultra-low-cost RISC-V MCU.
+
+**What was covered:**
+
+| Category | Tests | Peripherals |
+|----------|-------|-------------|
+| I/O / Loopback | 3 | GPIO, UART (TX-only + bidirectional), SPI full-duplex |
+| Interrupts / Capture | 2 | EXTI rising-edge, TIM1 PWM + EXTI capture |
+| Timers / Watchdogs | 3 | TIM2 free-running, SysTick, IWDG, WWDG |
+| Internal Peripherals | 3 | ADC Vrefint (ch8), DMA1 MEM2MEM, Flash R/W/Erase |
+| Power | 1 | PWR sleep + AWU wakeup |
+
+**Key engineering discoveries (all recorded in Civilization Engine):**
+
+| Finding | CE ID | Impact |
+|---------|-------|--------|
+| WCH OpenOCD `init` halts target — `catch {resume}` required | `91a479e9` | [HIGH_PRIORITY] pattern |
+| CH32V003 AFIO EXTICR: 2-bit/line layout (not 4-bit like STM32) | `d994bafa` | board_family |
+| ADC EXTSEL must be 0b111 for SWSTART to work | `db402746` | board_family |
+| ch32v003fun.c `.data` startup copy bug — use `.bss` + runtime init | `5e480c33` | [HIGH_PRIORITY] board_family |
+| TIM2 CNT is 16-bit — use modulo subtraction + UIF flag | `ae4804b7` | board_family |
+
+**Canonical result:**
+
+- DUT: `ch32v003xxx` (RV32EC @ 24 MHz HSI, WCH-LinkE SDI probe)
+- Pack: [`packs/ch32v003_golden.json`](packs/ch32v003_golden.json)
+- Report: [`docs/reports/ch32v003_golden_suite_closeout_2026-04-06.md`](docs/reports/ch32v003_golden_suite_closeout_2026-04-06.md)
+
+---
+
 ### Zephyr + FreeRTOS — Three-Board RTOS Coverage Complete (2026-04-05)
 
 AEL now has **full RTOS coverage across three boards and two RTOS families** (Zephyr and FreeRTOS). Every board in the active bench can run bare-metal, FreeRTOS, and Zephyr firmware under closed-loop AEL validation with no bench reconfiguration.
