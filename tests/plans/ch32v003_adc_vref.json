@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_adc_vref",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "adc", "vref", "zero_wiring"],
+  "covers": ["ch32v003_adc1_vrefint_ch8"],
+  "preflight": { "enabled": false },
+  "notes": "Reads ADC1 channel 8 (internal Vrefint ~1.2V). Averages 4 samples. PASS if result in [200, 700] (10-bit, 3.3V supply). No external wiring required. Liveness: detail0 updated with latest reading.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_adc_vref",
+    "artifact_stem": "ch32v003_adc_vref"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 2.0,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "pass_fail",
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": { "enabled": false },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v003_golden",
-  "description": "CH32V003F4U6 golden test suite — GPIO, UART, SPI, TIM, EXTI, SysTick, IWDG, Flash",
+  "description": "CH32V003F4U6 golden test suite — GPIO, UART, SPI, TIM, EXTI, SysTick, IWDG, Flash, ADC, DMA, WWDG, PWR",
   "board": "ch32v003xxx",
   "tests": [
     "tests/plans/ch32v003_gpio_loopback.json",
@@ -12,6 +12,11 @@
     "tests/plans/ch32v003_spi_loopback.json",
     "tests/plans/ch32v003_systick.json",
     "tests/plans/ch32v003_iwdg.json",
-    "tests/plans/ch32v003_flash_rw.json"
+    "tests/plans/ch32v003_flash_rw.json",
+    "tests/plans/ch32v003_adc_vref.json",
+    "tests/plans/ch32v003_dma_mem2mem.json",
+    "tests/plans/ch32v003_tim2.json",
+    "tests/plans/ch32v003_wwdg.json",
+    "tests/plans/ch32v003_pwr_sleep.json"
   ]
 }
