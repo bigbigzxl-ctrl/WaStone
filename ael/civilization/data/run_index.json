@@ -3357,9 +3357,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 36,
+    "success_count": 46,
     "failure_count": 5,
-    "last_seen": 1775494084.3154857,
+    "last_seen": 1775508716.7251017,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
@@ -3381,9 +3381,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback_pc45": {
     "exp_id": "9e9b58d9-8346-4f9a-ac92-a636f75cbc78",
-    "success_count": 6,
+    "success_count": 7,
     "failure_count": 1,
-    "last_seen": 1775494240.940472,
+    "last_seen": 1775494259.6746323,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
