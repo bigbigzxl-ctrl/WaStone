@@ -18,10 +18,14 @@
   },
   "flash": { "method": "wch_openocd", "post_load_settle_s": 1.0 },
   "mailbox_verify": {
-    "settle_s": 0.5,
+    "settle_s": 1.0,
     "addr": "0x20000600",
     "skip_attach": true,
-    "halt_before_read": true
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
   },
   "bench_setup": {
     "bench_connections": [

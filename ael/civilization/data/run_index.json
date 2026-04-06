@@ -3357,9 +3357,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 22,
+    "success_count": 29,
     "failure_count": 5,
-    "last_seen": 1775493346.62682,
+    "last_seen": 1775493712.6639743,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {

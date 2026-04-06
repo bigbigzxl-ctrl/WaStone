@@ -129,56 +129,96 @@ def _execute_detail0_increment(
     skip_attach: bool,
     halt_before_read: bool,
     attach_monitor_cmd: str,
+    post_resume_openocd_bin: str | None = None,
+    post_resume_openocd_cfg: str | None = None,
+    probe_port: int = 4242,
 ) -> Dict[str, Any]:
-    """Verify detail0.toggle_count increments between two reads (live/RUNNING firmware)."""
+    """Verify detail0.toggle_count increments between two reads.
+
+    Both reads happen in a SINGLE GDB session using 'shell sleep' so the
+    MCU is only halted for the reads and runs freely between them.
+    """
     increment_wait_s = float(inputs.get("increment_wait_s", 2.0))
 
-    raw1 = _gdb_read_mailbox(endpoint, target_id, addr,
-                             gdb_cmd=gdb_cmd,
-                             skip_attach=skip_attach,
-                             halt_before_read=halt_before_read,
-                             attach_monitor_cmd=attach_monitor_cmd)
-    if not raw1.get("ok"):
-        return {"ok": False, "error_summary": f"mailbox read T1 failed: {raw1.get('error')}",
+    cmds = [
+        "set pagination off",
+        "set confirm off",
+        f"target extended-remote {endpoint}",
+    ]
+    if not skip_attach:
+        cmds += [attach_monitor_cmd, f"attach {target_id}"]
+    if halt_before_read:
+        cmds += ["monitor halt"]
+
+    addr_hex = f"{addr:#010x}"
+    disconnect_cmd = "disconnect" if skip_attach else "detach"
+    cmds += [
+        f"x/4xw {addr_hex}",           # T1 read
+        "monitor resume",
+        f"shell sleep {int(increment_wait_s)}",   # MCU runs freely
+        "monitor halt",
+        f"x/4xw {addr_hex}",           # T2 read
+        "monitor resume",
+        disconnect_cmd,
+        "quit",
+    ]
+
+    args = [gdb_cmd, "--batch"] + [
+        item for cmd in cmds for item in ("-ex", cmd)
+    ]
+    try:
+        proc = subprocess.run(args, capture_output=True, text=True,
+                              timeout=increment_wait_s + 30)
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error_summary": "gdb timeout in detail0_increment",
+                "failure_kind": "mailbox_read_error"}
+    except FileNotFoundError:
+        return {"ok": False, "error_summary": "gdb not found",
                 "failure_kind": "mailbox_read_error"}
 
-    magic_ok = raw1["magic"] == MAILBOX_MAGIC
+    # Parse both x/4xw outputs — find all lines matching the address
+    stdout = proc.stdout
+    readings: list[list[int]] = []
+    for line in stdout.splitlines():
+        if addr_hex in line.lower():
+            found = re.findall(r"0x[0-9a-fA-F]+", line)
+            words = [int(x, 16) for x in found[1:]]
+            if len(words) >= 4:
+                readings.append(words)
+
+    if post_resume_openocd_bin and post_resume_openocd_cfg:
+        _post_resume_openocd(post_resume_openocd_bin, post_resume_openocd_cfg, probe_port)
+
+    if len(readings) < 2:
+        return {"ok": False,
+                "error_summary": f"could not parse two mailbox reads (got {len(readings)})",
+                "failure_kind": "mailbox_read_error"}
+
+    w1, w2 = readings[0], readings[1]
+    magic_ok = w1[0] == MAILBOX_MAGIC
     if not magic_ok:
         return {"ok": False,
-                "error_summary": f"magic mismatch: {raw1['magic']:#010x}",
+                "error_summary": f"magic mismatch: {w1[0]:#010x}",
                 "failure_kind": "mailbox_verify_mismatch"}
 
-    tc1 = _extract_toggle_count(raw1["detail0"])
-    time.sleep(increment_wait_s)
-
-    raw2 = _gdb_read_mailbox(endpoint, target_id, addr,
-                             gdb_cmd=gdb_cmd,
-                             skip_attach=skip_attach,
-                             halt_before_read=halt_before_read,
-                             attach_monitor_cmd=attach_monitor_cmd)
-    if not raw2.get("ok"):
-        return {"ok": False, "error_summary": f"mailbox read T2 failed: {raw2.get('error')}",
-                "failure_kind": "mailbox_read_error"}
-
-    tc2 = _extract_toggle_count(raw2["detail0"])
-    period_ms = (raw2["detail0"] >> 16) & 0xFFFF
-    led_state = raw2["detail0"] & 0x1
+    tc1 = _extract_toggle_count(w1[3])
+    tc2 = _extract_toggle_count(w2[3])
+    led_state = w2[3] & 0x1
     incremented = tc2 != tc1
 
     result = {
         "ok":               incremented,
         "addr":             addr_str,
         "endpoint":         endpoint,
-        "magic":            f"{raw1['magic']:#010x}",
+        "magic":            f"{w1[0]:#010x}",
         "magic_ok":         magic_ok,
-        "status_t1":        STATUS_NAMES.get(raw1["status"], raw1["status"]),
-        "status_t2":        STATUS_NAMES.get(raw2["status"], raw2["status"]),
-        "detail0_t1":       raw1["detail0"],
-        "detail0_t2":       raw2["detail0"],
+        "status_t1":        STATUS_NAMES.get(w1[1], w1[1]),
+        "status_t2":        STATUS_NAMES.get(w2[1], w2[1]),
+        "detail0_t1":       w1[3],
+        "detail0_t2":       w2[3],
         "toggle_count_t1":  tc1,
         "toggle_count_t2":  tc2,
         "led_state":        led_state,
-        "period_ms":        period_ms,
         "incremented":      incremented,
     }
     if out_json:
@@ -187,7 +227,7 @@ def _execute_detail0_increment(
     if not incremented:
         return {
             "ok": False,
-            "error_summary": f"toggle_count did not increment (t1={tc1} t2={tc2}); LED not blinking",
+            "error_summary": f"toggle_count did not increment (t1={tc1} t2={tc2}); MCU not running",
             "failure_kind": "mailbox_verify_mismatch",
             "result": result,
         }
@@ -206,7 +246,8 @@ def _post_resume_openocd(openocd_bin: str, openocd_cfg: str, probe_port: int) ->
         subprocess.run(
             [openocd_bin, "-f", openocd_cfg,
              "-c", "gdb_port disabled; tcl_port disabled; telnet_port disabled",
-             "-c", "init; resume; shutdown"],
+             "-c", "init",
+             "-c", "wlink_reset_resume; shutdown"],
             capture_output=True, timeout=15,
         )
     except Exception:
@@ -242,6 +283,9 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
         return _execute_detail0_increment(
             inputs, addr_str, addr, endpoint, target_id, gdb_cmd, out_json,
             skip_attach, halt_before_read, attach_monitor_cmd,
+            post_resume_openocd_bin=post_resume_openocd_bin,
+            post_resume_openocd_cfg=post_resume_openocd_cfg,
+            probe_port=probe_port,
         )
 
     raw      = _gdb_read_mailbox(
