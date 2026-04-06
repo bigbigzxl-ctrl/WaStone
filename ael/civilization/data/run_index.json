@@ -3270,5 +3270,73 @@
         "last_raw": "[stm32h563rgt6] stm32h563rgt6_zephyr_synchronization: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
       }
     }
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_daplink_led_blink": {
+    "exp_id": "a5b23422-9dc5-4c81-af74-241edfe7f630",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1775433304.3526378,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_signal": {
+        "exp_id": "5d429515-b0e0-4048-a317-dccd147c9b05",
+        "count": 1,
+        "last_raw": "[stm32f401ce_blackpill_daplink] stm32f401ce_blackpill_daplink_led_blink: failed — stages: preflight, build, load, run — failure: check_signal — observe failed"
+      }
+    }
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_daplink_uart_banner": {
+    "exp_id": "9c8a20e1-89ee-48f9-9e99-d8347a44cea4",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775433314.7334957,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_daplink_uart_ping_pong": {
+    "exp_id": "62d312f4-681f-44af-bb55-594d609fdda6",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775433320.9587417,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_daplink_uart_echo": {
+    "exp_id": "d8a6a353-064d-4e5a-9968-cb0dd6ac0750",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775433327.133437,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_usb_cdc_banner": {
+    "exp_id": "0677ef7f-2759-4edf-a65b-f81f05e8327a",
+    "success_count": 1,
+    "failure_count": 3,
+    "last_seen": 1775434588.1066995,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_uart_roundtrip": {
+        "exp_id": "75f4dae9-0eb4-402c-8028-f5526479e37c",
+        "count": 3,
+        "last_raw": "[stm32f401ce_blackpill_daplink] stm32f401ce_blackpill_usb_cdc_banner: failed — stages: preflight, build, load, run — failure: check_uart_roundtrip — expected UART ready patterns missing"
+      }
+    }
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_usb_cdc_ping_pong": {
+    "exp_id": "6b9bb03b-69e4-4860-ac1e-f1dd365e0ce4",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775434598.5512674,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_usb_cdc_echo": {
+    "exp_id": "f71ba224-f593-44e2-806d-52c7b4b63b9a",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775434608.9639053,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }

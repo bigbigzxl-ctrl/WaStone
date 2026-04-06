@@ -21,6 +21,7 @@ AI → Generate → Execute → Observe → Iterate
 - Development becomes a closed-loop system on real hardware
 
 👉 Tutorial: [Getting_Started_with_AI_Driven_Embedded_Development_Using_ESP32JTAG](docs/tutorials/Getting_Started_with_AI_Driven_Embedded_Development_Using_ESP32JTAG_EN_v3.md)
+
 👉 Learn more: [AEL Paradigm Shift](docs/ael_paradigm_shift.md)
 
 ---
