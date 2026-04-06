@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_uart_wchlink",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "uart", "wchlink"],
+  "covers": ["ch32v003_usart1_pd5", "wchlink_cdc_uart"],
+  "preflight": { "enabled": false },
+  "notes": "USART1 TX=PD5 @ 115200 (APB2=8MHz, BRR=0x0045). WCH-Link CDC UART (/dev/ttyACM0). Sends 'AEL_UART_TEST OK <n>' every ~500ms. Verified via observe_uart + mailbox liveness.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_uart_wchlink",
+    "artifact_stem": "ch32v003_uart_wchlink"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "duration_s": 5,
+    "expect_patterns": [
+      "AEL_UART_TEST OK"
+    ]
+  },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" },
+      { "from": "WCHLink RX",    "to": "CH32V003 PD5 (USART1_TX)" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
