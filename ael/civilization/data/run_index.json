@@ -3357,20 +3357,25 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 9,
-    "failure_count": 3,
-    "last_seen": 1775492392.3483691,
+    "success_count": 22,
+    "failure_count": 5,
+    "last_seen": 1775493346.62682,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "628dd6ec-2d7c-44ae-80bc-d0ad8366f5df",
-        "count": 2,
+        "count": 3,
         "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       },
       "load": {
         "exp_id": "2863f7ff-84f2-4a94-87d3-c3593028c24c",
         "count": 1,
         "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, build, run, check — failure: load — step failed"
+      },
+      "build": {
+        "exp_id": "e42e8881-4a8f-4c6d-a6b7-06dd3d3cabfe",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, load, run, check — failure: build — build failed"
       }
     }
   }

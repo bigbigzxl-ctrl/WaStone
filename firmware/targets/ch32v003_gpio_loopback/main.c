@@ -14,7 +14,7 @@
  *                                error_code bit 1 = LOW  check failed
  *
  * After the loopback test, PC6 blinks at a visible rate so the
- * connected LED (PC6 or PC7) can be seen toggling.
+ * connected LED can be seen toggling.
  */
 
 #define AEL_MAILBOX_ADDR  0x20000600u

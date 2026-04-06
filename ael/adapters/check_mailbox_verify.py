@@ -194,6 +194,25 @@ def _execute_detail0_increment(
     return {"ok": True, "result": result}
 
 
+def _post_resume_openocd(openocd_bin: str, openocd_cfg: str, probe_port: int) -> None:
+    """Kill the persistent GDB server and run a fresh OpenOCD to resume the target."""
+    try:
+        subprocess.run(["fuser", "-k", f"{probe_port}/tcp"],
+                       capture_output=True, timeout=5)
+        time.sleep(0.5)
+    except Exception:
+        pass
+    try:
+        subprocess.run(
+            [openocd_bin, "-f", openocd_cfg,
+             "-c", "gdb_port disabled; tcl_port disabled; telnet_port disabled",
+             "-c", "init; resume; shutdown"],
+            capture_output=True, timeout=15,
+        )
+    except Exception:
+        pass
+
+
 def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
     inputs    = step.get("inputs", {}) if isinstance(step, dict) else {}
     probe_ip  = inputs.get("probe_ip", "")
@@ -207,6 +226,8 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
     halt_before_read = bool(inputs.get("halt_before_read", False))
     attach_monitor_cmd = str(inputs.get("attach_monitor_cmd", "monitor swdp_scan"))
     check_mode  = inputs.get("check_mode", "pass")
+    post_resume_openocd_bin = inputs.get("post_resume_openocd_bin")
+    post_resume_openocd_cfg = inputs.get("post_resume_openocd_cfg")
 
     if not probe_ip:
         return {"ok": False, "error_summary": "check.mailbox_verify: probe_ip not set"}
@@ -268,6 +289,9 @@ def execute(step: dict, plan: dict, ctx: Any) -> Dict[str, Any]:  # noqa: ARG001
     }
     if out_json:
         _write_json(out_json, result)
+
+    if post_resume_openocd_bin and post_resume_openocd_cfg:
+        _post_resume_openocd(post_resume_openocd_bin, post_resume_openocd_cfg, probe_port)
 
     if not pass_ok:
         if not magic_ok:

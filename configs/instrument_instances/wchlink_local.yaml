@@ -10,6 +10,8 @@ connection:
   gdb_cmd: "/nvme1t/wch-riscv-gcc/bin/riscv-none-embed-gdb"
   openocd_bin: "/nvme1t/wch-riscv-gcc/openocd/bin/openocd"
   openocd_cfg: "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  post_resume_openocd_bin: "/nvme1t/wch-riscv-gcc/openocd/bin/openocd"
+  post_resume_openocd_cfg: "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
 
 communication:
   primary: gdb_remote
