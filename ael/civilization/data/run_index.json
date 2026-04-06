@@ -3349,10 +3349,29 @@
   },
   "ch32v003xxx|ch32v003_led_blink_mailbox": {
     "exp_id": "17d17435-8578-4d5c-bdde-4c2235078a39",
-    "success_count": 3,
+    "success_count": 7,
     "failure_count": 0,
-    "last_seen": 1775489333.5559838,
-    "confidence": 0.7,
+    "last_seen": 1775490473.9879441,
+    "confidence": 1.0,
     "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_gpio_loopback": {
+    "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
+    "success_count": 9,
+    "failure_count": 3,
+    "last_seen": 1775492392.3483691,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "628dd6ec-2d7c-44ae-80bc-d0ad8366f5df",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "2863f7ff-84f2-4a94-87d3-c3593028c24c",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
   }
 }

@@ -63,8 +63,12 @@ def _gdb_read_mailbox(
     if halt_before_read:
         cmds += ["monitor halt"]
     disconnect_cmd = "disconnect" if skip_attach else "detach"
+    # Always resume before disconnect: wch-openocd fires a gdb-detach halt event
+    # on disconnect regardless of halt_before_read, so we must send monitor resume
+    # unconditionally to ensure the target keeps running after the GDB session ends.
     cmds += [
         f"x/4xw {addr:#010x}",
+        "monitor resume",
         disconnect_cmd,
         "quit",
     ]
