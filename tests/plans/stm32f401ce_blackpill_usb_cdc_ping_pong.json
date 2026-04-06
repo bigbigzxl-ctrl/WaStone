@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f401ce_blackpill_usb_cdc_ping_pong",
+  "board": "stm32f401ce_blackpill_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": false,
+    "datacapture": false
+  },
+  "labels": ["stage2", "usb", "cdc", "stim"],
+  "covers": ["usb", "cdc_acm", "enumeration", "ping_pong"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f401ce_usb_cdc",
+    "artifact_stem": "stm32f401ce_usb_cdc_app",
+    "build_dir": "artifacts/build_stm32f401ce_usb_cdc"
+  },
+  "signal_checks": [],
+  "host_uart_exchange": {
+    "enabled": true,
+    "baud": 115200,
+    "dtr": true,
+    "ready_patterns": [],
+    "tx": "PING\r\n",
+    "expect_patterns": ["PONG"],
+    "startup_wait_s": 2.0,
+    "ready_timeout_s": 1.0,
+    "response_timeout_s": 4.0,
+    "port_discovery": {
+      "vid": "0x1209",
+      "pid": "0x4010",
+      "manufacturer_contains": "OpenAI AEL",
+      "product_contains": "STM32F401 USB CDC Test",
+      "timeout_s": 12.0,
+      "poll_s": 0.25
+    }
+  },
+  "bench_setup": {
+    "notes": "Connect the STM32F401 Black Pill USB connector to the host PC. DAPLink remains connected only for SWD flashing and debug. The target USB CDC device enumerates on PA11/PA12 and must respond to host PING with PONG.",
+    "peripheral_signals": [
+      {
+        "role": "usb_fs_dm",
+        "dut_signal": "PA11/USB_DM",
+        "direction": "bidirectional",
+        "notes": "Target USB FS D- through the board USB connector to the host PC."
+      },
+      {
+        "role": "usb_fs_dp",
+        "dut_signal": "PA12/USB_DP",
+        "direction": "bidirectional",
+        "notes": "Target USB FS D+ through the board USB connector to the host PC."
+      }
+    ]
+  }
+}

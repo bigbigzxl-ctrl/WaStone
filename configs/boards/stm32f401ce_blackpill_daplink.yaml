@@ -8,6 +8,7 @@ board:
     - programmable_via_swd
     - has_gpio
     - has_uart
+    - has_usb_device
     - has_timer
   default_bench_profile: stm32f401ce_blackpill_daplink__default
   build:
@@ -15,7 +16,7 @@ board:
     project_dir: firmware/targets/stm32f401ce
     artifact_stem: stm32f401ce_blackpill_app
   firmware:
-    description: STM32F401 Black Pill local DAPLink bench with SWD on DAPLink and host UART on USART1 PA9/PA10
+    description: STM32F401 Black Pill local DAPLink bench with SWD on DAPLink, host UART on USART1 PA9/PA10, and target USB FS on PA11/PA12
   flash:
     speed_khz: 1000
     reset_strategy: connect_under_reset
@@ -39,6 +40,10 @@ board:
       to: DAPLink RX
     - from: DAPLink TX
       to: PA10
+    - from: PA11
+      to: USB D-
+    - from: PA12
+      to: USB D+
     - from: PC13
       to: LED
     - from: GND
@@ -52,6 +57,7 @@ board:
     reset: "NC"
     verify: "LED"
     uart: "daplink_bridge"
+    usb: "target_usb_fs"
   power_and_boot:
     reset_strategy: connect_under_reset
     boot_mode_default: normal

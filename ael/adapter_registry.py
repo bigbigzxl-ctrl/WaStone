@@ -623,19 +623,85 @@ class _HostUartRoundtripAdapter:
             ready_timeout_s = float(cfg.get("ready_timeout_s") or 6.0)
             response_timeout_s = float(cfg.get("response_timeout_s") or 4.0)
             drain_s = float(cfg.get("drain_s") or 0.15)
+            dtr_enabled = cfg.get("dtr")
+            discovery_cfg = dict(cfg.get("port_discovery") or {})
 
-            if not port:
+            def _resolve_host_port():
+                if port:
+                    return port, ""
+                if not discovery_cfg:
+                    return "", "host_uart_exchange.port missing"
+                try:
+                    from ael.instruments import usb_uart_bridge_daemon as usb_bridge
+                except Exception as exc:
+                    return "", f"USB port discovery unavailable: {exc}"
+
+                want_vid = discovery_cfg.get("vid")
+                want_pid = discovery_cfg.get("pid")
+                want_serial = str(discovery_cfg.get("serial_number") or "").strip()
+                want_identity = str(discovery_cfg.get("identity_value") or "").strip()
+                want_manufacturer = str(discovery_cfg.get("manufacturer_contains") or "").strip().lower()
+                want_product = str(discovery_cfg.get("product_contains") or "").strip().lower()
+                enumeration_timeout_s = float(discovery_cfg.get("timeout_s") or startup_wait_s or 3.0)
+                poll_s = float(discovery_cfg.get("poll_s") or 0.25)
+
+                def _norm_int(value):
+                    if value is None or value == "":
+                        return None
+                    if isinstance(value, str):
+                        return int(value, 0)
+                    return int(value)
+
+                want_vid_i = _norm_int(want_vid)
+                want_pid_i = _norm_int(want_pid)
+                deadline = time.time() + max(0.0, enumeration_timeout_s)
+                last_reason = "no matching USB CDC device found"
+                while time.time() <= deadline:
+                    try:
+                        discovery = usb_bridge.discover_usb_uart_devices()
+                    except Exception as exc:
+                        last_reason = str(exc)
+                        time.sleep(poll_s)
+                        continue
+                    matches = []
+                    for entry in discovery.get("devices", []):
+                        if want_identity and str(entry.get("identity_value") or "") != want_identity:
+                            continue
+                        if want_serial and str(entry.get("serial_number") or "") != want_serial:
+                            continue
+                        if want_vid_i is not None and int(entry.get("vid") or -1) != want_vid_i:
+                            continue
+                        if want_pid_i is not None and int(entry.get("pid") or -1) != want_pid_i:
+                            continue
+                        manufacturer = str(entry.get("manufacturer") or "").lower()
+                        product = str(entry.get("product") or "").lower()
+                        if want_manufacturer and want_manufacturer not in manufacturer:
+                            continue
+                        if want_product and want_product not in product:
+                            continue
+                        matches.append(entry)
+                    if len(matches) == 1:
+                        entry = matches[0]
+                        return str(entry.get("by_id_path") or entry.get("device_path") or ""), ""
+                    if len(matches) > 1:
+                        last_reason = "multiple USB CDC devices matched discovery filters"
+                    time.sleep(poll_s)
+                return "", last_reason
+
+            resolved_port, resolve_error = _resolve_host_port()
+            if not resolved_port:
                 return {
                     "ok": False,
                     "bytes": 0,
                     "lines": 0,
-                    "port": "",
+                    "port": port,
                     "baud": baud,
                     "matched": {"ready": {}, "expect": {}},
                     "missing_ready": ready_patterns,
                     "missing_expect": expect_patterns,
-                    "error_summary": "host_uart_exchange.port missing",
+                    "error_summary": resolve_error or "host_uart_exchange.port missing",
                 }
+            port = resolved_port
 
             open_deadline = time.time() + max(0.0, startup_wait_s)
             ser = None
@@ -682,7 +748,10 @@ class _HostUartRoundtripAdapter:
 
             try:
                 try:
-                    ser.dtr = False
+                    if dtr_enabled is not None:
+                        ser.dtr = bool(dtr_enabled)
+                    else:
+                        ser.dtr = False
                 except Exception:
                     pass
 

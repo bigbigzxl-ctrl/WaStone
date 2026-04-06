@@ -1,0 +1,23 @@
+{
+  "name": "stm32f401ce_blackpill_usb_cdc_golden",
+  "description": "STM32F401 Black Pill USB CDC pack for the local DAPLink SWD bench. Stage1 proves target USB CDC enumeration and host port open over the board USB port. Stage2 proves host-driven PING/PONG over the same target USB CDC link. Stage3 proves host-driven ECHO over the same link.",
+  "board": "stm32f401ce_blackpill_daplink",
+  "status": "validated",
+  "verified_date": "2026-04-05",
+  "stages": {
+    "1": [
+      "tests/plans/stm32f401ce_blackpill_usb_cdc_banner.json"
+    ],
+    "2": [
+      "tests/plans/stm32f401ce_blackpill_usb_cdc_ping_pong.json"
+    ],
+    "3": [
+      "tests/plans/stm32f401ce_blackpill_usb_cdc_echo.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/stm32f401ce_blackpill_usb_cdc_banner.json",
+    "tests/plans/stm32f401ce_blackpill_usb_cdc_ping_pong.json",
+    "tests/plans/stm32f401ce_blackpill_usb_cdc_echo.json"
+  ]
+}
