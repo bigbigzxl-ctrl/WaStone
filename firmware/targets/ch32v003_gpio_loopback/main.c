@@ -51,7 +51,7 @@ int main(void)
     uint16_t toggle_count = 0;
     while (1)
     {
-        for (volatile uint32_t i = 0; i < 2000000u; i++);
+        for (volatile uint32_t i = 0; i < 1000000u; i++);
         GPIOC->OUTDR ^= (1u << 6) | (1u << 4);  /* single RMW — avoids stale read between two writes */
         toggle_count++;
         uint32_t led = (GPIOC->OUTDR >> 6) & 1u;
