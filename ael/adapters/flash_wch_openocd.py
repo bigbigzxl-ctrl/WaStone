@@ -120,6 +120,7 @@ def run(probe_cfg: dict, firmware_path: str, flash_cfg: dict = None, flash_json_
         openocd_bin,
         "-f", openocd_cfg,
         "-c", f"gdb_port {port}; tcl_port disabled; telnet_port disabled",
+        "-c", "init; catch {resume}",
     ]
 
     print(f"Flash/WCH: starting GDB server on port {port}")

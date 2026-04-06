@@ -36,12 +36,9 @@ int main(void)
     IWDG->PSCR = 6u;
     /* Reload = 1200 → timeout ≈ 7.7 s (gives plenty of margin) */
     IWDG->RLDR = 1200u;
-    /* Wait for registers to update (PVU/RVU bits clear) */
-    while (IWDG->STATR & 0x3u);
-    /* Reload once before starting */
-    IWDG->CTLR = 0xAAAAu;
-    /* Start watchdog */
-    IWDG->CTLR = 0xCCCCu;
+    /* Reload then start (WCH HAL does NOT poll PVU/RVU — CH32V003 sequence) */
+    IWDG->CTLR = 0xAAAAu;   /* reload */
+    IWDG->CTLR = 0xCCCCu;  /* start watchdog */
 
     ael_mailbox_pass();
 

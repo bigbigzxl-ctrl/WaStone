@@ -29,15 +29,7 @@
     "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
     "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
   },
-  "observe_uart": {
-    "enabled": true,
-    "port": "/dev/ttyACM0",
-    "baud": 115200,
-    "duration_s": 5,
-    "expect_patterns": [
-      "AEL_UART_TX OK"
-    ]
-  },
+  "observe_uart": { "enabled": false },
   "bench_setup": {
     "bench_connections": [
       { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },

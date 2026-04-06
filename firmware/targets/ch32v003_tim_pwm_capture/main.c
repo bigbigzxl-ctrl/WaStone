@@ -59,9 +59,11 @@ static void exti4_init(void)
     /* PD4 = floating input (CFGLR bits[19:16] = 0x4) */
     GPIOD->CFGLR = (GPIOD->CFGLR & ~(0xFu << 16)) | (0x4u << 16);
 
-    /* AFIO clock already enabled; EXTI4 source = PD (3) → bits[19:16] */
+    /* AFIO clock already enabled; EXTI4 source = PD (3) → bits[9:8]
+     * CH32V003 uses 2 bits per EXTI line: bit_pos = PinSource<<1
+     * EXTI4 → shift=8, PD port value=3 → set bits[9:8]=0b11 */
     RCC->APB2PCENR |= RCC_AFIOEN;
-    AFIO->EXTICR = (AFIO->EXTICR & ~(0xFu << 16)) | (0x3u << 16);
+    AFIO->EXTICR = (AFIO->EXTICR & ~(0x3u << 8)) | (0x3u << 8);
 
     EXTI->RTENR  |= (1u << 4);
     EXTI->INTENR |= (1u << 4);

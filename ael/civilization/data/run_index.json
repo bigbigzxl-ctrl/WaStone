@@ -3357,9 +3357,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 46,
+    "success_count": 48,
     "failure_count": 5,
-    "last_seen": 1775508716.7251017,
+    "last_seen": 1775513962.0750964,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
@@ -3390,6 +3390,99 @@
         "exp_id": "7956cd7a-c869-429c-8787-7ab30139b58c",
         "count": 1,
         "last_raw": "[ch32v003xxx] ch32v003_gpio_loopback_pc45: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_systick": {
+    "exp_id": "e3f46374-1a43-44f3-9904-e9cb1ce67809",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775513931.9131906,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_iwdg": {
+    "exp_id": "61f219a8-05aa-429f-a17a-ab9798b5f91a",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1775513941.4000118,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "02ccf415-ffdb-48d0-8b75-bf3d920dbf76",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_iwdg: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_uart_wchlink": {
+    "exp_id": "22b3ae50-f820-464c-81cf-93f4c5ca603d",
+    "success_count": 1,
+    "failure_count": 6,
+    "last_seen": 1775513727.8812025,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "0365fe15-bf20-4a77-9e04-784e6c571f65",
+        "count": 5,
+        "last_raw": "[ch32v003xxx] ch32v003_uart_wchlink: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      },
+      "load": {
+        "exp_id": "1227fece-35d4-4b17-82b3-01f36898116e",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_uart_wchlink: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_flash_rw": {
+    "exp_id": "433dbbbe-f49f-409f-a8c6-0c2966a68b0f",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775513951.6878018,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_exti_loopback": {
+    "exp_id": "4cc211fa-6541-4ad6-93aa-a3154016ab5c",
+    "success_count": 1,
+    "failure_count": 2,
+    "last_seen": 1775513843.97276,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "def4541b-6cc0-43af-8498-2b94026dc543",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_exti_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_tim_pwm_capture": {
+    "exp_id": "36be9190-5fce-4bfb-b305-478235b3bbd8",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775513853.6124313,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_spi_loopback": {
+    "exp_id": "17afb4fd-da3a-416c-a208-e708c508e1ff",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775513862.987321,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_uart_bidir": {
+    "exp_id": "1fd39a45-69c0-49fc-b2e8-dd3393f8ef7a",
+    "success_count": 1,
+    "failure_count": 1,
+    "last_seen": 1775513920.9663146,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "08e51e25-a7b6-4202-a146-f297b6d304a4",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_uart_bidir: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
       }
     }
   }

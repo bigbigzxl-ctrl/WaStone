@@ -37,8 +37,10 @@ static void exti_init(void)
     /* PC1 = floating input (CFGLR bits[7:4] = 0x4) */
     GPIOC->CFGLR = (GPIOC->CFGLR & ~(0xFu << 4)) | (0x4u << 4);
 
-    /* AFIO EXTICR: EXTI1 source = PC (value 2) → bits[7:4] */
-    AFIO->EXTICR = (AFIO->EXTICR & ~(0xFu << 4)) | (0x2u << 4);
+    /* AFIO EXTICR: EXTI1 source = PC (value 2) → bits[3:2]
+     * CH32V003 uses 2 bits per EXTI line: bit_pos = PinSource<<1
+     * EXTI1 → shift=2, PC port value=2 → set bits[3:2]=0b10 */
+    AFIO->EXTICR = (AFIO->EXTICR & ~(0x3u << 2)) | (0x2u << 2);
 
     /* EXTI line 1: rising-edge trigger, enable interrupt mask for INTFR latching */
     EXTI->RTENR  |= (1u << 1);
