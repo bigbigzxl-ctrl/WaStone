@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_tim_pwm_capture",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "tim", "pwm", "exti", "loopback"],
+  "covers": ["ch32v003_tim1_ch1_pd2", "ch32v003_exti4_pd4"],
+  "preflight": { "enabled": false },
+  "notes": "TIM1_CH1 PWM ~1kHz on PD2 (no remap). EXTI4 rising-edge counter on PD4. Wire PD2↔PD4. PASS after 5 edges confirmed. Liveness: edge_count in detail0.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_tim_pwm_capture",
+    "artifact_stem": "ch32v003_tim_pwm_capture"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": { "enabled": false },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" },
+      { "from": "CH32V003 PD2",  "to": "CH32V003 PD4" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

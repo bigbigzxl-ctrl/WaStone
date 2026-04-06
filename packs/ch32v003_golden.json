@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "name": "ch32v003_golden",
+  "description": "CH32V003F4U6 golden test suite — GPIO, UART, SPI, TIM, EXTI, SysTick, IWDG, Flash",
+  "board": "ch32v003xxx",
+  "tests": [
+    "tests/plans/ch32v003_gpio_loopback.json",
+    "tests/plans/ch32v003_uart_wchlink.json",
+    "tests/plans/ch32v003_uart_bidir.json",
+    "tests/plans/ch32v003_exti_loopback.json",
+    "tests/plans/ch32v003_tim_pwm_capture.json",
+    "tests/plans/ch32v003_spi_loopback.json",
+    "tests/plans/ch32v003_systick.json",
+    "tests/plans/ch32v003_iwdg.json",
+    "tests/plans/ch32v003_flash_rw.json"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_flash_rw",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "flash", "rw"],
+  "covers": ["ch32v003_flash_page_prog", "ch32v003_flash_page_erase"],
+  "preflight": { "enabled": false },
+  "notes": "64-byte fast flash R/W test. Target: last page 0x08003FC0. Unlock, BufReset, BufLoad ×16, ErasePage_Fast, ProgramPage_Fast, verify. PASS on match. No pins required.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_flash_rw",
+    "artifact_stem": "ch32v003_flash_rw"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 2.0 },
+  "mailbox_verify": {
+    "settle_s": 2.0,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 6,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": { "enabled": false },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

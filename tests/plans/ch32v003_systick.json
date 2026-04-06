@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_systick",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "systick", "timer"],
+  "covers": ["ch32v003_systick_hclk"],
+  "preflight": { "enabled": false },
+  "notes": "SysTick enabled with HCLK (24MHz) source. Verifies CNT advances. detail0 = (CNT>>13)<<1 for liveness. No pins required.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_systick",
+    "artifact_stem": "ch32v003_systick"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": { "enabled": false },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}

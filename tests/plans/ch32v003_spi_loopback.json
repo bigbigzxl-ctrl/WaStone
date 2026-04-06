@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v003_spi_loopback",
+  "board": "ch32v003xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v003", "spi", "loopback"],
+  "covers": ["ch32v003_spi1_pc6_mosi", "ch32v003_spi1_pc7_miso"],
+  "preflight": { "enabled": false },
+  "notes": "SPI1 master loopback: MOSI=PC6, MISO=PC7, SCK=PC5, software NSS. PC6↔PC7 wired together. 5 probe bytes verified at startup.",
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v003_spi_loopback",
+    "artifact_stem": "ch32v003_spi_loopback"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "observe_uart": { "enabled": false },
+  "bench_setup": {
+    "bench_connections": [
+      { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" },
+      { "from": "CH32V003 PC6 (MOSI)", "to": "CH32V003 PC7 (MISO)" }
+    ],
+    "ground_required": true,
+    "ground_confirmed": false
+  }
+}
