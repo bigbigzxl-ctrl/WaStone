@@ -154,11 +154,17 @@ def _execute_detail0_increment(
     if halt_before_read:
         cmds += ["monitor halt"]
 
+    shell_cmd_after_t1_resume = str(inputs.get("shell_cmd_after_t1_resume") or "").strip()
+
     addr_hex = f"{addr:#010x}"
     disconnect_cmd = "disconnect" if skip_attach else "detach"
+    after_resume: list[str] = []
+    if shell_cmd_after_t1_resume:
+        after_resume = [f"shell {shell_cmd_after_t1_resume}"]
     cmds += [
         f"x/4xw {addr_hex}",           # T1 read
         "monitor resume",
+        *after_resume,                  # optional: host injects stimulus (e.g. UART bytes)
         f"shell sleep {int(increment_wait_s)}",   # MCU runs freely
         "monitor halt",
         f"x/4xw {addr_hex}",           # T2 read
