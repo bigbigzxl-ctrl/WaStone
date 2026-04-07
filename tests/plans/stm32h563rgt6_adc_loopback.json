@@ -34,19 +34,19 @@
     "halt_before_read": false
   },
   "bench_setup": {
-    "notes": "GPIO→ADC loopback: PC0 (output, also LED1 active-low) drives HIGH/LOW; PC1 (ADC1_INP11 analog input, also LED2) reads back. GPIO output impedance dominates LED resistor — LED influence negligible. PASS: HIGH raw>3500, LOW raw<500. detail0 = (high_raw<<16)|low_raw. Wire required: PC0 → PC1.",
+    "notes": "GPIO→ADC loopback: PC2 (output) drives HIGH/LOW; PC1 (ADC1_INP11 analog input) reads back via shared wire. PASS: HIGH raw>3500, LOW raw<500. detail0 = (high_raw<<16)|low_raw. Wire required: PC1 ↔ PC2.",
     "peripheral_signals": [
       {
         "role": "GPIO_OUT",
-        "dut_signal": "PC0",
+        "dut_signal": "PC2",
         "direction": "output",
-        "notes": "Push-pull output. Drives HIGH then LOW. Wire: PC0 → PC1."
+        "notes": "Push-pull output. Drives HIGH then LOW. Wire: PC1 ↔ PC2."
       },
       {
         "role": "ADC_IN",
         "dut_signal": "PC1",
         "direction": "input",
-        "notes": "ADC1_INP11 analog input. Wire: PC0 → PC1."
+        "notes": "ADC1_INP11 analog input. Wire: PC1 ↔ PC2."
       }
     ]
   }

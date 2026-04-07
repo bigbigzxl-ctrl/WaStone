@@ -2,14 +2,15 @@
  * stm32h563rgt6_adc_loopback
  *
  * GPIO loopback into ADC:
- *   PC0 (push-pull output)  → wire → PC1 (ADC1_INP11 analog input)
+ *   PC2 (push-pull output)  → wire → PC1 (ADC1_INP11 analog input)
  *
- * PC0 is also LED1 (active-low); GPIO output impedance is low enough
- * to dominate the LED resistor and maintain correct rail voltage.
+ * Wiring: PC1 ↔ PC2 (physically connected on bench).
+ * PC2 drives HIGH/LOW; PC1 reads back via ADC1 channel 11.
+ * (Original wiring was PC0→PC1; changed to PC2→PC1 to match bench.)
  *
  * Test:
- *   1. Drive PC0 HIGH → ADC read INP11, expect > 3500  (≈VDD)
- *   2. Drive PC0 LOW  → ADC read INP11, expect < 500   (≈GND)
+ *   1. Drive PC2 HIGH → ADC read INP11, expect > 3500  (≈VDD)
+ *   2. Drive PC2 LOW  → ADC read INP11, expect < 500   (≈GND)
  *
  * Clock: HSI 64 MHz default.
  * ADC kernel clock: default async (uses HCLK via ADCSEL).
@@ -74,8 +75,8 @@ int main(void)
     RCC_AHB2ENR |= (1u << 2);
     (void)RCC_AHB2ENR;
 
-    /* 2. Configure PC0 as push-pull output (MODER bits[1:0] = 01) */
-    GPIOC_MODER = (GPIOC_MODER & ~(3u << 0)) | (1u << 0);
+    /* 2. Configure PC2 as push-pull output (MODER bits[5:4] = 01) */
+    GPIOC_MODER = (GPIOC_MODER & ~(3u << 4)) | (1u << 4);
     /* 3. Configure PC1 as analog input (MODER bits[3:2] = 11) */
     GPIOC_MODER |= (3u << 2);
 
@@ -117,8 +118,8 @@ int main(void)
         }
     }
 
-    /* 10. Drive PC0 HIGH, settle, read ADC */
-    GPIOC_BSRR = (1u << 0);                       /* BS0 = set PC0 high */
+    /* 10. Drive PC2 HIGH, settle, read ADC */
+    GPIOC_BSRR = (1u << 2);                       /* BS2 = set PC2 high */
     for (volatile uint32_t t = 0; t < 10000; t++) {}  /* ~150µs settle */
 
     uint32_t raw_high = adc_read_channel11();
@@ -129,8 +130,8 @@ int main(void)
         while (1) {}
     }
 
-    /* 11. Drive PC0 LOW, settle, read ADC */
-    GPIOC_BSRR = (1u << 16);                      /* BR0 = reset PC0 low */
+    /* 11. Drive PC2 LOW, settle, read ADC */
+    GPIOC_BSRR = (1u << 18);                      /* BR2 = reset PC2 low */
     for (volatile uint32_t t = 0; t < 10000; t++) {}  /* ~150µs settle */
 
     uint32_t raw_low = adc_read_channel11();

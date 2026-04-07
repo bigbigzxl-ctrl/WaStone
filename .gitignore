@@ -25,6 +25,8 @@ assets_golden/duts/**/firmware/sdkconfig.old
 
 # Local tool/vendor caches
 third_party/cache/
+.codex/
+firmware/third_party/
 
 # Workflow archive — runtime-generated event data (daily JSONL files + migration backup)
 workflow_archive/*.jsonl
