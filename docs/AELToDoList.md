@@ -109,6 +109,42 @@ ESP32JTAG BMDA 固件有 bug —— 任何一次 GDB 连接失败（SWD scan 失
 
 ---
 
+### TASK-004 — CH32V003 设备恢复 + pwr_sleep AWU 测试修复
+
+**Status:** [ ] 待实现
+
+**背景：**
+`pwr_sleep` 固件使用了 `__WFE()` 而未配置 `EXTI->EVENR bit9`，导致设备永久卡死在
+WFE 休眠状态，WCH-Link SDI 接口无响应，无法 flash 新固件。已将 `pwr_sleep` 从
+`ch32v003_golden.json` 中移除，golden 现为 13/13。
+
+**恢复方法：**
+用 WCH-LinkUtility（PC 端 WCH 官方工具）通过 ISP 模式强制写入任意可运行固件：
+1. 安装 WCH-LinkUtility（Windows/Linux）
+2. 选择 CH32V003，通过 WCH-Link USB 连接
+3. ISP 模式下写入 `ch32v003_minimal_mailbox.elf`（不休眠）
+4. 验证 `ael run --test ch32v003_minimal_mailbox.json` PASS
+
+**pwr_sleep 正确修复方案（恢复后实施）：**
+已知原因：`__WFI()` 唤醒需要 `EXTI->EVENR |= (1u << 9)` 打开 AWU 事件线。
+修复后固件逻辑（已写好，见 `firmware/targets/ch32v003_pwr_sleep/main.c`）：
+- `EXTI->EVENR |= (1u << 9)` — AWU 事件路由到 WFI
+- `__WFI()` — 仅休眠一次（约 100 ms）
+- 唤醒后写 PASS，进入 busy liveness 循环（不再休眠，debug halt 可靠）
+- liveness 用 `SysTick->CNT >> 13` 持续更新 detail0
+
+恢复后执行：
+```
+ael run --test tests/plans/ch32v003_pwr_sleep.json
+# PASS → 将 pwr_sleep 加回 ch32v003_golden.json → golden 恢复 14/14
+```
+
+**附：CH32V003 stage2 待验证**
+9 个 stage2 测试（I2C、SPI DMA、ADC DMA、TIM DMA 等）之前已 PASS，
+设备恢复后可正式将 stage2 跑通，确认后可并入 golden 或维持独立 pack。
+
+---
+
 ## Done
 
 _（暂无）_
