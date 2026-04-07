@@ -51,6 +51,8 @@
 #define ERR_UART            (1u << 2)
 #define ERR_ADC_HIGH        (1u << 3)
 #define ERR_ADC_LOW         (1u << 4)
+#define ERR_SPI_HIGH        (1u << 5)
+#define ERR_SPI_LOW         (1u << 6)
 
 static void delay_cycles(volatile uint32_t n) {
     while (n-- > 0u) {
@@ -78,6 +80,29 @@ static uint32_t test_gpio_loopback(void)
     delay_cycles(12000u);
     if ((GPIOB_IDR & (1u << 8u)) != 0u) {
         err |= ERR_GPIO_LOW;
+    }
+
+    return err;
+}
+
+static uint32_t test_spi_wire(void)
+{
+    uint32_t err = 0u;
+
+    /* PA7 = output push-pull 50 MHz, PA6 = input floating */
+    GPIOA_CRL &= ~((0xFu << 24u) | (0xFu << 28u));
+    GPIOA_CRL |=  (0x4u << 24u) | (0x3u << 28u);
+
+    GPIOA_ODR |= (1u << 7u);
+    delay_cycles(12000u);
+    if ((GPIOA_IDR & (1u << 6u)) == 0u) {
+        err |= ERR_SPI_HIGH;
+    }
+
+    GPIOA_ODR &= ~(1u << 7u);
+    delay_cycles(12000u);
+    if ((GPIOA_IDR & (1u << 6u)) != 0u) {
+        err |= ERR_SPI_LOW;
     }
 
     return err;
@@ -181,6 +206,7 @@ int main(void)
 
     uint32_t err = 0u;
     err |= test_gpio_loopback();
+    err |= test_spi_wire();
     err |= test_uart_loopback();
     err |= test_adc_loopback();
 

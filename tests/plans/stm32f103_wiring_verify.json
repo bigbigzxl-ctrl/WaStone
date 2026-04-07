@@ -21,7 +21,7 @@
     "addr": "0x20004C00"
   },
   "bench_setup": {
-    "notes": "Stage 2 wiring verify. Firmware runs GPIO, UART, and ADC loopback tests internally. Pass/fail and per-wire error bitmask are reported through mailbox at 0x20004C00. Wiring: PA8→PB8, PA9→PA10, PA1→PA0.",
+    "notes": "Stage 2 wiring verify. Firmware runs GPIO, SPI wire, UART, and ADC loopback tests internally. Pass/fail and per-wire error bitmask are reported through mailbox at 0x20004C00. Wiring: PA8→PB8, PA7→PA6, PA9→PA10, PA1→PA0.",
     "peripheral_signals": [
       {
         "role": "GPIO_OUT",
@@ -34,6 +34,18 @@
         "dut_signal": "PB8",
         "direction": "input",
         "notes": "GPIO loopback receiver. Wire: PA8 → PB8."
+      },
+      {
+        "role": "SPI_WIRE_OUT",
+        "dut_signal": "PA7",
+        "direction": "output",
+        "notes": "SPI wire check driver. Wire: PA7 → PA6."
+      },
+      {
+        "role": "SPI_WIRE_IN",
+        "dut_signal": "PA6",
+        "direction": "input",
+        "notes": "SPI wire check receiver. Wire: PA7 → PA6."
       },
       {
         "role": "USART1_TX",
