@@ -3943,5 +3943,21 @@
     "last_seen": 1775574388.5709603,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "stm32f103_gpio|stm32f103_rtc_backup_mailbox": {
+    "exp_id": "69f71af9-72b8-493e-95df-efeb2bb17234",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775575337.3380485,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "stm32f103_gpio|stm32f103_flash_selfprog_mailbox": {
+    "exp_id": "20087da9-3418-4800-a172-3a18d98e4e77",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1775575353.9427018,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }

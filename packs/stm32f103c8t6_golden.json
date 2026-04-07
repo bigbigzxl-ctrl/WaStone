@@ -1,6 +1,6 @@
 {
   "name": "stm32f103c8t6_golden",
-  "description": "STM32F103C8T6 Golden Test Suite — staged F103 canonical suite on existing bench wiring. Stage0: blinky + mailbox runtime gate. Stage1: timer, SysTick, internal temp. Stage2: wiring verify, GPIO/EXTI/capture/PWM mailbox checks, UART loopback and UART DMA, SPI mailbox, ADC loopback mailbox, IWDG. Stage3: legacy-but-preserved LA/banner proofs. Wiring: PA8↔PB8, PA9↔PA10, PA7↔PA6, PA1↔PA0, LA: PA4→P0.0, PA5→P0.1.",
+  "description": "STM32F103C8T6 Golden Test Suite — staged F103 canonical suite on existing bench wiring. Stage0: blinky + mailbox runtime gate. Stage1: timer, SysTick, internal temp, RTC/backup, flash self-programming. Stage2: wiring verify, GPIO/EXTI/capture/PWM mailbox checks, UART loopback and UART DMA, SPI mailbox, ADC loopback mailbox, IWDG. Stage3: legacy-but-preserved LA/banner proofs. Wiring: PA8↔PB8, PA9↔PA10, PA7↔PA6, PA1↔PA0, LA: PA4→P0.0, PA5→P0.1.",
   "board": "stm32f103_gpio",
   "bench_profile": "stm32f103_gpio__stage3",
   "status": "golden",
@@ -12,7 +12,9 @@
     "1": [
       "tests/plans/stm32f103_timer_mailbox.json",
       "tests/plans/stm32f103_systick_mailbox.json",
-      "tests/plans/stm32f103_internal_temp_mailbox.json"
+      "tests/plans/stm32f103_internal_temp_mailbox.json",
+      "tests/plans/stm32f103_rtc_backup_mailbox.json",
+      "tests/plans/stm32f103_flash_selfprog_mailbox.json"
     ],
     "2": [
       "tests/plans/stm32f103_wiring_verify.json",
@@ -44,6 +46,8 @@
     "tests/plans/stm32f103_timer_mailbox.json",
     "tests/plans/stm32f103_systick_mailbox.json",
     "tests/plans/stm32f103_internal_temp_mailbox.json",
+    "tests/plans/stm32f103_rtc_backup_mailbox.json",
+    "tests/plans/stm32f103_flash_selfprog_mailbox.json",
     "tests/plans/stm32f103_wiring_verify.json",
     "tests/plans/stm32f103_gpio_loopback_mailbox.json",
     "tests/plans/stm32f103_exti_mailbox.json",

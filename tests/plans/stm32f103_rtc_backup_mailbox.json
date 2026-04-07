@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_rtc_backup_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "no_wiring"],
+  "covers": ["rtc", "backup_registers", "lsi"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_rtc_backup_mailbox",
+    "artifact_stem": "stm32f103_rtc_backup_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_rtc_backup_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "addr": "0x20004C00",
+    "settle_s": 3.0
+  },
+  "bench_setup": {
+    "notes": "No external wiring required. Firmware tests: (1) write 4 patterns to BKP_DR1..DR4 and read back; (2) enable LSI, configure RTC at ~100 Hz, verify counter ticks within 100 ms. detail0 on PASS = tick count observed (~10 ticks expected).",
+    "peripheral_signals": []
+  }
+}

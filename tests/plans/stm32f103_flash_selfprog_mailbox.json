@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f103_flash_selfprog_mailbox",
+  "board": "stm32f103_gpio",
+  "supported_instruments": ["esp32jtag", "stlink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "portable", "no_wiring"],
+  "covers": ["flash", "self_programming"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f103_flash_selfprog_mailbox",
+    "artifact_stem": "stm32f103_flash_selfprog_mailbox_app",
+    "build_dir": "artifacts/build_stm32f103_flash_selfprog_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "addr": "0x20004C00",
+    "settle_s": 2.0
+  },
+  "bench_setup": {
+    "notes": "No external wiring required. Firmware uses page 63 (0x0800FC00, last 1 KB of 64 KB flash) as scratch. Steps: unlock flash, erase page, verify erased (all 0xFFFF), program 8 halfword patterns, lock flash, read back and verify. detail0 on PASS = bytes programmed (16).",
+    "peripheral_signals": []
+  }
+}
