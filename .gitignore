@@ -25,6 +25,7 @@ assets_golden/duts/**/firmware/sdkconfig.old
 
 # Local tool/vendor caches
 third_party/cache/
+.codex
 .codex/
 firmware/third_party/
 
