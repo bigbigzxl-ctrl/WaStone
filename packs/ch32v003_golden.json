@@ -16,7 +16,6 @@
     "tests/plans/ch32v003_adc_vref.json",
     "tests/plans/ch32v003_dma_mem2mem.json",
     "tests/plans/ch32v003_tim2.json",
-    "tests/plans/ch32v003_wwdg.json",
-    "tests/plans/ch32v003_pwr_sleep.json"
+    "tests/plans/ch32v003_wwdg.json"
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "name": "ch32v003_stage2_prestage",
+  "description": "CH32V003 Stage-2 prestage: wire connectivity checks before running Stage-2 tests. Verifies PC6↔PC7 (for SPI DMA) and PC1↔PC2 (for I2C loopback).",
+  "board": "ch32v003xxx",
+  "tests": [
+    "tests/plans/ch32v003_wire_check_pc67.json",
+    "tests/plans/ch32v003_wire_check_pc12.json"
+  ]
+}

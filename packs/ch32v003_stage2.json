@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "name": "ch32v003_stage2",
+  "description": "CH32V003F4U6 Stage-2 test suite — OPA, I2C loopback, PWR standby, RCC/MCO, TIM one-pulse, TIM DMA, SPI DMA, ADC DMA, ADC watchdog, USART DMA. Run ch32v003_stage2_prestage first to verify bench wiring.",
+  "board": "ch32v003xxx",
+  "tests": [
+    "tests/plans/ch32v003_adc_watchdog.json",
+    "tests/plans/ch32v003_adc_dma.json",
+    "tests/plans/ch32v003_tim_onepulse.json",
+    "tests/plans/ch32v003_tim_dma.json",
+    "tests/plans/ch32v003_rcc_mco.json",
+    "tests/plans/ch32v003_opa.json",
+    "tests/plans/ch32v003_i2c_loopback.json",
+    "tests/plans/ch32v003_usart_dma.json",
+    "tests/plans/ch32v003_spi_dma.json"
+  ]
+}

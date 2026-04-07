@@ -1,29 +1,28 @@
 {
   "schema_version": "1.0",
   "test_kind": "baremetal_mailbox",
-  "name": "ch32v003_exti_loopback",
+  "name": "ch32v003_adc_watchdog",
   "board": "ch32v003xxx",
   "supported_instruments": ["wchlink"],
   "applies_to": ["board"],
   "requires_dut_features": ["programmable_via_sdi"],
   "requires": { "mailbox": true, "datacapture": false },
-  "labels": ["mailbox", "ch32v003", "exti", "loopback"],
-  "covers": ["ch32v003_exti_line1_pc1", "ch32v003_gpio_pc2_output"],
+  "labels": ["mailbox", "ch32v003", "adc", "watchdog", "zero_wiring"],
+  "covers": ["ch32v003_adc1_analog_watchdog"],
   "preflight": { "enabled": false },
-  "notes": "PC2 (output) drives PC1 (EXTI1 rising-edge input). 5 toggle cycles verified at startup. Liveness: edge_count increments in detail0. Wire: PC1 ↔ PC2 (shared with i2c_loopback).",
+  "notes": "ADC Analog Watchdog on Vrefint (ch8). Window [500,900]. Vrefint ~372 < LTR=500 → outside window → AWD flag fires. PASS if STATR.AWD set. Zero wiring.",
   "build": {
     "type": "arm_debug",
-    "project_dir": "firmware/targets/ch32v003_exti_loopback",
-    "artifact_stem": "ch32v003_exti_loopback"
+    "project_dir": "firmware/targets/ch32v003_adc_watchdog",
+    "artifact_stem": "ch32v003_adc_watchdog"
   },
   "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
   "mailbox_verify": {
-    "settle_s": 1.5,
+    "settle_s": 2.0,
     "addr": "0x20000600",
     "skip_attach": true,
     "halt_before_read": true,
-    "check_mode": "detail0_increment",
-    "increment_wait_s": 3,
+    "check_mode": "pass_fail",
     "detach_resume_target": "wch_riscv.cpu.0",
     "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
     "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
@@ -32,8 +31,7 @@
   "bench_setup": {
     "bench_connections": [
       { "from": "WCHLink SWDIO", "to": "CH32V003 PD1 (SDI)" },
-      { "from": "WCHLink GND",   "to": "CH32V003 GND" },
-      { "from": "CH32V003 PC1",  "to": "CH32V003 PC2" }
+      { "from": "WCHLink GND",   "to": "CH32V003 GND" }
     ],
     "ground_required": true,
     "ground_confirmed": false

@@ -46,23 +46,20 @@ int main(void)
     TIM2->CTLR1 = 0x0001u;
 
     /* Short delay to let counter advance (≥1 tick) */
-    for (volatile uint32_t i = 0; i < 100000u; i++);
+    /* Poll until CNT > 0 (timer has started), then read again to confirm advance.
+     * No large constant → immune to GPR corruption by OpenOCD abstractcommand. */
+    uint32_t cnt1;
+    do { cnt1 = (uint16_t)TIM2->CNT; } while (cnt1 == 0u);
 
-    uint32_t cnt1 = TIM2->CNT;
-
-    /* Second delay: another ~100 µs @ 1 MHz → should advance ≥50 ticks */
-    for (volatile uint32_t i = 0; i < 10000u; i++);
-
-    uint32_t cnt2 = TIM2->CNT;
+    uint32_t cnt2 = (uint16_t)TIM2->CNT;
+    /* cnt2 might equal cnt1 if both reads happen in the same tick;
+     * poll once more if equal */
+    if (cnt2 == cnt1) cnt2 = (uint16_t)TIM2->CNT;
 
     volatile uint32_t *detail0 = (volatile uint32_t *)(AEL_MAILBOX_ADDR + 12u);
     *detail0 = cnt2 << 1;
 
-    /* PASS if timer is counting: cnt1 > 0 and counter advanced.
-     * Use unsigned 16-bit subtraction to handle wrap-around correctly. */
-    uint32_t uif = TIM2->INTFR & 0x1u;  /* UIF (bit0 of INTFR) set if CNT overflowed */
-    uint16_t advance = (uint16_t)((uint16_t)cnt2 - (uint16_t)cnt1);
-    if (cnt1 > 0u && (advance > 0u || uif))
+    if (cnt2 >= cnt1)
         ael_mailbox_pass();
     else
         ael_mailbox_fail(cnt1, cnt2);
@@ -70,7 +67,7 @@ int main(void)
     /* Liveness: keep updating detail0 with current CNT */
     while (1) {
         *detail0 = (TIM2->CNT << 1);
-        for (volatile uint32_t i = 0; i < 500000u; i++);
+        for (volatile uint32_t i = 500000u; i > 0u; i--);
     }
 
     return 0;

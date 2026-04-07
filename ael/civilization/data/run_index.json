@@ -1478,13 +1478,13 @@
   "unknown|unknown": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 12,
-    "last_seen": 1775514932.1529884,
+    "failure_count": 13,
+    "last_seen": 1775534524.015406,
     "confidence": 0.5,
     "known_failures": {
       "preflight": {
         "exp_id": "a1af869a-dec3-4f06-afd9-f5d250a30e7d",
-        "count": 8,
+        "count": 9,
         "last_raw": "[unknown] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
       },
       "load": {
@@ -1600,8 +1600,8 @@
   "stm32h563rgt6|stm32h563rgt6_adc_loopback": {
     "exp_id": "492b3a39-e4af-4d40-8467-da0ba3c258f5",
     "success_count": 37,
-    "failure_count": 2,
-    "last_seen": 1775429528.5968437,
+    "failure_count": 3,
+    "last_seen": 1775551357.9289558,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
@@ -1611,8 +1611,8 @@
       },
       "load": {
         "exp_id": "e33956eb-36d3-4221-8716-b2bba4890770",
-        "count": 1,
-        "last_raw": "[stm32h563rgt6] stm32h563rgt6_adc_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
+        "count": 2,
+        "last_raw": "[stm32h563rgt6] stm32h563rgt6_adc_loopback: failed — stages: preflight, build, run, check — failure: load — Flash: pyocd gdbserver did not start listening in time"
       }
     }
   },
@@ -3342,10 +3342,16 @@
   "ch32v003xxx|ch32v003_minimal_mailbox": {
     "exp_id": "b1284bfc-3e7c-4a09-be10-d96e600fd286",
     "success_count": 1,
-    "failure_count": 0,
-    "last_seen": 1775487984.1296482,
+    "failure_count": 2,
+    "last_seen": 1775555872.7802782,
     "confidence": 0.5,
-    "known_failures": {}
+    "known_failures": {
+      "load": {
+        "exp_id": "0ca025a8-00e8-403a-88b5-d262c36b742c",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_minimal_mailbox: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
   },
   "ch32v003xxx|ch32v003_led_blink_mailbox": {
     "exp_id": "17d17435-8578-4d5c-bdde-4c2235078a39",
@@ -3357,9 +3363,9 @@
   },
   "ch32v003xxx|ch32v003_gpio_loopback": {
     "exp_id": "09c62d65-8ef3-49e1-8982-d9a98f822a4d",
-    "success_count": 50,
+    "success_count": 58,
     "failure_count": 5,
-    "last_seen": 1775516315.5869684,
+    "last_seen": 1775552732.7748554,
     "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
@@ -3395,18 +3401,24 @@
   },
   "ch32v003xxx|ch32v003_systick": {
     "exp_id": "e3f46374-1a43-44f3-9904-e9cb1ce67809",
-    "success_count": 4,
-    "failure_count": 0,
-    "last_seen": 1775516336.1675594,
-    "confidence": 0.8,
-    "known_failures": {}
+    "success_count": 9,
+    "failure_count": 10,
+    "last_seen": 1775553715.618509,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "ac4d3480-42f8-4dc0-ba7f-2a2474149113",
+        "count": 10,
+        "last_raw": "[ch32v003xxx] ch32v003_systick: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      }
+    }
   },
   "ch32v003xxx|ch32v003_iwdg": {
     "exp_id": "61f219a8-05aa-429f-a17a-ab9798b5f91a",
-    "success_count": 4,
+    "success_count": 12,
     "failure_count": 1,
-    "last_seen": 1775516339.3038814,
-    "confidence": 0.8,
+    "last_seen": 1775552758.468579,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "02ccf415-ffdb-48d0-8b75-bf3d920dbf76",
@@ -3417,10 +3429,10 @@
   },
   "ch32v003xxx|ch32v003_uart_wchlink": {
     "exp_id": "22b3ae50-f820-464c-81cf-93f4c5ca603d",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 6,
-    "last_seen": 1775516318.885608,
-    "confidence": 0.7,
+    "last_seen": 1775552736.1175947,
+    "confidence": 1.0,
     "known_failures": {
       "check_uart": {
         "exp_id": "0365fe15-bf20-4a77-9e04-784e6c571f65",
@@ -3436,48 +3448,48 @@
   },
   "ch32v003xxx|ch32v003_flash_rw": {
     "exp_id": "433dbbbe-f49f-409f-a8c6-0c2966a68b0f",
-    "success_count": 4,
+    "success_count": 12,
     "failure_count": 0,
-    "last_seen": 1775516342.9620655,
-    "confidence": 0.8,
+    "last_seen": 1775552762.249527,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v003xxx|ch32v003_exti_loopback": {
     "exp_id": "4cc211fa-6541-4ad6-93aa-a3154016ab5c",
-    "success_count": 3,
-    "failure_count": 2,
-    "last_seen": 1775516325.2740867,
-    "confidence": 0.7,
+    "success_count": 9,
+    "failure_count": 6,
+    "last_seen": 1775552742.625214,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "def4541b-6cc0-43af-8498-2b94026dc543",
-        "count": 2,
+        "count": 6,
         "last_raw": "[ch32v003xxx] ch32v003_exti_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v003xxx|ch32v003_tim_pwm_capture": {
     "exp_id": "36be9190-5fce-4bfb-b305-478235b3bbd8",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 0,
-    "last_seen": 1775516328.4194634,
-    "confidence": 0.7,
+    "last_seen": 1775552745.8501785,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v003xxx|ch32v003_spi_loopback": {
     "exp_id": "17afb4fd-da3a-416c-a208-e708c508e1ff",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 0,
-    "last_seen": 1775516331.5415134,
-    "confidence": 0.7,
+    "last_seen": 1775552749.0353153,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v003xxx|ch32v003_uart_bidir": {
     "exp_id": "1fd39a45-69c0-49fc-b2e8-dd3393f8ef7a",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 1,
-    "last_seen": 1775516322.0594077,
-    "confidence": 0.7,
+    "last_seen": 1775552739.3697426,
+    "confidence": 1.0,
     "known_failures": {
       "check_uart": {
         "exp_id": "08e51e25-a7b6-4202-a146-f297b6d304a4",
@@ -3489,37 +3501,37 @@
   "ch32v003xxx|unknown": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 1,
-    "last_seen": 1775515028.5520608,
+    "failure_count": 4,
+    "last_seen": 1775534595.3283398,
     "confidence": 0.5,
     "known_failures": {
       "preflight": {
         "exp_id": "16fad375-4888-44be-9887-1e82652b278e",
-        "count": 1,
+        "count": 4,
         "last_raw": "[ch32v003xxx] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
       }
     }
   },
   "ch32v003xxx|ch32v003_adc_vref": {
     "exp_id": "ec40f397-7db8-4ea8-bd2c-efa6f10e5e5d",
-    "success_count": 3,
-    "failure_count": 1,
-    "last_seen": 1775516346.764512,
-    "confidence": 0.7,
+    "success_count": 8,
+    "failure_count": 11,
+    "last_seen": 1775554315.3550766,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "0930d8f4-044d-471d-be0d-9461610918ab",
-        "count": 1,
-        "last_raw": "[ch32v003xxx] ch32v003_adc_vref: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+        "count": 11,
+        "last_raw": "[ch32v003xxx] ch32v003_adc_vref: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v003xxx|ch32v003_dma_mem2mem": {
     "exp_id": "87611046-7f14-4899-8b36-f4af9ff81303",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 2,
-    "last_seen": 1775516349.977935,
-    "confidence": 0.7,
+    "last_seen": 1775552773.4113433,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "08e6b076-df86-4edc-a5ba-374ec690b8c1",
@@ -3530,32 +3542,214 @@
   },
   "ch32v003xxx|ch32v003_tim2": {
     "exp_id": "6d2d5311-f210-4f0d-907a-301ffd261b36",
-    "success_count": 2,
-    "failure_count": 2,
-    "last_seen": 1775516355.7089567,
-    "confidence": 0.6,
+    "success_count": 7,
+    "failure_count": 8,
+    "last_seen": 1775553720.0812683,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "16bda916-5aa5-42e5-a846-f7d5b5f08447",
-        "count": 2,
-        "last_raw": "[ch32v003xxx] ch32v003_tim2: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "count": 8,
+        "last_raw": "[ch32v003xxx] ch32v003_tim2: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
       }
     }
   },
   "ch32v003xxx|ch32v003_wwdg": {
     "exp_id": "3c0b4a1d-c6a2-4ba5-afca-643011fae004",
-    "success_count": 3,
+    "success_count": 11,
     "failure_count": 0,
-    "last_seen": 1775516359.3655734,
-    "confidence": 0.7,
+    "last_seen": 1775552784.8650348,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v003xxx|ch32v003_pwr_sleep": {
     "exp_id": "4484dac1-842b-4814-bd14-cfc4cb02a37a",
-    "success_count": 3,
+    "success_count": 7,
+    "failure_count": 18,
+    "last_seen": 1775556382.0537355,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "32100d05-c0df-4567-b811-614993ba596e",
+        "count": 15,
+        "last_raw": "[ch32v003xxx] ch32v003_pwr_sleep: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      },
+      "load": {
+        "exp_id": "450a882a-ee39-4064-ad9c-91b435969766",
+        "count": 3,
+        "last_raw": "[ch32v003xxx] ch32v003_pwr_sleep: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_wire_check_pc67": {
+    "exp_id": "c095577e-09e2-420c-87cc-a9cac063d6b2",
+    "success_count": 2,
     "failure_count": 0,
-    "last_seen": 1775516366.0893667,
-    "confidence": 0.7,
+    "last_seen": 1775552278.8956656,
+    "confidence": 0.6,
     "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_wire_check_pc12": {
+    "exp_id": "142b74de-5faf-4b06-bf4b-546e18f76f34",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1775552281.6608856,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v003xxx|ch32v003_adc_watchdog": {
+    "exp_id": "38b15eca-3c8b-4921-a68b-59d452acd405",
+    "success_count": 9,
+    "failure_count": 2,
+    "last_seen": 1775537942.966137,
+    "confidence": 1.0,
+    "known_failures": {
+      "load": {
+        "exp_id": "25b3698c-cf68-4272-a57d-f5221c9946b1",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_adc_watchdog: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_adc_dma": {
+    "exp_id": "7d3ba544-4675-4555-90a1-63c5bfb151a8",
+    "success_count": 5,
+    "failure_count": 35,
+    "last_seen": 1775538021.9653676,
+    "confidence": 0.9,
+    "known_failures": {
+      "load": {
+        "exp_id": "8705e7a6-af25-4ebd-ad0c-ce327b693672",
+        "count": 3,
+        "last_raw": "[ch32v003xxx] ch32v003_adc_dma: failed — stages: preflight, build, run, check — failure: load — step failed"
+      },
+      "check_mailbox": {
+        "exp_id": "5bfb92da-ac0d-43bb-8e86-c0b5530a8184",
+        "count": 32,
+        "last_raw": "[ch32v003xxx] ch32v003_adc_dma: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_tim_onepulse": {
+    "exp_id": "1b66714a-a9c6-4c84-8fc1-3b949b4931a2",
+    "success_count": 5,
+    "failure_count": 2,
+    "last_seen": 1775537950.9477124,
+    "confidence": 0.9,
+    "known_failures": {
+      "load": {
+        "exp_id": "d44bce81-31e5-4b2e-a5cd-5daa0947e83f",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_tim_onepulse: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_tim_dma": {
+    "exp_id": "be2bc876-1bb6-41e1-a11b-c47b0ce5c76d",
+    "success_count": 5,
+    "failure_count": 2,
+    "last_seen": 1775537954.7292144,
+    "confidence": 0.9,
+    "known_failures": {
+      "load": {
+        "exp_id": "7567ce60-9f0f-463c-8a18-3cecee76f039",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_tim_dma: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_rcc_mco": {
+    "exp_id": "abdba969-ca75-4f7e-8479-d0591deb87dc",
+    "success_count": 4,
+    "failure_count": 3,
+    "last_seen": 1775537958.42957,
+    "confidence": 0.8,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "19ddd20f-73c3-4605-93fe-3b5f007b7527",
+        "count": 1,
+        "last_raw": "[ch32v003xxx] ch32v003_rcc_mco: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      },
+      "load": {
+        "exp_id": "e07e76ff-09a0-49aa-951f-bdd44f590b69",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_rcc_mco: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_opa": {
+    "exp_id": "2e4bc8a4-be36-4a7e-90e3-4cdd9920bb8c",
+    "success_count": 9,
+    "failure_count": 24,
+    "last_seen": 1775537962.1297903,
+    "confidence": 1.0,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "3344bc44-329a-418b-b0ab-4818530482d5",
+        "count": 22,
+        "last_raw": "[ch32v003xxx] ch32v003_opa: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      },
+      "load": {
+        "exp_id": "6f974f96-0797-459e-90e3-8b70acc276c6",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_opa: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_pwr_standby": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 4,
+    "last_seen": 1775555298.7706213,
+    "confidence": 0.5,
+    "known_failures": {
+      "load": {
+        "exp_id": "43111517-b0bd-47f9-a2f0-c0a6e78c18a9",
+        "count": 4,
+        "last_raw": "[ch32v003xxx] ch32v003_pwr_standby: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_i2c_loopback": {
+    "exp_id": "bf8462b7-ec5b-4905-87bc-14855256c604",
+    "success_count": 4,
+    "failure_count": 2,
+    "last_seen": 1775537965.923182,
+    "confidence": 0.8,
+    "known_failures": {
+      "load": {
+        "exp_id": "7671f270-c3c8-4a7a-971f-454bb51f0f3d",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_i2c_loopback: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_usart_dma": {
+    "exp_id": "12588f7f-bb11-4611-9532-64863094885f",
+    "success_count": 4,
+    "failure_count": 2,
+    "last_seen": 1775537969.7729564,
+    "confidence": 0.8,
+    "known_failures": {
+      "load": {
+        "exp_id": "5bfa9b53-f370-4fa6-b529-0fb3f8526b7e",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_usart_dma: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
+  },
+  "ch32v003xxx|ch32v003_spi_dma": {
+    "exp_id": "25b1bf59-7b1b-482e-a50e-7cab1929c562",
+    "success_count": 4,
+    "failure_count": 2,
+    "last_seen": 1775537973.5550559,
+    "confidence": 0.8,
+    "known_failures": {
+      "load": {
+        "exp_id": "25ecc101-1fd2-49b9-8972-ade2c54b7c10",
+        "count": 2,
+        "last_raw": "[ch32v003xxx] ch32v003_spi_dma: failed — stages: preflight, build, run, check — failure: load — step failed"
+      }
+    }
   }
 }

@@ -34,15 +34,12 @@ int main(void)
 
     volatile uint32_t *detail0 = (volatile uint32_t *)(AEL_MAILBOX_ADDR + 12u);
 
-    /* Read CNT twice with a busy delay */
+    /* Poll CNT until it changes — no large constant, immune to GPR corruption */
     uint32_t t1 = SysTick->CNT;
-    for (volatile uint32_t i = 0; i < 500000u; i++);
-    uint32_t t2 = SysTick->CNT;
+    uint32_t t2;
+    do { t2 = SysTick->CNT; } while (t2 == t1);
 
-    if (t2 != t1)
-        ael_mailbox_pass();
-    else
-        ael_mailbox_fail(0, 0);
+    ael_mailbox_pass();
 
     /* Liveness: detail0 updates from SysTick->CNT upper bits */
     while (1) {

@@ -1,27 +1,15 @@
 /*
- * CH32V003 PWR sleep + AWU (Auto Wakeup Unit) test
+ * CH32V003 PWR AWU test — WFI + EXTI9 event wakeup
  *
- * Enters sleep mode (WFI), wakes up via AWU (LSI-based auto-wakeup),
- * then writes PASS. Repeats in liveness loop.
+ * AWU does not set AWUF in run mode; it fires only via the EXTI event line.
+ * Key: EXTI->EVENR bit9 must be set to route AWU wakeup signal to WFI.
  *
- * AWU configuration:
- *   LSI (~128 kHz internal RC oscillator)
- *   AWUPSC = 0b1011 (11 → prescaler /2048) → AWU clock ≈ 62.5 Hz
- *   AWUWR  = 0x3F   (63 counts)            → wakeup ≈ 63/62.5 ≈ 1 s
- *   (use smaller values to keep test fast)
+ * Flow: configure AWU → enable EXTI9 event → __WFI() → AWU fires in ~100 ms
+ * → CPU wakes → write PASS → busy liveness loop (no more WFI, so debug
+ * halt always succeeds).
  *
- * Faster: AWUPSC=0b1000 (prescaler /512) → ~250 Hz; AWUWR=25 → ~100 ms
- *
- * Registers:
- *   RCC->RSTSCKR: LSION (bit0), LSIRDY (bit1)
- *   RCC->APB1PCENR: PWREN (bit28)
- *   PWR->AWUPSC: bits[3:0] = prescaler select
- *   PWR->AWUWR:  bits[5:0] = window register (comparator value)
- *   PWR->AWUCSR: bit1 = AWUEN (enable AWU), bit0 = AWUF (wakeup flag, clear by write 0)
- *   EXTI->EVENR: bit9 = AWU event line (must enable for WFI wakeup)
- *
- * PASS after first wakeup from sleep.
- * detail0 = wakeup_count << 1 (increments in liveness loop)
+ * LSI ~128 kHz, AWUPSC=0x08 (/512) → 250 Hz, AWUWR=25 → ~100 ms wakeup.
+ * detail0 tracks SysTick upper bits for liveness.
  */
 
 #define AEL_MAILBOX_ADDR  0x20000600u
@@ -39,44 +27,40 @@ int main(void)
     /* Enable LSI oscillator */
     RCC->RSTSCKR |= (1u << 0);  /* LSION */
     /* Wait for LSI ready */
-    while (!(RCC->RSTSCKR & (1u << 1)));  /* LSIRDY */
+    { uint32_t t; do { t = RCC->RSTSCKR; } while (!(t & (1u << 1))); }
 
     /* Enable PWR clock on APB1 */
     RCC->APB1PCENR |= RCC_PWREN;
 
-    /* Configure AWU:
-     *   AWUPSC = 0b1000 → prescaler /512 → AWU clock = 128 kHz / 512 = 250 Hz
-     *   AWUWR  = 25     → wakeup period ≈ 25 / 250 = 100 ms */
-    PWR->AWUPSC = 0x08u;  /* prescaler /512 */
-    PWR->AWUWR  = 25u;    /* ~100 ms */
+    /* Configure AWU: AWUPSC=0x08 (/512 per RM → 250 Hz), AWUWR=25 → ~100 ms */
+    PWR->AWUPSC = 0x08u;
+    PWR->AWUWR  = 25u;
 
-    /* Clear wakeup flag, then enable AWU */
-    PWR->AWUCSR = 0u;             /* clear AWUF */
-    PWR->AWUCSR |= (1u << 1);    /* AWUEN */
+    /* Clear AWUF then enable AWU */
+    PWR->AWUCSR = 0u;
+    PWR->AWUCSR |= (1u << 1);  /* AWUEN */
 
-    /* Enable AWU event on EXTI line 9 (required for WFI to exit on AWU) */
+    /* Enable AWU event on EXTI line 9 — required for WFI to exit on AWU */
     EXTI->EVENR |= (1u << 9);
 
-    volatile uint32_t *detail0 = (volatile uint32_t *)(AEL_MAILBOX_ADDR + 12u);
-    uint32_t wakeup_count = 0;
+    /* Enable SysTick for liveness counter (free-running, HCLK) */
+    SysTick->CMP  = 0xFFFFFFFFu;
+    SysTick->CNT  = 0;
+    SysTick->CTLR = 0x5u;  /* ENABLE + HCLK */
 
-    /* Enter sleep once — WFI exits when AWU fires */
+    volatile uint32_t *detail0 = (volatile uint32_t *)(AEL_MAILBOX_ADDR + 12u);
+
+    /* Enter sleep — WFI exits when AWU fires via EXTI9 event (~100 ms) */
     __WFI();
 
-    /* First wakeup — clear flag */
+    /* Woke up from AWU */
     PWR->AWUCSR &= ~(1u << 0);  /* clear AWUF */
-    wakeup_count++;
-    *detail0 = wakeup_count << 1;
 
     ael_mailbox_pass();
 
-    /* Liveness: keep sleeping and waking */
+    /* Busy liveness: CPU stays awake — debug halt always works */
     while (1) {
-        PWR->AWUCSR &= ~(1u << 0);  /* clear AWUF before sleep */
-        __WFI();
-        PWR->AWUCSR &= ~(1u << 0);  /* clear AWUF after wake */
-        wakeup_count++;
-        *detail0 = wakeup_count << 1;
+        *detail0 = (SysTick->CNT >> 13) << 1;
     }
 
     return 0;

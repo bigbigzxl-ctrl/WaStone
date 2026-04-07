@@ -1,13 +1,13 @@
 /*
- * CH32V003 EXTI loopback test: PC0 (output) → PC1 (EXTI1 input)
+ * CH32V003 EXTI loopback test: PC2 (output) → PC1 (EXTI1 input)
  *
- * PC0 = push-pull output (drives the edge)
+ * PC2 = push-pull output (drives the edge)
  * PC1 = floating input + EXTI line 1 rising-edge trigger
- * Wired: PC0 ↔ PC1 (loopback wire)
+ * Wired: PC1 ↔ PC2 (shared with i2c_loopback wire)
  *
  * Test flow:
- *   1. Drive PC0 HIGH → poll EXTI->INTFR bit 1 → verify rising edge caught
- *   2. Drive PC0 LOW  → verify INDR bit 1 = 0
+ *   1. Drive PC2 HIGH → poll EXTI->INTFR bit 1 → verify rising edge caught
+ *   2. Drive PC2 LOW  → verify INDR bit 1 = 0
  *   3. PASS if all 5 initial cycles catch the edge; FAIL otherwise
  *   4. Loop forever, toggling and counting edges in detail0 for liveness
  *
@@ -30,9 +30,9 @@ static void exti_init(void)
     /* Clocks: AFIO + GPIOC */
     RCC->APB2PCENR |= RCC_AFIOEN | RCC_IOPCEN;
 
-    /* PC0 = push-pull output 50 MHz (CFGLR bits[3:0] = 0x3), drive LOW */
-    GPIOC->CFGLR = (GPIOC->CFGLR & ~(0xFu << 0)) | (0x3u << 0);
-    GPIOC->BSHR  = (1u << (0 + 16));  /* PC0 LOW */
+    /* PC2 = push-pull output 50 MHz (CFGLR bits[11:8] = 0x3), drive LOW */
+    GPIOC->CFGLR = (GPIOC->CFGLR & ~(0xFu << 8)) | (0x3u << 8);
+    GPIOC->BSHR  = (1u << (2 + 16));  /* PC2 LOW */
 
     /* PC1 = floating input (CFGLR bits[7:4] = 0x4) */
     GPIOC->CFGLR = (GPIOC->CFGLR & ~(0xFu << 4)) | (0x4u << 4);
@@ -50,14 +50,14 @@ static void exti_init(void)
     EXTI->INTFR = (1u << 1);
 }
 
-/* Drive PC0 HIGH, poll EXTI INTFR bit1 for rising edge (timeout loops).
+/* Drive PC2 HIGH, poll EXTI INTFR bit1 for rising edge (timeout loops).
  * Returns 1 if edge detected, 0 on timeout. Clears flag. */
 static uint8_t wait_rising_edge(void)
 {
     /* Clear stale flag before driving edge */
     EXTI->INTFR = (1u << 1);
 
-    GPIOC->BSHR = (1u << 0);  /* PC0 HIGH */
+    GPIOC->BSHR = (1u << 2);  /* PC2 HIGH */
     for (volatile uint32_t i = 0; i < 50000u; i++) {
         if (EXTI->INTFR & (1u << 1)) {
             EXTI->INTFR = (1u << 1);  /* clear */
@@ -80,7 +80,7 @@ int main(void)
     for (uint8_t i = 0; i < 5; i++) {
         if (!wait_rising_edge()) { err |= (1u << i); }
         /* Drive LOW and verify INDR */
-        GPIOC->BSHR = (1u << (0 + 16));
+        GPIOC->BSHR = (1u << (2 + 16));
         for (volatile uint32_t j = 0; j < 1000u; j++);
         if (GPIOC->INDR & (1u << 1)) { err |= (1u << (i + 8)); }
     }
@@ -98,7 +98,7 @@ int main(void)
             *detail0 = edge_count << 1;
         }
         /* Drive LOW, short settle */
-        GPIOC->BSHR = (1u << (0 + 16));
+        GPIOC->BSHR = (1u << (2 + 16));
         for (volatile uint32_t i = 0; i < 500000u; i++);
     }
 
