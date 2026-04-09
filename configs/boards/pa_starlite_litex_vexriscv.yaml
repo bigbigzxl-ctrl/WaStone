@@ -1,0 +1,43 @@
+board:
+  name: PA StarLite A7-35T — LiteX VexRiscv AEL Semantic Debug
+  target: pa_starlite_litex_vexriscv
+  kind: fpga_target
+  features:
+    - litex_soc
+    - vexriscv_cpu
+    - ael_semantic_debug
+    - spi_loopback
+    - rtos_task_observe
+    - cpu_fault_capture
+
+  # LiteX Wishbone access via litex_server (JTAGBone over FT232H)
+  litex_server_host: localhost
+  litex_server_port: 1234
+
+  # FPGA toolchain (not used by AEL flash step — done separately via Vivado)
+  build:
+    type: custom
+    project_dir: /nvme1t/work/codex/riscv-semantic-dbg
+    bitstream: build/pa_starlite_platform/gateware/pa_starlite_platform.bit
+
+  # No standard flash step — FPGA programmed via Vivado HW Manager
+  flash:
+    method: none
+
+  # SPI loopback wiring (external, hardware-verified)
+  spi_loopback:
+    mosi_fpga_pin: D19   # IO_L14N_T2_SRCC_16, bank 16
+    miso_fpga_pin: E19   # IO_L14P_T2_SRCC_16, bank 16
+    wire: D19→E19        # physical loopback wire
+
+  # AEL Semantic Debug CSR base
+  ael_debug_base: 0xf0001000
+
+  # Test suite
+  tests:
+    - name: test_semantic_spi
+      path: /nvme1t/work/codex/riscv-semantic-dbg/ael_integration/tests/test_semantic_spi.py
+      tags: [spi, loopback, ael]
+    - name: test_rtos_tasks
+      path: /nvme1t/work/codex/riscv-semantic-dbg/ael_integration/tests/test_rtos_tasks.py
+      tags: [rtos, task_state, cpu_fault, ael]
