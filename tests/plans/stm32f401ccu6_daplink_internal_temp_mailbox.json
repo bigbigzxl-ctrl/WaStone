@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "stm32f401ccu6_daplink_internal_temp_mailbox",
+  "board": "stm32f401ccu6_daplink",
+  "supported_instruments": ["daplink"],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": ["mailbox", "stage1", "no_wire", "internal_temp"],
+  "covers": ["adc", "temperature", "internal_sensor"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "project_dir": "firmware/targets/stm32f401rct6_internal_temp_mailbox",
+    "artifact_stem": "stm32f401ccu6_internal_temp_mailbox_app",
+    "build_dir": "artifacts/build_stm32f401ccu6_internal_temp_mailbox"
+  },
+  "signal_checks": [],
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x2000FC00",
+    "skip_attach": true,
+    "halt_before_read": false
+  },
+  "bench_setup": {
+    "notes": "Rule-B Stage 1 no-wire self-test for local STM32F401CCU6 over DAPLink. ADC1 samples the internal temperature sensor on channel 18 with TSVREFE enabled. PASS requires a non-zero, non-saturated average and non-zero sample spread across 8 conversions.",
+    "peripheral_signals": []
+  }
+}
