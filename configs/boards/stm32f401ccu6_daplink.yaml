@@ -1,0 +1,37 @@
+board:
+  name: STM32F401CCU6 DAPLink Local
+  target: stm32f401ccu6
+  instrument_instance: daplink_stm32f401ccu6_local
+  clock_hz: 16000000
+  kind: board
+  features:
+    - programmable_via_swd
+    - has_gpio
+    - has_uart
+  default_bench_profile: stm32f401ccu6_daplink__default
+  build:
+    type: arm_debug
+    project_dir: firmware/targets/stm32f401ce
+    artifact_stem: stm32f401ccu6_app
+  firmware:
+    description: STM32F401xC local DAPLink bench with PC13 LED blink and SWD runtime bring-up
+  flash:
+    speed_khz: 1000
+    reset_strategy: connect_under_reset
+    post_load_settle_s: 2.0
+    target_id: 1
+    gdb_launch_cmds:
+      - "monitor reset halt"
+      - "file {firmware}"
+      - "load"
+      - "monitor reset run"
+      - "detach"
+  mailbox_verify_defaults:
+    skip_attach: true
+    halt_before_read: false
+  power_and_boot:
+    reset_strategy: connect_under_reset
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "program_only",
+  "name": "stm32f401ccu6_daplink_led_blink",
+  "board": "stm32f401ccu6_daplink",
+  "supported_instruments": ["daplink"],
+  "labels": ["stage0", "led", "visual"],
+  "covers": ["gpio", "board_health"],
+  "preflight": { "enabled": false },
+  "build": {
+    "project_dir": "firmware/targets/stm32f401ce",
+    "artifact_stem": "stm32f401ccu6_app",
+    "build_dir": "artifacts/build_stm32f401ccu6_led_blink"
+  },
+  "bench_setup": {
+    "notes": "Visual-only Stage 0 baseline for the local STM32F401CCU6 DAPLink bench. Flashes the PC13 blink image and leaves the target running."
+  }
+}

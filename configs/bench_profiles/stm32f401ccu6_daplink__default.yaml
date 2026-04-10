@@ -1,0 +1,42 @@
+bench_profile:
+  id: stm32f401ccu6_daplink__default
+  board_id: stm32f401ccu6_daplink
+  description: "DAPLink SWD plus DAPLink CDC UART on USART1 PA9/PA10, with PC13 onboard LED"
+
+  bench_connections:
+    - from: SWDIO
+      to: DAPLink SWDIO
+    - from: SWCLK
+      to: DAPLink SWCLK
+    - from: PA9
+      to: DAPLink RX
+    - from: DAPLink TX
+      to: PA10
+    - from: PC13
+      to: LED
+    - from: GND
+      to: DAPLink GND
+
+  serial_console:
+    port: "/dev/serial/by-id/usb-jixin.pro_CMSIS-DAP_CZ_CZ_2023_6688-if00"
+    baud: 115200
+
+  observe_map:
+    led: LED
+
+  verification_views:
+    led:
+      pin: led
+      resolved_to: LED
+      description: Onboard PC13 LED blink
+
+  default_wiring:
+    swd: "external"
+    reset: "NC"
+    verify: "LED"
+    uart: "daplink_bridge"
+
+  safe_pins:
+    - PA9
+    - PA10
+    - PC13
