@@ -24,6 +24,7 @@
       "tests/plans/ch32v203_bkp.json"
     ],
     "2": [
+      "tests/plans/ch32v203_wire_check.json",
       "tests/plans/ch32v203_gpio_loopback.json",
       "tests/plans/ch32v203_exti_loopback.json",
       "tests/plans/ch32v203_uart_loopback.json",

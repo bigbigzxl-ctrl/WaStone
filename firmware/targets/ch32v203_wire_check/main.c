@@ -95,8 +95,9 @@ int main(void)
 
     uint32_t tick = 0;
     while (1) {
-        AEL_MAILBOX->detail0 = (fail_mask ? fail_mask : 0x5A5A);
+        /* On PASS: increment detail0 so detail0_increment check sees liveness.
+         * On FAIL: keep fail_mask in detail0 for diagnosis. */
+        AEL_MAILBOX->detail0 = fail_mask ? fail_mask : ++tick;
         for (volatile int i = 0; i < 720000; i++);
-        tick++;
     }
 }

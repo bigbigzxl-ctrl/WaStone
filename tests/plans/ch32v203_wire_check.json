@@ -7,7 +7,7 @@
   "applies_to": ["board"],
   "requires_dut_features": ["programmable_via_sdi"],
   "requires": { "mailbox": true, "datacapture": false },
-  "labels": ["mailbox", "ch32v203", "wire_check", "connectivity"],
+  "labels": ["mailbox", "ch32v203", "wire_check", "connectivity", "pre_stage2"],
   "covers": ["ch32v203_wire_check"],
   "preflight": { "enabled": false },
   "build": {
@@ -17,22 +17,18 @@
   },
   "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
   "mailbox_verify": {
-    "settle_s": 1.5,
+    "settle_s": 3.0,
     "addr": "0x20000600",
-    "skip_attach": true,
     "halt_before_read": true,
     "check_mode": "detail0_increment",
-    "increment_wait_s": 3,
-    "detach_resume_target": "wch_riscv.cpu.0",
-    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
-    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+    "increment_wait_s": 2
   },
   "bench_setup": {
+    "notes": "Pre-Stage-2 connectivity check. Verifies all 4 Stage-2 loopback wires are in place before running peripheral tests. error_code bitmask: bit0=PA2↔PA3, bit1=PA9↔PA10, bit2=PA7↔PA6, bit3=PA8↔PA0.",
     "bench_connections": [
       { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
       { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
       { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
-      { "from": "WCHLink 3V3",    "to": "CH32V203 3V3"  },
       { "from": "CH32V203 PA2",   "to": "CH32V203 PA3"  },
       { "from": "CH32V203 PA9",   "to": "CH32V203 PA10" },
       { "from": "CH32V203 PA7",   "to": "CH32V203 PA6"  },
