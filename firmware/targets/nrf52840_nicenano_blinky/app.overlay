@@ -3,10 +3,13 @@
  *
  * - Redirects code partition to 0x1000 (Adafruit UF2 bootloader layout)
  * - Adds nice!nano LED alias on P0.15 (active-high blue LED)
+ * - Adds USB CDC so 1200-baud bootloader re-entry works
  */
 
 / {
     chosen {
+        zephyr,console = &cdc_acm_uart0;
+        zephyr,shell-uart = &cdc_acm_uart0;
         zephyr,code-partition = &nicenano_app;
     };
 
@@ -30,5 +33,11 @@
             label = "nicenano-app";
             reg = <0x00001000 0x000EE000>;
         };
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
     };
 };
