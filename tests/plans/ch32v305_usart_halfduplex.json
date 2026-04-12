@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v305_usart_halfduplex",
+  "board": "ch32v305xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v305", "usart_halfduplex", "usart", "stage2"],
+  "covers": ["usart", "half_duplex"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v305_usart_halfduplex",
+    "artifact_stem": "ch32v305_usart_halfduplex"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 2.0 },
+  "mailbox_verify": {
+    "settle_s": 2.0,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "bench_setup": {
+    "notes": "USART1 HDSEL on PA9 (AF_OD). PA10 (IPU) provides pull-up via PA9↔PA10 jumper during TX. After TC, PA10 switches to GPIO Out_PP and bit-bangs the echo byte at 4800 baud; USART1 (RX mode on PA9) receives it. CH32V305 HDSEL disables RX during TX so external echo via PA10 is required.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V305 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V305 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V305 GND"  },
+      { "from": "CH32V305 PA9",   "to": "CH32V305 PA10" }
+    ],
+    "ground_required": true
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v305xxx_golden",
-  "description": "CH32V305RBT6 golden test suite — Stage 0 (blinky), Stage 1 (internal peripherals), Stage 2 (GPIO/EXTI/UART/SPI/TIM loopbacks)",
+  "description": "CH32V305RBT6 golden test suite — Stage 0 (blinky), Stage 1 (internal peripherals + RNG), Stage 2 (loopbacks + OPM + HD)",
   "board": "ch32v305xxx",
   "stages": {
     "0": [
@@ -16,9 +16,12 @@
       "tests/plans/ch32v305_crc.json",
       "tests/plans/ch32v305_adc_vref.json",
       "tests/plans/ch32v305_adc_temp.json",
+      "tests/plans/ch32v305_adc_dma.json",
       "tests/plans/ch32v305_dma_mem2mem.json",
       "tests/plans/ch32v305_can_loopback.json",
-      "tests/plans/ch32v305_pwr_pvd.json"
+      "tests/plans/ch32v305_pwr_pvd.json",
+      "tests/plans/ch32v305_bkp.json",
+      "tests/plans/ch32v305_rng.json"
     ],
     "2": [
       "tests/plans/ch32v305_wire_check.json",
@@ -28,7 +31,9 @@
       "tests/plans/ch32v305_dma_uart.json",
       "tests/plans/ch32v305_spi_loopback.json",
       "tests/plans/ch32v305_spi_dma.json",
-      "tests/plans/ch32v305_tim_pwm_capture.json"
+      "tests/plans/ch32v305_tim_pwm_capture.json",
+      "tests/plans/ch32v305_tim_onepulse.json",
+      "tests/plans/ch32v305_usart_halfduplex.json"
     ]
   },
   "wiring_guide": {
