@@ -326,5 +326,85 @@
     "last_seen": 1776006855.9018824,
     "confidence": 0.6,
     "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_systick": {
+    "exp_id": "3a2ed473-1d64-49ef-8185-dba543e13d69",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776010977.2875714,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_iwdg": {
+    "exp_id": "ff580106-85b0-4946-ace7-c27c4f1dc995",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776010977.2969422,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_rtc_self": {
+    "exp_id": "9ec3cdf4-3ae0-45c4-bf9e-153a5ec6d762",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776010977.3048615,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "5a2fafd7-ad79-418d-834d-50e55e8a9a91",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_rtc_self: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_flash_rw": {
+    "exp_id": "330328e6-7ed8-4618-9149-a08006f41905",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776010977.317114,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "5e8086af-b66f-481c-8f74-f2756c8baf80",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_flash_rw: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_crc": {
+    "exp_id": "8c00423c-2bab-4208-8ebd-b147008fbb81",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776010977.3283055,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "766fbff0-e8b6-498d-aa7e-87dd6b25fd41",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_crc: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_adc_vref": {
+    "exp_id": "a3a8b0d3-0549-4105-9c9e-1cf09b4b2461",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776010977.3385916,
+    "confidence": 0.7,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "b1b39025-063d-4ae6-85bf-e90614df70ac",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_adc_vref: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_dma_mem2mem": {
+    "exp_id": "1b3ff585-2348-48cc-b2ef-c53890b3246d",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776010977.3484066,
+    "confidence": 0.8,
+    "known_failures": {}
   }
 }

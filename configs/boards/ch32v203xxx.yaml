@@ -1,0 +1,33 @@
+board:
+  name: CH32V203
+  target: ch32v203xxx
+  instrument_instance: wchlink_local
+  clock_hz: 72000000        # PLL 72 MHz (HSE 8 MHz × 9)
+  kind: board
+  features:
+    - programmable_via_sdi
+  default_bench_profile: ch32v203xxx__default
+  build:
+    type: arm_debug          # custom Makefile — build step not used by AEL
+    project_dir: firmware/targets/ch32v203_minimal_mailbox
+    artifact_stem: ch32v203_minimal_mailbox
+  flash:
+    method: wch_openocd
+    post_load_settle_s: 1.5
+  mailbox_verify_defaults:
+    skip_attach: true
+    halt_before_read: true
+    address: "0x20000600"
+    detach_resume_target: "wch_riscv.cpu.0"
+    post_resume_openocd_bin: "/nvme1t/wch-riscv-gcc/openocd/bin/openocd"
+    post_resume_openocd_cfg: "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  power_and_boot:
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3
+  notes: >
+    nanoCH32V203 v1.1 by MuseLab. CH32V203C8T6 RISC-V RV32IMAC,
+    64KB flash @ 0x08000000, 20KB SRAM @ 0x20000000.
+    Debug: WCHLink fw ≥2.18 (8010) required — fw 2.01 (unknow) and 8012 (open failed) do NOT work.
+    USB flash: isp55e0 with 4348:55e0 bootloader (BOOT+RST).

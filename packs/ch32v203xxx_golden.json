@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "name": "ch32v203xxx_golden",
+  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI",
+  "board": "ch32v203xxx",
+  "stages": {
+    "0": [
+      "tests/plans/ch32v203_systick.json",
+      "tests/plans/ch32v203_iwdg.json",
+      "tests/plans/ch32v203_rtc_self.json",
+      "tests/plans/ch32v203_flash_rw.json",
+      "tests/plans/ch32v203_crc.json",
+      "tests/plans/ch32v203_adc_vref.json",
+      "tests/plans/ch32v203_dma_mem2mem.json"
+    ],
+    "1": [
+      "tests/plans/ch32v203_gpio_loopback.json",
+      "tests/plans/ch32v203_exti_loopback.json",
+      "tests/plans/ch32v203_uart_loopback.json",
+      "tests/plans/ch32v203_spi_loopback.json",
+      "tests/plans/ch32v203_i2c_loopback.json",
+      "tests/plans/ch32v203_tim_pwm_capture.json"
+    ]
+  },
+  "wiring_guide": {
+    "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND, 3V3) + USB-C power. No GPIO jumpers.",
+    "stage1": [
+      "PA2  ↔  PA3   (GPIO loopback A / EXTI)",
+      "PA9(TX1) ↔ PA10(RX1)  (UART loopback)",
+      "PA7(MOSI1) ↔ PA6(MISO1)  (SPI loopback)",
+      "PB6(SCL1) + PB7(SDA1) + 4.7kΩ to 3V3  (I2C)",
+      "PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)  (PWM capture)"
+    ]
+  },
+  "notes": "WCHLink fw 2.18 (PID 8010) required. fw 2.01 and PID 8012 do NOT work with this OpenOCD."
+}
