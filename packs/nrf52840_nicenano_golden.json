@@ -1,8 +1,10 @@
 {
   "name": "nrf52840_nicenano_golden",
-  "description": "nRF52840 nice!nano v1 Golden Test Suite. Stage0: UF2 blinky (visual) + USB CDC banner. Stage1: 6 on-chip self-tests (TEMP, RNG, TIMER0, RTC1, NVMC flash, AES-ECB), no external wiring. Stage2: peripheral loopback + radio tests (GPIO, UART, SPI, I2C, PWM+capture, SAADC, BLE beacon, IEEE 802.15.4). Note: no onboard external SPI flash — nRF52840 internal flash only. Flash via UF2 mass-storage (no SWD required). Observation via /dev/ttyACM0 USB CDC.",
+  "description": "nRF52840 nice!nano v1 Golden Test Suite — 15/15 PASS (2026-04-12). Stage0: UF2 blinky (visual) + USB CDC banner. Stage1: 6 on-chip self-tests (TEMP, RNG, TIMER0, RTC1, NVMC flash, AES-ECB), no external wiring. Stage2: peripheral loopback + radio (GPIO, UART, SPI, PWM+capture, SAADC, BLE beacon, IEEE 802.15.4). Flash via UF2 mass-storage (no SWD required). Observe via /dev/ttyACM0 USB CDC. Note: no onboard external SPI flash — nRF52840 internal flash only. I2C excluded (no 4.7kΩ pull-ups in standard bench setup).",
   "board": "nrf52840_nicenano",
-  "status": "draft",
+  "status": "golden",
+  "golden_date": "2026-04-12",
+  "result": "15/15 PASS",
   "stages": {
     "0": [
       "tests/plans/nicenano_blinky_visual.json",
@@ -20,7 +22,6 @@
       "tests/plans/nicenano_gpio_loopback.json",
       "tests/plans/nicenano_uart_loopback.json",
       "tests/plans/nicenano_spi_loopback.json",
-      "tests/plans/nicenano_i2c_loopback.json",
       "tests/plans/nicenano_pwm_capture.json",
       "tests/plans/nicenano_saadc.json",
       "tests/plans/nicenano_ble_beacon.json",
@@ -39,7 +40,6 @@
     "tests/plans/nicenano_gpio_loopback.json",
     "tests/plans/nicenano_uart_loopback.json",
     "tests/plans/nicenano_spi_loopback.json",
-    "tests/plans/nicenano_i2c_loopback.json",
     "tests/plans/nicenano_pwm_capture.json",
     "tests/plans/nicenano_saadc.json",
     "tests/plans/nicenano_ble_beacon.json",
@@ -49,12 +49,13 @@
     "stage0": "USB only — no wires needed",
     "stage1": "USB only — no wires needed",
     "stage2": [
-      "P0.06 ↔ P0.08  (GPIO loopback pair A)",
-      "P0.17 ↔ P0.20  (GPIO loopback pair B / UART RX→TX)",
+      "P0.17 ↔ P0.20  (GPIO loopback / UART TX↔RX, left-col PIN6↔PIN5)",
       "P1.13 ↔ P1.11  (SPI MOSI→MISO, right-col PIN16↔PIN15)",
-      "P0.22 → P0.24  (PWM→capture, 1 wire)",
-      "P0.28 + P0.29  (I2C SCL+SDA, add 4.7 kΩ pull-ups)",
-      "P0.31          (SAADC, no wire — on-board VBATT divider)"
+      "P0.22 → P0.24  (PWM→capture, left-col PIN7→PIN8)",
+      "P0.31          (SAADC AIN7 — no wire, on-board VBATT divider)"
     ]
+  },
+  "excluded": {
+    "nicenano_i2c_loopback": "excluded — requires external 4.7kΩ pull-up resistors on P0.11+P1.04; not part of standard bench setup"
   }
 }

@@ -117,6 +117,44 @@ This project explores a future where AI becomes an active engineering partner in
 
 ## 🚀 Latest Milestone
 
+### nRF52840 nice!nano v1 — First Nordic + Zephyr Golden Suite: 15/15 PASS (2026-04-12)
+
+AEL completed a full golden suite on the **nRF52840 nice!nano v1** — a Pro Micro form-factor keyboard controller board — using **UF2 mass-storage flashing** (no SWD probe required) and **USB CDC-ACM** observation. This is AEL's first validated Zephyr-native target without any external debug probe.
+
+**What was covered:**
+
+| Category | Tests | Peripherals |
+|----------|-------|-------------|
+| Stage 0 — Boot | 2 | UF2 blinky (visual), USB CDC banner |
+| Stage 1 — On-chip | 6 | TEMP, RNG, TIMER0, RTC1, NVMC flash R/W/erase, AES-ECB |
+| Stage 2 — Loopback | 5 | GPIO, UART, SPI full-duplex, PWM+capture, SAADC (VBATT divider) |
+| Stage 2 — Radio | 2 | BLE 2.4 GHz beacon, IEEE 802.15.4 bare-metal PLL lock |
+
+**Stage 2 wiring (4 connections total):**
+```
+P0.17 ↔ P0.20  — GPIO / UART loopback  (left-col PIN6↔PIN5)
+P1.13 ↔ P1.11  — SPI MOSI→MISO        (right-col PIN16↔PIN15)
+P0.22 → P0.24  — PWM → capture        (left-col PIN7→PIN8)
+P0.31           — SAADC, no wire      (on-board VBATT divider)
+```
+
+**Key engineering discoveries:**
+
+| Finding | Impact |
+|---------|--------|
+| IEEE 802.15.4 `CONFIG_IEEE802154` requires full networking stack — use bare-metal RADIO registers instead | Avoids 100+ KB ROM overhead |
+| nice!nano connector only exposes specific P1.xx pins — P1.10/P1.12 not on header (see [nrfmicro wiki](https://github.com/joric/nrfmicro/wiki/Pinout)) | Prevents silent SPI wiring mistakes |
+| Zephyr 4.x USB CDC: `USB_DEVICE_STACK_NEXT` + `USBD_CDC_ACM_CLASS` (old `CDC_ACM_SERIAL_*` removed) | Required for all Zephyr 4.x USB CDC targets |
+| Stage 1 firmware prints sub-results at ~1.5s boot; `post_load_settle_s=4` misses them — match `AEL_STAGE1_PASS` in repeat loop | Fixes false-FAIL on all 6 stage1 tests |
+
+**Canonical result:**
+
+- DUT: `nrf52840_nicenano` (Cortex-M4F @ 64 MHz, 1 MB Flash, UF2 bootloader)
+- Pack: [`packs/nrf52840_nicenano_golden.json`](packs/nrf52840_nicenano_golden.json)
+- Report: [`docs/reports/nrf52840_nicenano_golden_suite_closeout_2026-04-12.md`](docs/reports/nrf52840_nicenano_golden_suite_closeout_2026-04-12.md)
+
+---
+
 ### CH32V003F4U6 — First RISC-V Board Validated with AEL: 14/14 PASS (2026-04-06)
 
 AEL has been successfully validated on a **RISC-V architecture** for the first time. The CH32V003F4U6 (WCH RV32EC, 24 MHz HSI, 16 KB Flash, 2 KB SRAM) completed a 14-test golden suite via WCH-LinkE SDI (1-wire debug), covering nearly the full peripheral set of this ultra-low-cost RISC-V MCU.
@@ -1158,7 +1196,7 @@ Notes:
 
 ---
 
-## STM32 MCU Golden Test Suite Summary
+## Board Golden Test Suite Summary
 
 > Last updated: 2026-03-28 — full audit report: [`docs/reports/stm32_golden_suite_inventory_2026-03-28.md`](docs/reports/stm32_golden_suite_inventory_2026-03-28.md)
 
@@ -1189,10 +1227,12 @@ Notes:
 │ stm32g431cbu6                 │ G4     │ golden    │ 10    │ 2026-03-16 │ smoke_stm32g431                                                │
 ├───────────────────────────────┼────────┼───────────┼───────┼────────────┼────────────────────────────────────────────────────────────────┤
 │ stm32h750vbt6                 │ H7     │ golden    │ 7     │ 2026-03-16 │ smoke_stm32h750                                                │
+├───────────────────────────────┼────────┼───────────┼───────┼────────────┼────────────────────────────────────────────────────────────────┤
+│ nrf52840_nicenano             │ nRF52  │ golden    │ 15    │ 2026-04-12 │ nrf52840_nicenano_golden                                       │
 └───────────────────────────────┴────────┴───────────┴───────┴────────────┴────────────────────────────────────────────────────────────────┘
 ```
 
-**12 boards · 75 test entries** — refactoring ongoing, priority: `stm32f401rct6` (pack consolidation) and `stm32f103c6t6_bluepill_like` (golden promotion).
+**13 boards · 90 test entries** — refactoring ongoing, priority: `stm32f401rct6` (pack consolidation) and `stm32f103c6t6_bluepill_like` (golden promotion).
 
 ---
 
