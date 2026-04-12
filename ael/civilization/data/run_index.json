@@ -174,5 +174,21 @@
     "last_seen": 1776001431.9576547,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_gpio_loopback": {
+    "exp_id": "manual",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001863.45909,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_usb_cdc_banner": {
+    "exp_id": "manual",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001863.45952,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }
