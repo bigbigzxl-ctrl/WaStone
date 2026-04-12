@@ -37,6 +37,7 @@ from __future__ import annotations
 import glob
 import os
 import shutil
+import subprocess
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -170,7 +171,15 @@ def run(
           f"({uf2_path.stat().st_size // 1024} KB) → {mount_path}")
 
     try:
-        shutil.copy2(str(uf2_path), str(dest))
+        # Use system cp instead of shutil — UF2 FAT drives don't support
+        # the utime/chmod calls that shutil.copy2 makes after writing.
+        result = subprocess.run(
+            ["cp", str(uf2_path), str(mount_path) + "/"],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            print(f"Flash/UF2: cp failed (rc={result.returncode}): {result.stderr.strip()}")
+            return False
     except Exception as exc:
         print(f"Flash/UF2: copy failed: {exc}")
         return False
