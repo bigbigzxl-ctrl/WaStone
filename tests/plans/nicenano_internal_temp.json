@@ -35,11 +35,11 @@
     "profile": "generic",
     "duration_s": 20,
     "expect_patterns": [
-      "\\[TEMP\\].*PASS"
+      "AEL_STAGE1_PASS"
     ]
   },
   "bench_setup": {
-    "notes": "Stage 1 no-wire. nRF52840 TEMP peripheral self-test. Reads die temperature, expects 0–85 °C.",
+    "notes": "Stage 1 no-wire. nRF52840 TEMP peripheral self-test. Reads die temperature, expects 0\u201385 \u00b0C.",
     "peripheral_signals": []
   },
   "preflight": {

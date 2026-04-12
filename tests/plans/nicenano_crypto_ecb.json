@@ -38,11 +38,11 @@
     "profile": "generic",
     "duration_s": 20,
     "expect_patterns": [
-      "\\[CRYPTO\\].*PASS"
+      "AEL_STAGE1_PASS"
     ]
   },
   "bench_setup": {
-    "notes": "Stage 1 no-wire. AES-ECB hardware using NIST FIPS-197 Appendix B test vector. Known plaintext→ciphertext match.",
+    "notes": "Stage 1 no-wire. AES-ECB hardware using NIST FIPS-197 Appendix B test vector. Known plaintext\u2192ciphertext match.",
     "peripheral_signals": []
   },
   "preflight": {

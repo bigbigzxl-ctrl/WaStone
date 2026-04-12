@@ -37,11 +37,11 @@
     "profile": "generic",
     "duration_s": 30,
     "expect_patterns": [
-      "\\[RTC\\].*PASS"
+      "AEL_STAGE1_PASS"
     ]
   },
   "bench_setup": {
-    "notes": "Stage 1 no-wire. RTC1 at 32768 Hz LFCLK, 1 s reference via Zephyr uptime. Accepts ±10% error.",
+    "notes": "Stage 1 no-wire. RTC1 at 32768 Hz LFCLK, 1 s reference via Zephyr uptime. Accepts \u00b110% error.",
     "peripheral_signals": []
   },
   "preflight": {

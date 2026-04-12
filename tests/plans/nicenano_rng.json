@@ -36,7 +36,7 @@
     "profile": "generic",
     "duration_s": 20,
     "expect_patterns": [
-      "\\[RNG\\].*PASS"
+      "AEL_STAGE1_PASS"
     ]
   },
   "bench_setup": {

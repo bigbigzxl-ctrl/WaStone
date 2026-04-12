@@ -36,11 +36,11 @@
     "profile": "generic",
     "duration_s": 25,
     "expect_patterns": [
-      "\\[TIMER\\].*PASS"
+      "AEL_STAGE1_PASS"
     ]
   },
   "bench_setup": {
-    "notes": "Stage 1 no-wire. TIMER0 32-bit free-run at 16 MHz, 1 s reference via Zephyr uptime. Accepts ±5% error.",
+    "notes": "Stage 1 no-wire. TIMER0 32-bit free-run at 16 MHz, 1 s reference via Zephyr uptime. Accepts \u00b15% error.",
     "peripheral_signals": []
   },
   "preflight": {
