@@ -19,6 +19,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/device.h>
+#include "../../nrf52840_nicenano_common/ael_usb.h"
 #include <zephyr/drivers/entropy.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/crypto/crypto.h>
@@ -135,41 +136,49 @@ static bool test_timer(void)
 
 /* ── RTC1 (direct register, 32768 Hz LFCLK, 1 s reference) ──────────────── */
 #define NRF_CLOCK_BASE      0x40000000UL
-#define CLOCK_TASKS_LFCLKSTART (*(volatile uint32_t *)(NRF_CLOCK_BASE + 0x008))
+#define CLOCK_TASKS_LFCLKSTART    (*(volatile uint32_t *)(NRF_CLOCK_BASE + 0x008))
 #define CLOCK_EVENTS_LFCLKSTARTED (*(volatile uint32_t *)(NRF_CLOCK_BASE + 0x104))
+/* LFCLKSTAT: bit 16 = LFCLKSTARTED (LFCLK running) */
+#define CLOCK_LFCLKSTAT           (*(volatile uint32_t *)(NRF_CLOCK_BASE + 0x418))
 
-#define NRF_RTC1_BASE       0x40011000UL
-#define RTC1_TASKS_START    (*(volatile uint32_t *)(NRF_RTC1_BASE + 0x000))
-#define RTC1_TASKS_STOP     (*(volatile uint32_t *)(NRF_RTC1_BASE + 0x004))
-#define RTC1_TASKS_CLEAR    (*(volatile uint32_t *)(NRF_RTC1_BASE + 0x008))
-#define RTC1_COUNTER        (*(volatile uint32_t *)(NRF_RTC1_BASE + 0x504))
-#define RTC1_PRESCALER      (*(volatile uint32_t *)(NRF_RTC1_BASE + 0x508))
+/* Use RTC2 — Zephyr uses RTC1 for kernel timer on nRF52840 */
+#define NRF_RTC2_BASE       0x40024000UL
+#define RTC2_TASKS_START    (*(volatile uint32_t *)(NRF_RTC2_BASE + 0x000))
+#define RTC2_TASKS_STOP     (*(volatile uint32_t *)(NRF_RTC2_BASE + 0x004))
+#define RTC2_TASKS_CLEAR    (*(volatile uint32_t *)(NRF_RTC2_BASE + 0x008))
+#define RTC2_COUNTER        (*(volatile uint32_t *)(NRF_RTC2_BASE + 0x504))
+#define RTC2_PRESCALER      (*(volatile uint32_t *)(NRF_RTC2_BASE + 0x508))
 
 static bool test_rtc(void)
 {
-    /* Start LFCLK if not already running */
-    CLOCK_EVENTS_LFCLKSTARTED = 0;
-    CLOCK_TASKS_LFCLKSTART = 1;
-    uint32_t deadline = k_uptime_get_32() + 1000;
-    while (!CLOCK_EVENTS_LFCLKSTARTED) {
-        if (k_uptime_get_32() > deadline) {
-            printk("[RTC] lfclk_start_timeout FAIL\n");
-            return false;
+    /* Zephyr uses LFCLK internally (RTC0 for SysTick). Only start it if not
+     * already running — re-issuing LFCLKSTART when running is a no-op and
+     * clearing + re-polling EVENTS_LFCLKSTARTED would spin forever. */
+    if (!(CLOCK_LFCLKSTAT & BIT(16))) {
+        CLOCK_EVENTS_LFCLKSTARTED = 0;
+        CLOCK_TASKS_LFCLKSTART = 1;
+        uint32_t deadline = k_uptime_get_32() + 1000;
+        while (!CLOCK_EVENTS_LFCLKSTARTED) {
+            k_yield();   /* let USB workqueue drain TX during spin */
+            if (k_uptime_get_32() > deadline) {
+                printk("[RTC] lfclk_start_timeout FAIL\n");
+                return false;
+            }
         }
     }
 
-    /* RTC1: prescaler=0 → 32768 Hz */
-    RTC1_TASKS_STOP  = 1;
-    RTC1_TASKS_CLEAR = 1;
-    RTC1_PRESCALER   = 0;
-    RTC1_TASKS_START = 1;
+    /* RTC2: prescaler=0 → 32768 Hz (RTC1 is reserved for Zephyr kernel timer) */
+    RTC2_TASKS_STOP  = 1;
+    RTC2_TASKS_CLEAR = 1;
+    RTC2_PRESCALER   = 0;
+    RTC2_TASKS_START = 1;
 
     uint32_t t0 = k_uptime_get_32();
     k_msleep(1000);
     uint32_t t1 = k_uptime_get_32();
 
-    uint32_t rtc_ticks = RTC1_COUNTER;
-    RTC1_TASKS_STOP = 1;
+    uint32_t rtc_ticks = RTC2_COUNTER;
+    RTC2_TASKS_STOP = 1;
 
     uint32_t elapsed_ms = t1 - t0;
     uint32_t expected   = (uint32_t)((uint64_t)elapsed_ms * 32768 / 1000);
@@ -192,7 +201,7 @@ static bool test_rtc(void)
 
 static bool test_flash(void)
 {
-    const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash));
+    const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
     if (!device_is_ready(dev)) {
         printk("[FLASH] device_not_ready FAIL\n");
         return false;
@@ -248,11 +257,7 @@ static const uint8_t _ecb_cipher[16] = {
 
 static bool test_crypto(void)
 {
-    const struct device *dev = device_get_binding(CONFIG_CRYPTO_NRF_ECB_DRV_NAME);
-    if (!dev) {
-        /* Try DT-based lookup */
-        dev = DEVICE_DT_GET_ANY(nordic_nrf_ecb);
-    }
+    const struct device *dev = DEVICE_DT_GET_ANY(nordic_nrf_ecb);
     if (!dev || !device_is_ready(dev)) {
         printk("[CRYPTO] device_not_ready FAIL\n");
         return false;
@@ -298,7 +303,7 @@ static bool test_crypto(void)
 /* ── main ─────────────────────────────────────────────────────────────────── */
 int main(void)
 {
-    /* Short boot delay so USB CDC enumerates before first printk */
+    ael_usb_init();
     k_msleep(1500);
 
     printk("AEL_STAGE1_START board=nRF52840\n");
@@ -319,6 +324,7 @@ int main(void)
 
     /* Repeat summary every 5 s so observe_uart always catches it */
     while (1) {
+        if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
         k_msleep(5000);
         printk("AEL_STAGE1_%s (repeat)\n", pass ? "PASS" : "FAIL");
     }
