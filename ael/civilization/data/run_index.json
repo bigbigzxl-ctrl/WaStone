@@ -498,5 +498,99 @@
         "last_raw": "[ch32v203xxx] ch32v203_tim_encoder: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
+  },
+  "ch32v203xxx|ch32v203_pwr_pvd": {
+    "exp_id": "75bc3fd8-0ac7-42c0-84bf-6d69dcce960b",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015313.0930674,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_adc_dma": {
+    "exp_id": "e7862353-0df8-4b84-8869-9cb38c60ce9d",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015348.1721556,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_tim_onepulse": {
+    "exp_id": "3afecf18-01fb-4c98-ae7f-11b21b304108",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015356.1470075,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_bkp": {
+    "exp_id": "55a788fe-d344-4423-9be2-87245ddf05b2",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015362.1436458,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_spi_dma": {
+    "exp_id": "85bf3550-7074-4b45-b4dc-d095426532bc",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015369.0848196,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_usart_halfduplex": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1776015380.063325,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "5968ae87-f09e-424d-b35b-c2771bba2e51",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_usart_halfduplex: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v203xxx|pwr_pvd": {
+    "exp_id": null,
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015450.3830678,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|adc_dma": {
+    "exp_id": null,
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015450.3841047,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|tim_onepulse": {
+    "exp_id": null,
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015450.3874905,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|bkp": {
+    "exp_id": null,
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015450.3884027,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "ch32v203xxx|spi_dma": {
+    "exp_id": null,
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776015450.3893054,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }

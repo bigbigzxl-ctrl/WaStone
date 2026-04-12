@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v203_pwr_pvd",
+  "board": "ch32v203xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v203", "pwr", "pvd", "stage0", "no_wire"],
+  "covers": ["ch32v203_pvd_detector"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v203_pwr_pvd",
+    "artifact_stem": "ch32v203_pwr_pvd"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "bench_setup": {
+    "notes": "PVD threshold 2.9V. At 3.3V supply PVDO=0 (above threshold) → PASS. detail0=PWR->CSR on PASS.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
+      { "from": "WCHLink 3V3",    "to": "CH32V203 3V3"  }
+    ],
+    "ground_required": true
+  }
+}

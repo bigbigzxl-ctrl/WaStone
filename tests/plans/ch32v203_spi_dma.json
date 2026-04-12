@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v203_spi_dma",
+  "board": "ch32v203xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v203", "spi", "dma", "loopback", "stage1"],
+  "covers": ["ch32v203_spi_dma_loopback"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v203_spi_dma",
+    "artifact_stem": "ch32v203_spi_dma"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "bench_setup": {
+    "notes": "SPI1 master loopback via DMA. DMA1_Ch2=RX, DMA1_Ch3=TX. 8 bytes. PA7(MOSI)↔PA6(MISO) wire required (same as spi_loopback).",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
+      { "from": "WCHLink 3V3",    "to": "CH32V203 3V3"  },
+      { "from": "CH32V203 PA7",   "to": "CH32V203 PA6"  }
+    ],
+    "ground_required": true
+  }
+}

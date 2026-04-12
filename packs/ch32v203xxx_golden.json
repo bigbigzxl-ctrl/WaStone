@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v203xxx_golden",
-  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI",
+  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA, USART-HD, USB-CDC",
   "board": "ch32v203xxx",
   "stages": {
     "0": [
@@ -13,7 +13,11 @@
       "tests/plans/ch32v203_adc_vref.json",
       "tests/plans/ch32v203_adc_temp.json",
       "tests/plans/ch32v203_dma_mem2mem.json",
-      "tests/plans/ch32v203_can_loopback.json"
+      "tests/plans/ch32v203_can_loopback.json",
+      "tests/plans/ch32v203_pwr_pvd.json",
+      "tests/plans/ch32v203_adc_dma.json",
+      "tests/plans/ch32v203_tim_onepulse.json",
+      "tests/plans/ch32v203_bkp.json"
     ],
     "1": [
       "tests/plans/ch32v203_gpio_loopback.json",
@@ -22,10 +26,15 @@
       "tests/plans/ch32v203_dma_uart.json",
       "tests/plans/ch32v203_spi_loopback.json",
       "tests/plans/ch32v203_i2c_loopback.json",
-      "tests/plans/ch32v203_tim_pwm_capture.json"
+      "tests/plans/ch32v203_tim_pwm_capture.json",
+      "tests/plans/ch32v203_spi_dma.json"
     ],
     "2": [
       "tests/plans/ch32v203_tim_encoder.json"
+    ],
+    "3": [
+      "tests/plans/ch32v203_usart_halfduplex.json",
+      "tests/plans/ch32v203_usb_cdc_banner.json"
     ]
   },
   "wiring_guide": {
@@ -33,7 +42,7 @@
     "stage1": [
       "PA2  ↔  PA3   (GPIO loopback A / EXTI)",
       "PA9(TX1) ↔ PA10(RX1)  (UART loopback + DMA_UART)",
-      "PA7(MOSI1) ↔ PA6(MISO1)  (SPI loopback)",
+      "PA7(MOSI1) ↔ PA6(MISO1)  (SPI loopback + SPI DMA)",
       "PB6(SCL1) + PB7(SDA1) + 4.7kΩ to 3V3  (I2C — optional, skip if no pull-ups)",
       "PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)  (PWM capture)"
     ],
@@ -41,6 +50,10 @@
       "PA0(TIM2_CH1) → PA6(TIM3_CH1)  (encoder quadrature A)",
       "PA1(TIM2_CH2) → PA7(TIM3_CH2)  (encoder quadrature B)",
       "Note: stage2 replaces stage1 PA7↔PA6 and PA8→PA0 wires"
+    ],
+    "stage3": [
+      "PA2(USART2_HD) ↔ PB10(USART3_HD) + 4.7kΩ pull-up to 3V3  (half-duplex — PA2 also connected to PA3 from stage1 is OK, just adds floating load)",
+      "USB-C cable from board secondary USB port (PA11=D-/PA12=D+) to host  (USB CDC banner — needs 96MHz PLL)"
     ]
   },
   "notes": "WCHLink fw 2.18 (PID 8010) required. fw 2.01 and PID 8012 do NOT work with this OpenOCD."
