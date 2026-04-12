@@ -185,10 +185,10 @@
   },
   "nrf52840_nicenano|nicenano_usb_cdc_banner": {
     "exp_id": "manual",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776001863.45952,
-    "confidence": 0.5,
+    "last_seen": 1776006855.8947613,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "nrf52840_nicenano|nicenano_saadc": {
@@ -262,6 +262,68 @@
     "success_count": 2,
     "failure_count": 0,
     "last_seen": 1776005829.9408085,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_internal_temp": {
+    "exp_id": "c40b4633-1186-4655-8b47-1e86283f024c",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1776006855.8982656,
+    "confidence": 0.6,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "8efceb5a-8aa5-41b4-a2eb-8ba1eff9f5ce",
+        "count": 1,
+        "last_raw": "[nrf52840_nicenano] nicenano_internal_temp: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+      }
+    }
+  },
+  "nrf52840_nicenano|nicenano_rng": {
+    "exp_id": "2dd43214-951b-4dc3-a331-d924941fc38e",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.8989935,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_timer_self": {
+    "exp_id": "8ac1f527-65fa-4994-922c-307e1e25d09c",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.8995523,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_rtc_self": {
+    "exp_id": "7fb0b6d9-c42d-48af-8a36-7809532b94c4",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.9001164,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_flash_rw": {
+    "exp_id": "f43b9941-ef1f-4f2d-89c1-f19ab0537501",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.9006777,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_crypto_ecb": {
+    "exp_id": "50e8e783-f6c7-4190-a442-9e853c33da80",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.9012558,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_blinky_visual": {
+    "exp_id": "5c9bc4eb-f081-4f56-a521-723c6b216321",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776006855.9018824,
     "confidence": 0.6,
     "known_failures": {}
   }
