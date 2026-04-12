@@ -115,7 +115,69 @@ This project explores a future where AI becomes an active engineering partner in
 
 ---
 
-## 🚀 Latest Milestone
+## 🚀 Latest Milestones
+
+### CH32V203C8T6 + CH32V305RBT6 — Dual WCH RISC-V Golden Suites Complete (2026-04-12)
+
+AEL has validated two WCH RISC-V boards end-to-end via **WCHLink-E SDI**, adding 48 passing tests to the golden registry in a single session.
+
+#### CH32V203C8T6 (nanoCH32V203) — 23/23 PASS
+
+A budget RISC-V (RV32IMAC @ 72 MHz, 64 KB Flash, 20 KB SRAM) with near-complete STM32F103-compatible peripheral coverage:
+
+| Stage | Tests | Peripherals |
+|-------|-------|-------------|
+| Stage 0 — Boot | 2 | GPIO blinky (visual + mailbox) |
+| Stage 1 — On-chip | 13 | SysTick, IWDG, RTC, Flash R/W, CRC, ADC Vrefint, ADC temp, ADC+DMA, DMA M2M, CAN loopback, PVD, BKP, TIM OPM |
+| Stage 2 — Loopback | 8 | Wire-check, GPIO, EXTI, UART, DMA-UART, SPI, SPI-DMA, TIM PWM+capture |
+
+**Stage 2 wiring (4 jumpers):**
+```
+PA2  ↔ PA3   — GPIO loopback / EXTI
+PA9  ↔ PA10  — UART loopback / DMA-UART
+PA7  ↔ PA6   — SPI MOSI↔MISO / SPI-DMA
+PA8  → PA0   — TIM1 PWM → TIM2 capture
+```
+
+**Canonical result:**
+- DUT: `ch32v203xxx` (RV32IMAC @ 72 MHz, WCHLink-E SDI)
+- Pack: [`packs/ch32v203xxx_golden.json`](packs/ch32v203xxx_golden.json)
+
+---
+
+#### CH32V305RBT6 (nanoCH32V305) — 25/25 PASS
+
+An enhanced WCH RISC-V (RV32IMAFCXW @ 96 MHz, 128 KB Flash, 32 KB SRAM) with hardware FPU, hardware RNG, and full CAN/SPI-DMA coverage:
+
+| Stage | Tests | Peripherals |
+|-------|-------|-------------|
+| Stage 0 — Boot | 2 | GPIO blinky (visual + mailbox) |
+| Stage 1 — On-chip | 13 | SysTick, IWDG, RTC, Flash R/W, CRC, ADC Vrefint, ADC temp, ADC+DMA, DMA M2M, CAN loopback, PVD, BKP, **RNG** |
+| Stage 2 — Loopback | 10 | Wire-check, GPIO, EXTI, UART, DMA-UART, SPI, SPI-DMA, TIM PWM+capture, TIM OPM, **USART half-duplex** |
+
+**Stage 2 wiring (4 jumpers, identical layout to V203):**
+```
+PA1  ↔ PA2   — GPIO loopback / EXTI / USART HDSEL pull-up
+PA9  ↔ PA10  — UART loopback / DMA-UART / USART HDSEL echo
+PA7  ↔ PA6   — SPI MOSI↔MISO / SPI-DMA
+PA8  → PA0   — TIM1 PWM → TIM2 capture
+```
+
+**Key engineering discoveries:**
+
+| Finding | Impact |
+|---------|--------|
+| `ch32v30x_rng.h` not included in `ch32v30x_conf.h` — must be explicit | Compile error without it |
+| CH32V30x HDSEL: RX disabled during TX; TC→RX guard ≈ 1–2 bit periods | Echo must wait ≥3 bit periods after TC (fix: `wait_bit()×3`) |
+| TIM2 is 32-bit on V305 (unlike V203's 16-bit) | No `& 0xFFFF` mask in capture difference |
+| ADC clock max 14 MHz: use `RCC_PCLK2_Div8` at 96 MHz | Prevents ADC mis-conversion |
+
+**Canonical result:**
+- DUT: `ch32v305xxx` (RV32IMAFCXW @ 96 MHz, WCHLink-E SDI)
+- Pack: [`packs/ch32v305xxx_golden.json`](packs/ch32v305xxx_golden.json)
+- Report: [`reports/ch32v305xxx_golden_suite_report.md`](reports/ch32v305xxx_golden_suite_report.md)
+
+---
 
 ### nRF52840 nice!nano v1 — First Nordic + Zephyr Golden Suite: 15/15 PASS (2026-04-12)
 
