@@ -8,7 +8,7 @@
     "known_failures": {}
   },
   "vexriscv_fpga_artix7|test_freertos_deadlock_tc60_tc74": {
-    "exp_id": "Experience(id='c50655ba-e39e-4181-991d-971d90e85960', schema_version='v1', domain='engineering', type='', intent=None, raw='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix7. AEL v0.5 bitstream (815KB, If/Elif FIFO fix). Key fixes: (1) Migen COMB push_cond must use If/Elif chain not multiple independent If stmts \u2014 last-wins semantics causes push_cond always 0. (2) event_data lower 16 bits = ev_id (RTL stores Signal(32,reset=EV_X) as-is in lower bits). TC-71 EV_DEADLOCK=0x1003 confirmed in FIFO.', summary='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix...', context={}, tags=['fix'], entities=[], actions=[], outcome='success', confidence=0.5, related_experience=[], derived_from=[], timestamp=1775780430.5750928, source=None, feedback=None, scope='task', last_used=None, decay_score=1.0, avoid=False)",
+    "exp_id": "Experience(id='c50655ba-e39e-4181-991d-971d90e85960', schema_version='v1', domain='engineering', type='', intent=None, raw='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix7. AEL v0.5 bitstream (815KB, If/Elif FIFO fix). Key fixes: (1) Migen COMB push_cond must use If/Elif chain not multiple independent If stmts — last-wins semantics causes push_cond always 0. (2) event_data lower 16 bits = ev_id (RTL stores Signal(32,reset=EV_X) as-is in lower bits). TC-71 EV_DEADLOCK=0x1003 confirmed in FIFO.', summary='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix...', context={}, tags=['fix'], entities=[], actions=[], outcome='success', confidence=0.5, related_experience=[], derived_from=[], timestamp=1775780430.5750928, source=None, feedback=None, scope='task', last_used=None, decay_score=1.0, avoid=False)",
     "success_count": 1,
     "failure_count": 0,
     "last_seen": 1775780430.6076438,
@@ -201,7 +201,7 @@
       "preflight": {
         "exp_id": "6ba4fc09-1a01-4dac-8395-9db7faf65dc0",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_saadc: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
+        "last_raw": "[nrf52840_nicenano] nicenano_saadc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
       }
     }
   },
@@ -223,7 +223,7 @@
       "check_uart": {
         "exp_id": "09ea136f-704c-4102-8a3f-8dfd71c5c686",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_spi_flash: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_uart \u2014 uart transport unavailable"
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_flash: failed — stages: preflight, build, load, run — failure: check_uart — uart transport unavailable"
       }
     }
   },
@@ -245,7 +245,7 @@
       "build": {
         "exp_id": "852faad3-df1e-4eeb-adfc-80211ae61c1b",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_spi_loopback: failed \u2014 stages: preflight, load, run, check \u2014 failure: build \u2014 adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'build', '-p', 'always', '-b', 'nrf52840dk/nrf52840', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_nicenano_spi_loopback', '/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback', '--', '-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay']' returned non-zero exit status 120."
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_loopback: failed — stages: preflight, load, run, check — failure: build — adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'build', '-p', 'always', '-b', 'nrf52840dk/nrf52840', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_nicenano_spi_loopback', '/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback', '--', '-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay']' returned non-zero exit status 120."
       }
     }
   },
@@ -275,7 +275,7 @@
       "check_uart": {
         "exp_id": "8efceb5a-8aa5-41b4-a2eb-8ba1eff9f5ce",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_internal_temp: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_uart \u2014 expected UART readiness patterns missing"
+        "last_raw": "[nrf52840_nicenano] nicenano_internal_temp: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
       }
     }
   },
@@ -329,159 +329,159 @@
   },
   "ch32v203xxx|ch32v203_systick": {
     "exp_id": "3a2ed473-1d64-49ef-8185-dba543e13d69",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776010977.2875714,
-    "confidence": 0.8,
+    "last_seen": 1776026171.2521424,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_iwdg": {
     "exp_id": "ff580106-85b0-4946-ace7-c27c4f1dc995",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776010977.2969422,
-    "confidence": 0.8,
+    "last_seen": 1776026174.8816853,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_rtc_self": {
     "exp_id": "9ec3cdf4-3ae0-45c4-bf9e-153a5ec6d762",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 1,
-    "last_seen": 1776010977.3048615,
-    "confidence": 0.7,
+    "last_seen": 1776026180.7515213,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "5a2fafd7-ad79-418d-834d-50e55e8a9a91",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_rtc_self: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_rtc_self: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_flash_rw": {
     "exp_id": "330328e6-7ed8-4618-9149-a08006f41905",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 1,
-    "last_seen": 1776010977.317114,
-    "confidence": 0.7,
+    "last_seen": 1776026184.4554005,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "5e8086af-b66f-481c-8f74-f2756c8baf80",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_flash_rw: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_flash_rw: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_crc": {
     "exp_id": "8c00423c-2bab-4208-8ebd-b147008fbb81",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 1,
-    "last_seen": 1776010977.3283055,
-    "confidence": 0.7,
+    "last_seen": 1776026188.1228032,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "766fbff0-e8b6-498d-aa7e-87dd6b25fd41",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_crc: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_crc: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_adc_vref": {
     "exp_id": "a3a8b0d3-0549-4105-9c9e-1cf09b4b2461",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 1,
-    "last_seen": 1776010977.3385916,
-    "confidence": 0.7,
+    "last_seen": 1776026192.0013897,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "b1b39025-063d-4ae6-85bf-e90614df70ac",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_adc_vref: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=RUNNING (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_adc_vref: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_dma_mem2mem": {
     "exp_id": "1b3ff585-2348-48cc-b2ef-c53890b3246d",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776010977.3484066,
-    "confidence": 0.8,
+    "last_seen": 1776026199.5967364,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_wire_check": {
     "exp_id": "249b201d-926a-410e-9bb1-6c704cc6ee8e",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3392267,
-    "confidence": 0.6,
+    "last_seen": 1776026223.0148942,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_gpio_loopback": {
     "exp_id": "384638c5-fad1-4c0a-b5c9-95d9006acd13",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3509696,
-    "confidence": 0.6,
+    "last_seen": 1776026226.6524339,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_exti_loopback": {
     "exp_id": "920e4089-241d-4950-8a1e-0103737e834a",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3593216,
-    "confidence": 0.6,
+    "last_seen": 1776026230.308294,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_uart_loopback": {
     "exp_id": "b6385899-38a9-4f4e-8999-4b4ad85eb0e8",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3704813,
-    "confidence": 0.6,
+    "last_seen": 1776026234.6169982,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_spi_loopback": {
     "exp_id": "f44566e3-a357-4fef-80d7-5f6a839bb43a",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3811233,
-    "confidence": 0.6,
+    "last_seen": 1776026242.2276483,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_tim_pwm_capture": {
     "exp_id": "4f63313a-8385-4156-bd19-4d445db51eda",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776011398.3919573,
-    "confidence": 0.6,
+    "last_seen": 1776026246.3688655,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_can_loopback": {
     "exp_id": "ac859841-d7ab-4af7-9971-ca65932abd64",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1776013454.7947712,
-    "confidence": 0.6,
+    "last_seen": 1776026203.4188595,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_adc_temp": {
     "exp_id": "c259b6b3-7d20-4e6f-9b0a-3ef4f8de3370",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1776013454.7959325,
-    "confidence": 0.6,
+    "last_seen": 1776026195.860407,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_dma_uart": {
     "exp_id": "2c2bf40c-98e6-4081-af27-0ec5e3f4b0ce",
-    "success_count": 2,
+    "success_count": 6,
     "failure_count": 3,
-    "last_seen": 1776013454.7994883,
-    "confidence": 0.6,
+    "last_seen": 1776026238.5691009,
+    "confidence": 1.0,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "4edb927d-07bc-4f43-99b0-4e305020beaf",
         "count": 3,
-        "last_raw": "[ch32v203xxx] ch32v203_dma_uart: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_dma_uart: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -495,48 +495,48 @@
       "check_mailbox": {
         "exp_id": "8660d61d-422e-4734-8aa7-aff7015441f7",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_tim_encoder: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_tim_encoder: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_pwr_pvd": {
     "exp_id": "75bc3fd8-0ac7-42c0-84bf-6d69dcce960b",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776015313.0930674,
-    "confidence": 0.5,
+    "last_seen": 1776026206.5639405,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_adc_dma": {
     "exp_id": "e7862353-0df8-4b84-8869-9cb38c60ce9d",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776015348.1721556,
-    "confidence": 0.5,
+    "last_seen": 1776026210.0743904,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_tim_onepulse": {
     "exp_id": "3afecf18-01fb-4c98-ae7f-11b21b304108",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776015356.1470075,
-    "confidence": 0.5,
+    "last_seen": 1776026215.0907588,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_bkp": {
     "exp_id": "55a788fe-d344-4423-9be2-87245ddf05b2",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776015362.1436458,
-    "confidence": 0.5,
+    "last_seen": 1776026218.2719321,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_spi_dma": {
     "exp_id": "85bf3550-7074-4b45-b4dc-d095426532bc",
-    "success_count": 1,
+    "success_count": 5,
     "failure_count": 0,
-    "last_seen": 1776015369.0848196,
-    "confidence": 0.5,
+    "last_seen": 1776026249.8392825,
+    "confidence": 0.9,
     "known_failures": {}
   },
   "ch32v203xxx|ch32v203_usart_halfduplex": {
@@ -549,7 +549,7 @@
       "check_mailbox": {
         "exp_id": "5968ae87-f09e-424d-b35b-c2771bba2e51",
         "count": 6,
-        "last_raw": "[ch32v203xxx] ch32v203_usart_halfduplex: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_usart_halfduplex: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -593,12 +593,54 @@
     "confidence": 0.5,
     "known_failures": {}
   },
-    "ch32v203xxx|ch32v203_usb_cdc_banner": {
+  "ch32v203xxx|ch32v203_usb_cdc_banner": {
     "exp_id": "60587e26-8f2c-4909-a529-f7d26a7bd87a",
     "success_count": 1,
     "failure_count": 18,
     "last_seen": 1776024917.0,
     "confidence": 0.7,
     "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_blinky_visual": {
+    "exp_id": "b2302af6-44fb-4d45-af54-178225435c84",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776026283.2241492,
+    "confidence": 0.7,
+    "known_failures": {
+      "build": {
+        "exp_id": "2373472b-724f-4c85-acb5-85adadc4bdd1",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_blinky_visual: failed — stages: preflight, load, run, check — failure: build — build failed"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_blinky_mailbox": {
+    "exp_id": "e21052c5-144a-4b3c-8f1b-4e489f7068a9",
+    "success_count": 3,
+    "failure_count": 1,
+    "last_seen": 1776026289.799367,
+    "confidence": 0.7,
+    "known_failures": {
+      "build": {
+        "exp_id": "743c7593-0a3c-47ee-8f8d-d350dc7becd7",
+        "count": 1,
+        "last_raw": "[ch32v203xxx] ch32v203_blinky_mailbox: failed — stages: preflight, load, run, check — failure: build — build failed"
+      }
+    }
+  },
+  "ch32v203xxx|ch32v203_i2c_loopback": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1776025999.088932,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "7aaeac5b-9599-4c63-b6c2-9e0318addea0",
+        "count": 2,
+        "last_raw": "[ch32v203xxx] ch32v203_i2c_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
   }
 }
