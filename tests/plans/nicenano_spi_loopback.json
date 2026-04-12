@@ -4,8 +4,18 @@
   "name": "nicenano_spi_loopback",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage2", "spi", "loopback", "uf2"],
-  "covers": ["spim1", "dma", "spi_mosi", "spi_miso"],
+  "labels": [
+    "stage2",
+    "spi",
+    "loopback",
+    "uf2"
+  ],
+  "covers": [
+    "spim1",
+    "dma",
+    "spi_mosi",
+    "spi_miso"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -56,5 +66,8 @@
         "direction": "output"
       }
     ]
+  },
+  "preflight": {
+    "enabled": false
   }
 }

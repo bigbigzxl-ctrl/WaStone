@@ -1,0 +1,55 @@
+/*
+ * SPI1: SCK=P1.11, MOSI=P1.10, MISO=P1.13, CS=P1.12
+ * Onboard MX25R6435F 8MB SPI NOR flash (same bus as SPI loopback test).
+ * No extra wiring — flash chip is hardwired to these pins on nice!nano.
+ * Console: USB CDC
+ */
+
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart0;
+        zephyr,shell-uart = &cdc_acm_uart0;
+        zephyr,code-partition = &nicenano_app;
+    };
+};
+
+&flash0 {
+    partitions {
+        nicenano_app: partition@1000 {
+            label = "nicenano-app";
+            reg = <0x00001000 0x000EE000>;
+        };
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};
+
+&pinctrl {
+    spi1_default: spi1_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK,  1, 11)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 1, 13)>;
+        };
+    };
+    spi1_sleep: spi1_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK,  1, 11)>,
+                    <NRF_PSEL(SPIM_MOSI, 1, 10)>,
+                    <NRF_PSEL(SPIM_MISO, 1, 13)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi1 {
+    status = "okay";
+    pinctrl-0 = <&spi1_default>;
+    pinctrl-1 = <&spi1_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+};

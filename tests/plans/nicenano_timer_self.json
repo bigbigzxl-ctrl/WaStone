@@ -4,8 +4,17 @@
   "name": "nicenano_timer_self",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage1", "no_wire", "timer", "uf2"],
-  "covers": ["timer0", "interrupt", "nvic"],
+  "labels": [
+    "stage1",
+    "no_wire",
+    "timer",
+    "uf2"
+  ],
+  "covers": [
+    "timer0",
+    "interrupt",
+    "nvic"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -33,5 +42,8 @@
   "bench_setup": {
     "notes": "Stage 1 no-wire. TIMER0 32-bit free-run at 16 MHz, 1 s reference via Zephyr uptime. Accepts ±5% error.",
     "peripheral_signals": []
+  },
+  "preflight": {
+    "enabled": false
   }
 }

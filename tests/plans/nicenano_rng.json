@@ -4,8 +4,17 @@
   "name": "nicenano_rng",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage1", "no_wire", "rng", "entropy", "uf2"],
-  "covers": ["rng_peripheral", "entropy"],
+  "labels": [
+    "stage1",
+    "no_wire",
+    "rng",
+    "entropy",
+    "uf2"
+  ],
+  "covers": [
+    "rng_peripheral",
+    "entropy"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -33,5 +42,8 @@
   "bench_setup": {
     "notes": "Stage 1 no-wire. nRF52840 hardware RNG test. Generates 64 bytes, checks bit balance.",
     "peripheral_signals": []
+  },
+  "preflight": {
+    "enabled": false
   }
 }

@@ -1,35 +1,35 @@
 {
   "schema_version": "1.0",
   "test_kind": "observe_uart",
-  "name": "nicenano_crypto_ecb",
+  "name": "nicenano_ieee802154",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
   "labels": [
-    "stage1",
+    "stage2",
+    "ieee802154",
+    "radio",
     "no_wire",
-    "crypto",
-    "aes",
-    "ecb",
     "uf2"
   ],
   "covers": [
-    "ecb_peripheral",
-    "aes_hardware",
-    "crypto"
+    "ieee802154",
+    "nrf5_radio",
+    "2.4ghz",
+    "thread_radio"
   ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
-    "project_dir": "firmware/targets/nrf52840_nicenano_stage1",
+    "project_dir": "firmware/targets/nrf52840_nicenano_ieee802154",
     "artifact_stem": "zephyr",
-    "build_dir": "artifacts/build_nicenano_stage1",
-    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_stage1/app.overlay"
+    "build_dir": "artifacts/build_nicenano_ieee802154",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_ieee802154/app.overlay"
   },
   "flash": {
     "method": "uf2_copy",
     "uf2_mount_path": "/media/aes/NICENANO",
     "timeout_s": 30,
-    "post_load_settle_s": 4.0
+    "post_load_settle_s": 5.0
   },
   "observe_uart": {
     "enabled": true,
@@ -38,11 +38,11 @@
     "profile": "generic",
     "duration_s": 20,
     "expect_patterns": [
-      "\\[CRYPTO\\].*PASS"
+      "AEL_IEEE802154_PASS"
     ]
   },
   "bench_setup": {
-    "notes": "Stage 1 no-wire. AES-ECB hardware using NIST FIPS-197 Appendix B test vector. Known plaintext→ciphertext match.",
+    "notes": "Stage 2 (no extra wiring). Tests IEEE 802.15.4 radio on nRF52840 (same 2.4 GHz radio as BLE). TX frame on ch15, verify TX completes. Self-RX attempted as bonus.",
     "peripheral_signals": []
   },
   "preflight": {

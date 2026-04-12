@@ -1,6 +1,6 @@
 {
   "name": "nrf52840_nicenano_golden",
-  "description": "nRF52840 nice!nano v1 Golden Test Suite. Stage0: UF2 blinky (visual) + USB CDC banner. Stage1: 6 on-chip self-tests (TEMP, RNG, TIMER0, RTC1, NVMC flash, AES-ECB), no external wiring. Stage2: 6 peripheral loopback tests (GPIO, UART, SPI, I2C, PWM+capture, SAADC). Flash via UF2 mass-storage (no SWD required). Observation via /dev/ttyACM0 USB CDC.",
+  "description": "nRF52840 nice!nano v1 Golden Test Suite. Stage0: UF2 blinky (visual) + USB CDC banner. Stage1: 6 on-chip self-tests (TEMP, RNG, TIMER0, RTC1, NVMC flash, AES-ECB), no external wiring. Stage2: peripheral loopback + radio tests (GPIO, UART, SPI, I2C, PWM+capture, SAADC, BLE beacon, IEEE 802.15.4). Note: no onboard external SPI flash — nRF52840 internal flash only. Flash via UF2 mass-storage (no SWD required). Observation via /dev/ttyACM0 USB CDC.",
   "board": "nrf52840_nicenano",
   "status": "draft",
   "stages": {
@@ -22,7 +22,9 @@
       "tests/plans/nicenano_spi_loopback.json",
       "tests/plans/nicenano_i2c_loopback.json",
       "tests/plans/nicenano_pwm_capture.json",
-      "tests/plans/nicenano_saadc.json"
+      "tests/plans/nicenano_saadc.json",
+      "tests/plans/nicenano_ble_beacon.json",
+      "tests/plans/nicenano_ieee802154.json"
     ]
   },
   "tests": [
@@ -39,7 +41,9 @@
     "tests/plans/nicenano_spi_loopback.json",
     "tests/plans/nicenano_i2c_loopback.json",
     "tests/plans/nicenano_pwm_capture.json",
-    "tests/plans/nicenano_saadc.json"
+    "tests/plans/nicenano_saadc.json",
+    "tests/plans/nicenano_ble_beacon.json",
+    "tests/plans/nicenano_ieee802154.json"
   ],
   "wiring_guide": {
     "stage0": "USB only — no wires needed",

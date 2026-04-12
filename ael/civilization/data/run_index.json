@@ -190,5 +190,49 @@
     "last_seen": 1776001863.45952,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_saadc": {
+    "exp_id": "d1f747a5-247d-43ef-818b-05dadc1d7f07",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1776004079.5243735,
+    "confidence": 0.6,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "6ba4fc09-1a01-4dac-8395-9db7faf65dc0",
+        "count": 1,
+        "last_raw": "[nrf52840_nicenano] nicenano_saadc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
+  },
+  "nrf52840_nicenano|nicenano_ble_beacon": {
+    "exp_id": "95f08c09-f9e0-4f64-b1cd-5781ff23b5ae",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776004079.5251088,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_spi_flash": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1776003773.495989,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_uart": {
+        "exp_id": "09ea136f-704c-4102-8a3f-8dfd71c5c686",
+        "count": 1,
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_flash: failed — stages: preflight, build, load, run — failure: check_uart — uart transport unavailable"
+      }
+    }
+  },
+  "nrf52840_nicenano|nicenano_ieee802154": {
+    "exp_id": "6008991a-375e-4903-b607-2bca49574d11",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776004079.528124,
+    "confidence": 0.6,
+    "known_failures": {}
   }
 }

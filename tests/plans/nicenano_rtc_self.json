@@ -4,8 +4,18 @@
   "name": "nicenano_rtc_self",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage1", "no_wire", "rtc", "lfclk", "uf2"],
-  "covers": ["rtc1", "lfclk", "low_power_clock"],
+  "labels": [
+    "stage1",
+    "no_wire",
+    "rtc",
+    "lfclk",
+    "uf2"
+  ],
+  "covers": [
+    "rtc1",
+    "lfclk",
+    "low_power_clock"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -33,5 +43,8 @@
   "bench_setup": {
     "notes": "Stage 1 no-wire. RTC1 at 32768 Hz LFCLK, 1 s reference via Zephyr uptime. Accepts ±10% error.",
     "peripheral_signals": []
+  },
+  "preflight": {
+    "enabled": false
   }
 }

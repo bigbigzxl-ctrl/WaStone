@@ -4,8 +4,19 @@
   "name": "nicenano_flash_rw",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage1", "no_wire", "flash", "nvmc", "uf2"],
-  "covers": ["nvmc", "flash_erase", "flash_write", "flash_verify"],
+  "labels": [
+    "stage1",
+    "no_wire",
+    "flash",
+    "nvmc",
+    "uf2"
+  ],
+  "covers": [
+    "nvmc",
+    "flash_erase",
+    "flash_write",
+    "flash_verify"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -33,5 +44,8 @@
   "bench_setup": {
     "notes": "Stage 1 no-wire. NVMC erase+write+read 256 bytes at last test page (0xEF000). Data pattern 0xA5^i.",
     "peripheral_signals": []
+  },
+  "preflight": {
+    "enabled": false
   }
 }

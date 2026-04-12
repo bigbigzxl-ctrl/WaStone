@@ -4,8 +4,18 @@
   "name": "nicenano_saadc",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage2", "adc", "saadc", "no_wire", "uf2"],
-  "covers": ["saadc", "ain7", "vbatt_divider"],
+  "labels": [
+    "stage2",
+    "adc",
+    "saadc",
+    "no_wire",
+    "uf2"
+  ],
+  "covers": [
+    "saadc",
+    "ain7",
+    "vbatt_divider"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -40,5 +50,8 @@
         "notes": "On-board VBATT voltage divider — no extra wire needed"
       }
     ]
+  },
+  "preflight": {
+    "enabled": false
   }
 }

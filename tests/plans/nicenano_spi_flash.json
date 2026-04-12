@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_spi_flash",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": [
+    "stage2",
+    "spi",
+    "flash",
+    "onboard",
+    "no_wire",
+    "uf2"
+  ],
+  "covers": [
+    "spi1",
+    "spi_nor",
+    "jedec_id",
+    "mx25r6435f"
+  ],
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_spi_flash",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_spi_flash",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_spi_flash/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 15,
+    "expect_patterns": [
+      "AEL_SPI_FLASH_PASS"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 2 (no extra wiring). Reads JEDEC ID from onboard MX25R6435F 8MB SPI NOR flash. Expected: 0xC2,0x28,0x17. SPI1 on P1.10/P1.11/P1.12/P1.13.",
+    "peripheral_signals": [
+      {
+        "role": "SPI_FLASH_CS",
+        "dut_signal": "P1.12",
+        "direction": "output",
+        "notes": "Onboard flash CS — no extra wire"
+      },
+      {
+        "role": "SPI_FLASH_SCK",
+        "dut_signal": "P1.11",
+        "direction": "output",
+        "notes": "Onboard flash SCK — no extra wire"
+      },
+      {
+        "role": "SPI_FLASH_MOSI",
+        "dut_signal": "P1.10",
+        "direction": "output",
+        "notes": "Onboard flash MOSI — no extra wire"
+      },
+      {
+        "role": "SPI_FLASH_MISO",
+        "dut_signal": "P1.13",
+        "direction": "input",
+        "notes": "Onboard flash MISO — no extra wire"
+      }
+    ]
+  },
+  "preflight": {
+    "enabled": false
+  }
+}

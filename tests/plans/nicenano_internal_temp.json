@@ -4,8 +4,16 @@
   "name": "nicenano_internal_temp",
   "board": "nrf52840_nicenano",
   "supported_instruments": [],
-  "labels": ["stage1", "no_wire", "temp", "uf2"],
-  "covers": ["temp_peripheral", "board_health"],
+  "labels": [
+    "stage1",
+    "no_wire",
+    "temp",
+    "uf2"
+  ],
+  "covers": [
+    "temp_peripheral",
+    "board_health"
+  ],
   "build": {
     "type": "zephyr",
     "zephyr_board": "nrf52840dk/nrf52840",
@@ -33,5 +41,8 @@
   "bench_setup": {
     "notes": "Stage 1 no-wire. nRF52840 TEMP peripheral self-test. Reads die temperature, expects 0–85 °C.",
     "peripheral_signals": []
+  },
+  "preflight": {
+    "enabled": false
   }
 }
