@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v305xxx_golden",
-  "description": "CH32V305RBT6 golden test suite — Stage 0 (blinky), Stage 1 (internal peripherals), Stage 2 (TBD — loopback wiring)",
+  "description": "CH32V305RBT6 golden test suite — Stage 0 (blinky), Stage 1 (internal peripherals), Stage 2 (GPIO/EXTI/UART/SPI/TIM loopbacks)",
   "board": "ch32v305xxx",
   "stages": {
     "0": [
@@ -19,11 +19,22 @@
       "tests/plans/ch32v305_dma_mem2mem.json",
       "tests/plans/ch32v305_can_loopback.json",
       "tests/plans/ch32v305_pwr_pvd.json"
+    ],
+    "2": [
+      "tests/plans/ch32v305_wire_check.json",
+      "tests/plans/ch32v305_gpio_loopback.json",
+      "tests/plans/ch32v305_exti_loopback.json",
+      "tests/plans/ch32v305_uart_loopback.json",
+      "tests/plans/ch32v305_dma_uart.json",
+      "tests/plans/ch32v305_spi_loopback.json",
+      "tests/plans/ch32v305_spi_dma.json",
+      "tests/plans/ch32v305_tim_pwm_capture.json"
     ]
   },
   "wiring_guide": {
     "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND). No GPIO jumpers.",
-    "stage1": "WCHLink only (same as Stage 0). No GPIO jumpers."
+    "stage1": "WCHLink only (same as Stage 0). No GPIO jumpers.",
+    "stage2": "WCHLink + 4 jumpers: PA1↔PA2, PA9↔PA10, PA7↔PA6, PA8→PA0."
   },
   "notes": "WCHLink fw 2.18 (PID 8010) required. CH32V305RBT6 RISC-V4F @ 96MHz, 128KB Flash, 32KB SRAM."
 }

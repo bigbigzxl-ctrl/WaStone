@@ -642,5 +642,199 @@
         "last_raw": "[ch32v203xxx] ch32v203_i2c_loopback: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
+  },
+  "ch32v305xxx|ch32v305_blinky_visual": {
+    "exp_id": "2cb8217a-5b93-49fa-a7f5-ec339338390c",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1776029285.1059453,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_blinky_mailbox": {
+    "exp_id": "37acc09e-80cc-4323-af2a-add18420302f",
+    "success_count": 6,
+    "failure_count": 0,
+    "last_seen": 1776029292.126594,
+    "confidence": 1.0,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_systick": {
+    "exp_id": "1d37aa96-e82b-4f3d-a323-f5a996ea4222",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029128.83794,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_iwdg": {
+    "exp_id": "ceeefe75-86f2-49c3-a53e-4799fcdca227",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029132.6736135,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_rtc_self": {
+    "exp_id": "c7226743-abf4-4959-9e14-b73cc66dce55",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029138.717014,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_flash_rw": {
+    "exp_id": "37a178bd-72b7-4cf5-bf5d-3955c05e86bb",
+    "success_count": 1,
+    "failure_count": 3,
+    "last_seen": 1776029142.8845809,
+    "confidence": 0.5,
+    "known_failures": {
+      "check_mailbox": {
+        "exp_id": "84db8ebd-28d9-457a-8698-30fa76b4da58",
+        "count": 3,
+        "last_raw": "[ch32v305xxx] ch32v305_flash_rw: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "ch32v305xxx|ch32v305_crc": {
+    "exp_id": "0905c54f-80c6-41b4-be54-425577457318",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029146.8097935,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_adc_vref": {
+    "exp_id": "b589cd2f-683d-4fab-b92b-b1c85af70280",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029150.9273746,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_adc_temp": {
+    "exp_id": "866b13ec-5e50-422e-a529-a65f6ab9b186",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029154.9980347,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_dma_mem2mem": {
+    "exp_id": "d0e2b908-6bf5-4937-a637-ef5059d1186c",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029159.0067778,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_can_loopback": {
+    "exp_id": "dce22aa2-74c0-4d14-80a5-f1b94dafa71f",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029163.6792421,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_pwr_pvd": {
+    "exp_id": "a492c596-94ea-4d94-8cad-73927d349e12",
+    "success_count": 4,
+    "failure_count": 0,
+    "last_seen": 1776029167.554297,
+    "confidence": 0.8,
+    "known_failures": {}
+  },
+  "unknown|unknown": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1776029980.5763404,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "2c737a6d-14c5-4834-a2a7-b7e1a78bf923",
+        "count": 1,
+        "last_raw": "[unknown] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
+  },
+  "ch32v305xxx|unknown": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 2,
+    "last_seen": 1776029997.141928,
+    "confidence": 0.5,
+    "known_failures": {
+      "preflight": {
+        "exp_id": "f090ec7c-6669-44af-a3fe-7672d1ee8ccf",
+        "count": 2,
+        "last_raw": "[ch32v305xxx] unknown: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+      }
+    }
+  },
+  "ch32v305xxx|ch32v305_wire_check": {
+    "exp_id": "52ebd91d-a68e-4ba5-ad5d-b95aa0ca2a97",
+    "success_count": 3,
+    "failure_count": 0,
+    "last_seen": 1776030518.144885,
+    "confidence": 0.7,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_gpio_loopback": {
+    "exp_id": "3db3bf8b-4549-4155-b037-7d183efc3d8f",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1462965,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_exti_loopback": {
+    "exp_id": "72c38bdd-7a50-4453-97ba-da2fbdae9de0",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1497724,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_uart_loopback": {
+    "exp_id": "bc6d23f3-ba31-45bd-90b8-52f987272890",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1510105,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_dma_uart": {
+    "exp_id": "bb5ab616-4e37-4ae1-a7f6-e746c7f74234",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1522205,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_spi_loopback": {
+    "exp_id": "4284d088-82c8-40df-be06-2b7f02872fe6",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1534836,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_spi_dma": {
+    "exp_id": "f121a8ce-0592-41cd-8680-92d1a301196f",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1547294,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v305xxx|ch32v305_tim_pwm_capture": {
+    "exp_id": "f69a7fbd-d021-4e32-99b0-95d496d5a51a",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776030518.1559944,
+    "confidence": 0.6,
+    "known_failures": {}
   }
 }

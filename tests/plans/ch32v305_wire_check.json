@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v305_wire_check",
+  "board": "ch32v305xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v305", "wire_check", "connectivity", "pre_stage2"],
+  "covers": ["ch32v305_wire_check"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v305_wire_check",
+    "artifact_stem": "ch32v305_wire_check"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 3.0,
+    "addr": "0x20000600",
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 2
+  },
+  "bench_setup": {
+    "notes": "Pre-Stage-2 connectivity check. Verifies all 4 Stage-2 loopback wires before peripheral tests. error_code bitmask: bit0=PA1↔PA2, bit1=PA9↔PA10, bit2=PA7↔PA6, bit3=PA8→PA0.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V305 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V305 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V305 GND"  },
+      { "from": "CH32V305 PA1",   "to": "CH32V305 PA2"  },
+      { "from": "CH32V305 PA9",   "to": "CH32V305 PA10" },
+      { "from": "CH32V305 PA7",   "to": "CH32V305 PA6"  },
+      { "from": "CH32V305 PA8",   "to": "CH32V305 PA0"  }
+    ],
+    "ground_required": true
+  }
+}
