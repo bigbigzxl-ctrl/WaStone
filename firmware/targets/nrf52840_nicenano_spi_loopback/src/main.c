@@ -1,7 +1,7 @@
 /*
  * AEL Stage 2 — nRF52840 nice!nano SPI loopback
  *
- * Wiring: P1.10 (MOSI) ←→ P1.13 (MISO)   [1 wire]
+ * Wiring: P1.13 (MOSI, PIN16) ←→ P1.11 (MISO, PIN15)   [1 wire, adjacent right-column pins]
  *
  * Sends 32 bytes via SPI1, receives on MISO (shorted to MOSI), verifies.
  * Reports: [SPI] rx_match=%d/%d PASS|FAIL

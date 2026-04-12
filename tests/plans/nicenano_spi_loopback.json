@@ -41,28 +41,28 @@
     ]
   },
   "bench_setup": {
-    "notes": "Stage 2. Wire P1.10 (MOSI) → P1.13 (MISO). SPI1 @ 1 MHz. Sends 32 bytes, verifies round-trip.",
+    "notes": "Stage 2. Wire P1.13 (MOSI, PIN16) → P1.11 (MISO, PIN15) [adjacent right-column pins]. SPI1 @ 1 MHz. Sends 32 bytes, verifies round-trip.",
     "peripheral_signals": [
       {
         "role": "SPI1_MOSI",
-        "dut_signal": "P1.10",
+        "dut_signal": "P1.13",
         "direction": "output",
-        "notes": "Wire to P1.13 (MISO)"
+        "notes": "Wire to P1.11 (MISO) — adjacent right-col PIN16↔PIN15"
       },
       {
         "role": "SPI1_MISO",
-        "dut_signal": "P1.13",
+        "dut_signal": "P1.11",
         "direction": "input",
-        "notes": "Wire from P1.10 (MOSI)"
+        "notes": "Wire from P1.13 (MOSI)"
       },
       {
         "role": "SPI1_SCK",
-        "dut_signal": "P1.11",
+        "dut_signal": "P1.15",
         "direction": "output"
       },
       {
         "role": "SPI1_CS",
-        "dut_signal": "P1.12",
+        "dut_signal": "P0.09",
         "direction": "output"
       }
     ]
