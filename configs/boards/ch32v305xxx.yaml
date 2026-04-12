@@ -1,0 +1,32 @@
+board:
+  name: CH32V305
+  target: ch32v305xxx
+  instrument_instance: wchlink_local
+  clock_hz: 96000000        # default 96 MHz (system_ch32v30x.c)
+  kind: board
+  features:
+    - programmable_via_sdi
+  default_bench_profile: ch32v305xxx__default
+  build:
+    type: arm_debug
+    project_dir: firmware/targets/ch32v305_blinky_mailbox
+    artifact_stem: ch32v305_blinky_mailbox
+  flash:
+    method: wch_openocd
+    post_load_settle_s: 1.5
+  mailbox_verify_defaults:
+    skip_attach: true
+    halt_before_read: true
+    address: "0x20000600"
+    detach_resume_target: "wch_riscv.cpu.0"
+    post_resume_openocd_bin: "/nvme1t/wch-riscv-gcc/openocd/bin/openocd"
+    post_resume_openocd_cfg: "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  power_and_boot:
+    boot_mode_default: normal
+    power_rails:
+      - name: VDD
+        nominal_v: 3.3
+  notes: >
+    CH32V305RBT6 RISC-V4F (rv32imafcxw), 128KB flash, 32KB SRAM.
+    Debug: WCHLink fw 2.18 (PID 8010) via SDI (PA13/PA14).
+    Same wch-riscv.cfg as CH32V203/V003.

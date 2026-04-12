@@ -1,0 +1,22 @@
+bench_profile:
+  id: ch32v305xxx__default
+  board_id: ch32v305xxx
+  description: "CH32V305 golden suite — WCHLink SWD (PA13/PA14) + GND"
+
+  bench_connections:
+    - from: WCHLink SWDIO
+      to: CH32V305 PA13
+    - from: WCHLink SWDCLK
+      to: CH32V305 PA14
+    - from: WCHLink GND
+      to: CH32V305 GND
+
+  observe_map: {}
+
+  verification_views: {}
+
+  default_wiring:
+    swdio: "WCHLink SWDIO"
+    swdclk: "WCHLink SWDCLK"
+
+  safe_pins: []

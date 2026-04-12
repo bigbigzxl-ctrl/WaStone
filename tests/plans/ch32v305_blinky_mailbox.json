@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v305_blinky_mailbox",
+  "board": "ch32v305xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "blinky", "gpio", "stage0", "ch32v305"],
+  "covers": ["gpio", "led", "board_health", "mailbox_plumbing"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v305_blinky_mailbox",
+    "artifact_stem": "ch32v305_blinky_mailbox"
+  },
+  "flash": {
+    "method": "wch_openocd",
+    "post_load_settle_s": 1.0
+  },
+  "mailbox_verify": {
+    "settle_s": 5.0,
+    "addr": "0x20000600",
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 2
+  },
+  "bench_setup": {
+    "notes": "Stage 0 mailbox baseline. LED on PA3 blinks at 1 Hz (LOW=ON, active-low). Mailbox PASS written after GPIO init; detail0 increments every 500ms. Confirms GPIO, clock, and AEL mailbox plumbing.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V305 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V305 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V305 GND"  }
+    ],
+    "ground_required": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "name": "ch32v305xxx_golden",
+  "description": "CH32V305RBT6 golden test suite — Stage 0 (blinky), Stage 1 (internal peripherals), Stage 2 (TBD — loopback wiring)",
+  "board": "ch32v305xxx",
+  "stages": {
+    "0": [
+      "tests/plans/ch32v305_blinky_visual.json",
+      "tests/plans/ch32v305_blinky_mailbox.json"
+    ],
+    "1": [
+      "tests/plans/ch32v305_systick.json",
+      "tests/plans/ch32v305_iwdg.json",
+      "tests/plans/ch32v305_rtc_self.json",
+      "tests/plans/ch32v305_flash_rw.json",
+      "tests/plans/ch32v305_crc.json",
+      "tests/plans/ch32v305_adc_vref.json",
+      "tests/plans/ch32v305_adc_temp.json",
+      "tests/plans/ch32v305_dma_mem2mem.json",
+      "tests/plans/ch32v305_can_loopback.json",
+      "tests/plans/ch32v305_pwr_pvd.json"
+    ]
+  },
+  "wiring_guide": {
+    "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND). No GPIO jumpers.",
+    "stage1": "WCHLink only (same as Stage 0). No GPIO jumpers."
+  },
+  "notes": "WCHLink fw 2.18 (PID 8010) required. CH32V305RBT6 RISC-V4F @ 96MHz, 128KB Flash, 32KB SRAM."
+}

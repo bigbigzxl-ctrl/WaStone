@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v305_dma_mem2mem",
+  "board": "ch32v305xxx",
+  "supported_instruments": [
+    "wchlink"
+  ],
+  "applies_to": [
+    "board"
+  ],
+  "requires_dut_features": [
+    "programmable_via_sdi"
+  ],
+  "requires": {
+    "mailbox": true,
+    "datacapture": false
+  },
+  "labels": [
+    "mailbox",
+    "ch32v305",
+    "dma",
+    "mem2mem",
+    "stage1"
+  ],
+  "covers": [
+    "ch32v305_dma_mem2mem"
+  ],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v305_dma_mem2mem",
+    "artifact_stem": "ch32v305_dma_mem2mem"
+  },
+  "flash": {
+    "method": "wch_openocd",
+    "post_load_settle_s": 2.0
+  },
+  "mailbox_verify": {
+    "settle_s": 2.0,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "bench_setup": {
+    "bench_connections": [
+      {
+        "from": "WCHLink SWDIO",
+        "to": "CH32V305 PA13"
+      },
+      {
+        "from": "WCHLink SWDCLK",
+        "to": "CH32V305 PA14"
+      },
+      {
+        "from": "WCHLink GND",
+        "to": "CH32V305 GND"
+      }
+    ],
+    "ground_required": true
+  }
+}
