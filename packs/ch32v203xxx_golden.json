@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v203xxx_golden",
-  "description": "CH32V203C8T6 golden test suite — Blinky, SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA (USART-HD excluded: needs PA2↔PB10 wire; TIM-encoder excluded: needs Stage-2 rewire; USB-CDC excluded: requires manual power cycle)",
+  "description": "CH32V203C8T6 golden test suite — Blinky, SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA (I2C excluded: no pull-up resistors in bench; USART-HD excluded: needs PA2↔PB10; TIM-encoder excluded: needs Stage-2 rewire; USB-CDC excluded: requires manual power cycle)",
   "board": "ch32v203xxx",
   "stages": {
     "0": [
@@ -30,7 +30,6 @@
       "tests/plans/ch32v203_uart_loopback.json",
       "tests/plans/ch32v203_dma_uart.json",
       "tests/plans/ch32v203_spi_loopback.json",
-      "tests/plans/ch32v203_i2c_loopback.json",
       "tests/plans/ch32v203_tim_pwm_capture.json",
       "tests/plans/ch32v203_spi_dma.json"
     ]
@@ -42,11 +41,11 @@
       "PA2  ↔  PA3              (GPIO loopback / EXTI)",
       "PA9(TX1) ↔ PA10(RX1)    (UART loopback + DMA_UART)",
       "PA7(MOSI1) ↔ PA6(MISO1) (SPI loopback + SPI DMA)",
-      "PB6(SCL1) + PB7(SDA1) + 4.7kΩ to 3V3  (I2C)",
       "PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)  (PWM capture)"
     ]
   },
   "excluded": {
+    "ch32v203_i2c_loopback": "no 4.7kΩ pull-up resistors on PB6/PB7 in bench setup",
     "ch32v203_tim_encoder": "needs Stage-2 rewire (PA0→PA6, PA1→PA7, conflicts with Stage-2 SPI/PWM wires); see tests/plans/ch32v203_tim_encoder.json",
     "ch32v203_usart_halfduplex": "needs PA2↔PB10 wire (USART2↔USART3 HD shared line); not in bench setup",
     "ch32v203_usb_cdc_banner": "requires manual power cycle after flash (board USB-C powered only); see tests/plans/ch32v203_usb_cdc_banner.json"
