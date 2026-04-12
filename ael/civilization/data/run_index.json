@@ -102,5 +102,77 @@
     "last_seen": 1776001320.5804935,
     "confidence": 0.5,
     "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_uart_loopback": {
+    "exp_id": "",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.951323,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_pwm_capture": {
+    "exp_id": "",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.951815,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_saadc": {
+    "exp_id": "",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.9547966,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_internal_temp": {
+    "exp_id": "895bbc46",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.9552963,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_rng": {
+    "exp_id": "9a69ed52",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.955927,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_timer_self": {
+    "exp_id": "9a69ed52",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.956443,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_rtc_self": {
+    "exp_id": "9a69ed52",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.9569635,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_flash_rw": {
+    "exp_id": "9a69ed52",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.9572902,
+    "confidence": 0.5,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano_v1|nicenano_crypto_ecb": {
+    "exp_id": "9a69ed52",
+    "success_count": 1,
+    "failure_count": 0,
+    "last_seen": 1776001431.9576547,
+    "confidence": 0.5,
+    "known_failures": {}
   }
 }
