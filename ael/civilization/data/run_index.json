@@ -645,50 +645,50 @@
   },
   "ch32v305xxx|ch32v305_blinky_visual": {
     "exp_id": "2cb8217a-5b93-49fa-a7f5-ec339338390c",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776029285.1059453,
+    "last_seen": 1776033370.2833366,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_blinky_mailbox": {
     "exp_id": "37acc09e-80cc-4323-af2a-add18420302f",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776029292.126594,
+    "last_seen": 1776033370.2849486,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_systick": {
     "exp_id": "1d37aa96-e82b-4f3d-a323-f5a996ea4222",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031236.2480338,
+    "last_seen": 1776033370.2887154,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_iwdg": {
     "exp_id": "ceeefe75-86f2-49c3-a53e-4799fcdca227",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031240.105945,
+    "last_seen": 1776033370.2900522,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_rtc_self": {
     "exp_id": "c7226743-abf4-4959-9e14-b73cc66dce55",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031246.2360718,
+    "last_seen": 1776033370.2913418,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_flash_rw": {
     "exp_id": "37a178bd-72b7-4cf5-bf5d-3955c05e86bb",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 3,
-    "last_seen": 1776031250.3753924,
-    "confidence": 0.7,
+    "last_seen": 1776033370.2927868,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "84db8ebd-28d9-457a-8698-30fa76b4da58",
@@ -699,49 +699,49 @@
   },
   "ch32v305xxx|ch32v305_crc": {
     "exp_id": "0905c54f-80c6-41b4-be54-425577457318",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031254.2667413,
+    "last_seen": 1776033370.2940736,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_adc_vref": {
     "exp_id": "b589cd2f-683d-4fab-b92b-b1c85af70280",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031258.3312387,
+    "last_seen": 1776033370.2953582,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_adc_temp": {
     "exp_id": "866b13ec-5e50-422e-a529-a65f6ab9b186",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031262.4044905,
+    "last_seen": 1776033370.2966623,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_dma_mem2mem": {
     "exp_id": "d0e2b908-6bf5-4937-a637-ef5059d1186c",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031270.7936676,
+    "last_seen": 1776033370.2993693,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_can_loopback": {
     "exp_id": "dce22aa2-74c0-4d14-80a5-f1b94dafa71f",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031275.4312575,
+    "last_seen": 1776033370.3010058,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_pwr_pvd": {
     "exp_id": "a492c596-94ea-4d94-8cad-73927d349e12",
-    "success_count": 6,
+    "success_count": 8,
     "failure_count": 0,
-    "last_seen": 1776031279.333661,
+    "last_seen": 1776033370.3036861,
     "confidence": 1.0,
     "known_failures": {}
   },
@@ -775,90 +775,90 @@
   },
   "ch32v305xxx|ch32v305_wire_check": {
     "exp_id": "52ebd91d-a68e-4ba5-ad5d-b95aa0ca2a97",
-    "success_count": 5,
+    "success_count": 7,
     "failure_count": 0,
-    "last_seen": 1776032925.7553828,
-    "confidence": 0.9,
+    "last_seen": 1776033370.3077893,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_gpio_loopback": {
     "exp_id": "3db3bf8b-4549-4155-b037-7d183efc3d8f",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032929.5940077,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3090744,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_exti_loopback": {
     "exp_id": "72c38bdd-7a50-4453-97ba-da2fbdae9de0",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032933.5048096,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3103552,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_uart_loopback": {
     "exp_id": "bc6d23f3-ba31-45bd-90b8-52f987272890",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032937.6748362,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3116424,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_dma_uart": {
     "exp_id": "bb5ab616-4e37-4ae1-a7f6-e746c7f74234",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032942.1325045,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3129559,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_spi_loopback": {
     "exp_id": "4284d088-82c8-40df-be06-2b7f02872fe6",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032945.9789927,
-    "confidence": 0.8,
+    "last_seen": 1776033370.314671,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_spi_dma": {
     "exp_id": "f121a8ce-0592-41cd-8680-92d1a301196f",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032950.3114834,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3167121,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_tim_pwm_capture": {
     "exp_id": "f69a7fbd-d021-4e32-99b0-95d496d5a51a",
-    "success_count": 4,
+    "success_count": 6,
     "failure_count": 0,
-    "last_seen": 1776032954.6888194,
-    "confidence": 0.8,
+    "last_seen": 1776033370.3188353,
+    "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_adc_dma": {
     "exp_id": "cf829082-9c48-4d63-ac4b-11964cebdeb1",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1776031266.7486105,
-    "confidence": 0.6,
+    "last_seen": 1776033370.2980518,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_bkp": {
     "exp_id": "26ac2dd9-d81f-4dc6-8c63-d13f298d9aba",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1776031283.2551818,
-    "confidence": 0.6,
+    "last_seen": 1776033370.305112,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_rng": {
     "exp_id": "bef21063-5828-46ee-8dab-48a1056f0bc6",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 1,
-    "last_seen": 1776031287.2019408,
-    "confidence": 0.5,
+    "last_seen": 1776033370.3064318,
+    "confidence": 0.7,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "76c07ad7-6d3e-4c72-a607-688323cfa7ba",
@@ -869,18 +869,18 @@
   },
   "ch32v305xxx|ch32v305_tim_onepulse": {
     "exp_id": "64417391-c9c4-4ca6-ae3e-d929d7a7d2a4",
-    "success_count": 2,
+    "success_count": 4,
     "failure_count": 0,
-    "last_seen": 1776032960.8818536,
-    "confidence": 0.6,
+    "last_seen": 1776033370.320294,
+    "confidence": 0.8,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_usart_halfduplex": {
     "exp_id": "6aaa5686-f67a-401f-a393-6d75f9eb474d",
-    "success_count": 3,
+    "success_count": 5,
     "failure_count": 5,
-    "last_seen": 1776033001.782752,
-    "confidence": 0.7,
+    "last_seen": 1776033370.3216136,
+    "confidence": 0.9,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "5178246e-dfaa-4400-b416-c696bc08b00e",
