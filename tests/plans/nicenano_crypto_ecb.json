@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_crypto_ecb",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["stage1", "no_wire", "crypto", "aes", "ecb", "uf2"],
+  "covers": ["ecb_peripheral", "aes_hardware", "crypto"],
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_stage1",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_stage1",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_stage1/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 20,
+    "expect_patterns": [
+      "\\[CRYPTO\\].*PASS"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 1 no-wire. AES-ECB hardware using NIST FIPS-197 Appendix B test vector. Known plaintext→ciphertext match.",
+    "peripheral_signals": []
+  }
+}

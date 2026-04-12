@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_pwm_capture",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["stage2", "pwm", "capture", "timer", "ppi", "uf2"],
+  "covers": ["pwm0", "timer1", "gpiote", "ppi", "edge_count"],
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_pwm_capture",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_pwm_capture",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_pwm_capture/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 15,
+    "expect_patterns": [
+      "AEL_PWM_CAPTURE_PASS"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 2. Wire P0.22 (PWM0 CH0 @ 1 kHz) → P0.24 (GPIOTE input). Edge count in 100 ms window should be ~100. Tolerance ±30%.",
+    "peripheral_signals": [
+      {
+        "role": "PWM_OUT",
+        "dut_signal": "P0.22",
+        "direction": "output",
+        "notes": "Wire to P0.24 (capture input)"
+      },
+      {
+        "role": "CAPTURE_IN",
+        "dut_signal": "P0.24",
+        "direction": "input",
+        "notes": "Wire from P0.22 (PWM output)"
+      }
+    ]
+  }
+}

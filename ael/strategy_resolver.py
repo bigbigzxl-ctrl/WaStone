@@ -458,6 +458,7 @@ def resolve_load_stage(
             "load.idf_esptool"  if method == "idf_esptool"  else
             "load.zephyr_west"  if method == "zephyr_west"  else
             "load.wch_openocd"  if method == "wch_openocd"  else
+            "load.uf2_copy"     if method == "uf2_copy"     else
             "load.gdbmi"
         ),
         "inputs": {

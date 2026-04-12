@@ -1,0 +1,34 @@
+/*
+ * nice!nano blinky overlay — nrf52840dk/nrf52840 base
+ *
+ * - Redirects code partition to 0x1000 (Adafruit UF2 bootloader layout)
+ * - Adds nice!nano LED alias on P0.15 (active-high blue LED)
+ */
+
+/ {
+    chosen {
+        zephyr,code-partition = &nicenano_app;
+    };
+
+    aliases {
+        led0 = &nicenano_led;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        nicenano_led: nicenano_led_0 {
+            /* P0.15 — blue LED, active HIGH on nice!nano v1 */
+            gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+            label = "nice!nano Blue LED";
+        };
+    };
+};
+
+&flash0 {
+    partitions {
+        nicenano_app: partition@1000 {
+            label = "nicenano-app";
+            reg = <0x00001000 0x000EE000>;
+        };
+    };
+};

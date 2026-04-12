@@ -1,0 +1,48 @@
+/*
+ * SAADC: AIN7 = P0.31 (VBATT voltage divider, on-board)
+ * No external wiring needed.
+ * Console: USB CDC
+ */
+
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart0;
+        zephyr,shell-uart = &cdc_acm_uart0;
+        zephyr,code-partition = &nicenano_app;
+    };
+
+    zephyr_user {
+        /* VBATT divider on P0.31 = AIN7 */
+        io-channels = <&adc 7>;
+    };
+};
+
+&flash0 {
+    partitions {
+        nicenano_app: partition@1000 {
+            label = "nicenano-app";
+            reg = <0x00001000 0x000EE000>;
+        };
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};
+
+&adc {
+    status = "okay";
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@7 {
+        reg = <7>;
+        zephyr,gain = "ADC_GAIN_1_6";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,input-positive = <NRF_SAADC_AIN7>;
+        zephyr,resolution = <12>;
+    };
+};

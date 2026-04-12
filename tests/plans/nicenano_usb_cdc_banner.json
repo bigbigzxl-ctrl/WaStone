@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_usb_cdc_banner",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["banner", "usb_cdc", "stage0", "uf2"],
+  "covers": ["usb", "cdc_acm", "board_health", "uf2_flash"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_usb_cdc_banner",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_usb_cdc_banner",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_usb_cdc_banner/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 10,
+    "expect_patterns": [
+      "AEL_READY nRF52840"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 0 USB CDC health check. Flash via UF2 (enter bootloader: double-tap RST). Observe /dev/ttyACM0 for 'AEL_READY nRF52840'. Adjust port number if multiple CDC devices present.",
+    "serial_console": {
+      "port": "/dev/ttyACM0",
+      "baud": 115200,
+      "required": true
+    }
+  }
+}

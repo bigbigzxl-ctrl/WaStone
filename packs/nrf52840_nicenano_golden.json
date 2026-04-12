@@ -1,0 +1,56 @@
+{
+  "name": "nrf52840_nicenano_golden",
+  "description": "nRF52840 nice!nano v1 Golden Test Suite. Stage0: UF2 blinky (visual) + USB CDC banner. Stage1: 6 on-chip self-tests (TEMP, RNG, TIMER0, RTC1, NVMC flash, AES-ECB), no external wiring. Stage2: 6 peripheral loopback tests (GPIO, UART, SPI, I2C, PWM+capture, SAADC). Flash via UF2 mass-storage (no SWD required). Observation via /dev/ttyACM0 USB CDC.",
+  "board": "nrf52840_nicenano",
+  "status": "draft",
+  "stages": {
+    "0": [
+      "tests/plans/nicenano_blinky_visual.json",
+      "tests/plans/nicenano_usb_cdc_banner.json"
+    ],
+    "1": [
+      "tests/plans/nicenano_internal_temp.json",
+      "tests/plans/nicenano_rng.json",
+      "tests/plans/nicenano_timer_self.json",
+      "tests/plans/nicenano_rtc_self.json",
+      "tests/plans/nicenano_flash_rw.json",
+      "tests/plans/nicenano_crypto_ecb.json"
+    ],
+    "2": [
+      "tests/plans/nicenano_gpio_loopback.json",
+      "tests/plans/nicenano_uart_loopback.json",
+      "tests/plans/nicenano_spi_loopback.json",
+      "tests/plans/nicenano_i2c_loopback.json",
+      "tests/plans/nicenano_pwm_capture.json",
+      "tests/plans/nicenano_saadc.json"
+    ]
+  },
+  "tests": [
+    "tests/plans/nicenano_blinky_visual.json",
+    "tests/plans/nicenano_usb_cdc_banner.json",
+    "tests/plans/nicenano_internal_temp.json",
+    "tests/plans/nicenano_rng.json",
+    "tests/plans/nicenano_timer_self.json",
+    "tests/plans/nicenano_rtc_self.json",
+    "tests/plans/nicenano_flash_rw.json",
+    "tests/plans/nicenano_crypto_ecb.json",
+    "tests/plans/nicenano_gpio_loopback.json",
+    "tests/plans/nicenano_uart_loopback.json",
+    "tests/plans/nicenano_spi_loopback.json",
+    "tests/plans/nicenano_i2c_loopback.json",
+    "tests/plans/nicenano_pwm_capture.json",
+    "tests/plans/nicenano_saadc.json"
+  ],
+  "wiring_guide": {
+    "stage0": "USB only — no wires needed",
+    "stage1": "USB only — no wires needed",
+    "stage2": [
+      "P0.06 ↔ P0.08  (GPIO loopback pair A)",
+      "P0.17 ↔ P0.20  (GPIO loopback pair B / UART RX→TX)",
+      "P1.10 ↔ P1.13  (SPI MOSI→MISO)",
+      "P0.22 → P0.24  (PWM→capture, 1 wire)",
+      "P0.28 + P0.29  (I2C SCL+SDA, add 4.7 kΩ pull-ups)",
+      "P0.31          (SAADC, no wire — on-board VBATT divider)"
+    ]
+  }
+}

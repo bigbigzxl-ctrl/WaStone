@@ -161,7 +161,7 @@ def find_golden_reference(query):
 
 _VALID_MCU_ROLES = {"dut", "debugger", "coprocessor"}
 _VALID_BUILD_TYPES = {"arm_debug", "idf", "cmake", "pico"}
-_VALID_FLASH_METHODS = {"gdb_swd", "gdb_stutil", "idf_esptool", "bmda_gdb"}
+_VALID_FLASH_METHODS = {"gdb_swd", "gdb_stutil", "idf_esptool", "bmda_gdb", "uf2_copy"}
 _VALID_INSTRUMENT_FAMILIES = {"esp32jtag", "stlink", "esp32_meter", "none"}
 _VALID_LIFECYCLE_STAGES = {"golden", "draft", "runnable", "validated", "merge_candidate", "merged_to_main"}
 _VALID_PLATFORM_CLASSES = {"mcu", "fpga"}

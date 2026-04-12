@@ -316,6 +316,10 @@ class _LoadAdapter:
         elif self.method == "wch_openocd":
             ok = flash_wch_openocd.run(probe_cfg, firmware_path, flash_cfg=flash_cfg)
             return {"ok": bool(ok)}
+        elif self.method == "uf2_copy":
+            from ael.adapters import flash_uf2
+            ok = flash_uf2.run(probe_cfg, firmware_path, flash_cfg=flash_cfg)
+            return {"ok": bool(ok)}
         elif log_path and self.method == "idf_esptool":
             with _tee_output(log_path, output_mode):
                 ok = flash_idf.run(probe_cfg, firmware_path, flash_cfg=flash_cfg, flash_json_path=flash_json_path)
@@ -1757,6 +1761,7 @@ class AdapterRegistry:
             "load.idf_esptool": _LoadAdapter("idf_esptool"),
             "load.gdbmi": _LoadAdapter("gdbmi"),
             "load.wch_openocd": _LoadAdapter("wch_openocd"),
+            "load.uf2_copy": _LoadAdapter("uf2_copy"),
             "check.uart_log": _UartCheckAdapter(),
             "check.uart_roundtrip": _HostUartRoundtripAdapter(),
             "check.instrument_signature": _InstrumentSignatureAdapter(self._instrument_backends),

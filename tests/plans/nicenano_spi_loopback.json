@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_spi_loopback",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["stage2", "spi", "loopback", "uf2"],
+  "covers": ["spim1", "dma", "spi_mosi", "spi_miso"],
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_spi_loopback",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_spi_loopback",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 15,
+    "expect_patterns": [
+      "AEL_SPI_LOOPBACK_PASS"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 2. Wire P1.10 (MOSI) → P1.13 (MISO). SPI1 @ 1 MHz. Sends 32 bytes, verifies round-trip.",
+    "peripheral_signals": [
+      {
+        "role": "SPI1_MOSI",
+        "dut_signal": "P1.10",
+        "direction": "output",
+        "notes": "Wire to P1.13 (MISO)"
+      },
+      {
+        "role": "SPI1_MISO",
+        "dut_signal": "P1.13",
+        "direction": "input",
+        "notes": "Wire from P1.10 (MOSI)"
+      },
+      {
+        "role": "SPI1_SCK",
+        "dut_signal": "P1.11",
+        "direction": "output"
+      },
+      {
+        "role": "SPI1_CS",
+        "dut_signal": "P1.12",
+        "direction": "output"
+      }
+    ]
+  }
+}

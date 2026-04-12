@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "program_only",
+  "name": "nicenano_blinky_visual",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["minimal", "visual", "blinky", "stage0", "uf2"],
+  "covers": ["gpio", "board_health", "uf2_flash"],
+  "preflight": {
+    "enabled": false
+  },
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_blinky",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_blinky",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_blinky/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 2.0
+  },
+  "bench_setup": {
+    "notes": "Stage 0 visual baseline. Flash via UF2 (enter bootloader: double-tap RST). Board should blink the blue LED (P0.15) at 1 Hz. Success = operator sees blinking."
+  }
+}

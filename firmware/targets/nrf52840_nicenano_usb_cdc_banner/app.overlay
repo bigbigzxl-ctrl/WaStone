@@ -1,0 +1,28 @@
+/*
+ * nice!nano USB CDC banner overlay
+ * - Routes console to USB CDC (cdc_acm_uart0)
+ * - Sets code partition at 0x1000 (Adafruit UF2 bootloader)
+ */
+
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart0;
+        zephyr,shell-uart = &cdc_acm_uart0;
+        zephyr,code-partition = &nicenano_app;
+    };
+};
+
+&flash0 {
+    partitions {
+        nicenano_app: partition@1000 {
+            label = "nicenano-app";
+            reg = <0x00001000 0x000EE000>;
+        };
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};

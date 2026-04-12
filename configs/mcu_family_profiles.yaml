@@ -87,6 +87,27 @@ profiles:
     firmware_template: "esp32"
 
   # ── Nordic nRF (Tier 2 — no golden reference yet) ────────────────────────
+
+  # nRF52840 with UF2 bootloader (nice!nano, Adafruit Feather, etc.)
+  # SWD optional — primary flash path is UF2 mass-storage copy.
+  - prefix: "nrf52840"
+    group: "nrf"
+    family: "nrf52840"
+    build_type: "zephyr"
+    flash_method: "uf2_copy"
+    instrument_hint: "UF2 USB drive (double-tap reset to enter bootloader)"
+    first_test_archetype: "usb_cdc_banner"
+    preferred_reference: "nrf52840_nicenano"
+    firmware_template: "nrf52840_uf2"
+
+  - prefix: "nrf52"
+    group: "nrf"
+    family: "nrf52x"
+    build_type: "arm_debug"
+    flash_method: "gdb_swd"
+    instrument_hint: "J-Link or SWD adapter"
+    first_test_archetype: "gpio_signature"
+
   - prefix: "nrf5"
     group: "nrf"
     family: "nrf5x"

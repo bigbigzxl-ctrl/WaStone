@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "observe_uart",
+  "name": "nicenano_gpio_loopback",
+  "board": "nrf52840_nicenano",
+  "supported_instruments": [],
+  "labels": ["stage2", "gpio", "loopback", "uf2"],
+  "covers": ["gpio", "gpiote", "output", "input"],
+  "build": {
+    "type": "zephyr",
+    "zephyr_board": "nrf52840dk/nrf52840",
+    "project_dir": "firmware/targets/nrf52840_nicenano_gpio_loopback",
+    "artifact_stem": "zephyr",
+    "build_dir": "artifacts/build_nicenano_gpio_loopback",
+    "extra_overlay_file": "firmware/targets/nrf52840_nicenano_gpio_loopback/app.overlay"
+  },
+  "flash": {
+    "method": "uf2_copy",
+    "uf2_mount_path": "/media/aes/NICENANO",
+    "timeout_s": 30,
+    "post_load_settle_s": 4.0
+  },
+  "observe_uart": {
+    "enabled": true,
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "profile": "generic",
+    "duration_s": 15,
+    "expect_patterns": [
+      "AEL_GPIO_LOOPBACK_PASS"
+    ]
+  },
+  "bench_setup": {
+    "notes": "Stage 2. Wire P0.06 ↔ P0.08 (pair A) and P0.17 ↔ P0.20 (pair B). Each pair: output toggles 20 times, input reads back.",
+    "peripheral_signals": [
+      {
+        "role": "GPIO_LOOPBACK_A_OUT",
+        "dut_signal": "P0.06",
+        "direction": "output"
+      },
+      {
+        "role": "GPIO_LOOPBACK_A_IN",
+        "dut_signal": "P0.08",
+        "direction": "input",
+        "notes": "Wire to P0.06"
+      },
+      {
+        "role": "GPIO_LOOPBACK_B_OUT",
+        "dut_signal": "P0.17",
+        "direction": "output"
+      },
+      {
+        "role": "GPIO_LOOPBACK_B_IN",
+        "dut_signal": "P0.20",
+        "direction": "input",
+        "notes": "Wire to P0.17"
+      }
+    ]
+  }
+}

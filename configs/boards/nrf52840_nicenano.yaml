@@ -1,0 +1,64 @@
+board:
+  name: nRF52840 nice!nano v1
+  target: nrf52840_nicenano
+  kind: board
+  features:
+    - programmable_via_uf2
+    - native_usb_cdc
+    - has_gpio
+    - has_uart
+    - has_spi
+    - has_i2c
+    - has_adc
+    - has_pwm
+  processors:
+    - id: nrf52840
+      arch: arm
+      role: primary
+      clock_hz: 64000000
+  # No instrument_instance: flash via UF2, observe via USB CDC
+  build:
+    type: zephyr
+    zephyr_board: nrf52840dk/nrf52840
+    project_dir: firmware/targets/nrf52840_nicenano_blinky
+    artifact_stem: zephyr
+    build_dir: artifacts/build_nrf52840_nicenano_blinky
+  flash:
+    method: uf2_copy
+    uf2_mount_path: /media/aes/NICENANO
+    timeout_s: 30
+    post_load_settle_s: 4.0
+  power_and_boot:
+    reset_strategy: double_tap_reset
+    boot_mode_default: normal
+    power_rails:
+      - name: VCC
+        nominal_v: 3.3
+  pinout:
+    # Left column (top → bottom)
+    P0.06: A5
+    P0.08: A4
+    P0.17: A3/D3
+    P0.20: A2/D2
+    P0.22: A1/D1
+    P0.24: A0/D0
+    # Right column
+    P0.13: USB_DP
+    P0.14: USB_DM
+    P0.15: LED_BLUE
+    P0.28: SCL/D2
+    P0.29: SDA/D3
+    P0.31: VBATT_ADC
+    P1.10: MOSI/D15
+    P1.11: SCK/D16
+    P1.12: CS/D17
+    P1.13: MISO/D14
+  bench_connections:
+    - from: USB
+      to: host USB port
+      notes: UF2 flashing and USB CDC observation
+  notes: |
+    UF2 bootloader 0.6.0. App starts at 0x1000.
+    Enter bootloader: double-tap RST pin → NICENANO USB drive appears.
+    No SWD instrument connected (Stage 3 adds SWD via ESP32JTAG).
+    LED (P0.15) is active-high (blue).
