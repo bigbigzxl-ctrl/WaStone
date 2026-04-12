@@ -177,10 +177,10 @@
   },
   "nrf52840_nicenano|nicenano_gpio_loopback": {
     "exp_id": "manual",
-    "success_count": 1,
+    "success_count": 3,
     "failure_count": 0,
-    "last_seen": 1776001863.45909,
-    "confidence": 0.5,
+    "last_seen": 1776005829.9367206,
+    "confidence": 0.7,
     "known_failures": {}
   },
   "nrf52840_nicenano|nicenano_usb_cdc_banner": {
@@ -232,6 +232,36 @@
     "success_count": 2,
     "failure_count": 0,
     "last_seen": 1776004079.528124,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_spi_loopback": {
+    "exp_id": "f5cdfb8a-70ff-4610-bcc3-6de8eab072c6",
+    "success_count": 2,
+    "failure_count": 1,
+    "last_seen": 1776005829.9402547,
+    "confidence": 0.6,
+    "known_failures": {
+      "build": {
+        "exp_id": "852faad3-df1e-4eeb-adfc-80211ae61c1b",
+        "count": 1,
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_loopback: failed — stages: preflight, load, run, check — failure: build — adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'build', '-p', 'always', '-b', 'nrf52840dk/nrf52840', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_nicenano_spi_loopback', '/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback', '--', '-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay']' returned non-zero exit status 120."
+      }
+    }
+  },
+  "nrf52840_nicenano|nicenano_uart_loopback": {
+    "exp_id": "204d1dea-7835-4dba-b542-8a2747cddcff",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776005829.9372702,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "nrf52840_nicenano|nicenano_pwm_capture": {
+    "exp_id": "c2ec78c1-671b-4283-9b72-a08c279739a0",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776005829.9408085,
     "confidence": 0.6,
     "known_failures": {}
   }
