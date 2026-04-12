@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v203xxx_golden",
-  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA, USB-CDC (USART-HD skipped: needs PA2↔PB10 wire not in bench)",
+  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA (USART-HD skipped: needs PA2↔PB10 wire not in bench; USB-CDC excluded: requires manual power cycle, see tests/plans/ch32v203_usb_cdc_banner.json)",
   "board": "ch32v203xxx",
   "stages": {
     "0": [
@@ -32,9 +32,7 @@
     "2": [
       "tests/plans/ch32v203_tim_encoder.json"
     ],
-    "3": [
-      "tests/plans/ch32v203_usb_cdc_banner.json"
-    ]
+    "3": []
   },
   "wiring_guide": {
     "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND, 3V3) + USB-C power. No GPIO jumpers.",
@@ -50,10 +48,7 @@
       "PA1(TIM2_CH2) → PA7(TIM3_CH2)  (encoder quadrature B)",
       "Note: stage2 replaces stage1 PA7↔PA6 and PA8→PA0 wires"
     ],
-    "stage3": [
-      "PA2↔PA3 Stage-1 jumper stays in place (PA3 acts as IPU pull-up for USART2 half-duplex self-loopback on PA2)  — no new wire needed",
-      "USB-C cable from board secondary USB port (PA11=D-/PA12=D+) to host  (USB CDC banner — needs 96MHz PLL)"
-    ]
+    "stage3": "(empty — USB-CDC excluded from automated golden suite; manual test: see tests/plans/ch32v203_usb_cdc_banner.json)"
   },
   "notes": "WCHLink fw 2.18 (PID 8010) required. fw 2.01 and PID 8012 do NOT work with this OpenOCD."
 }
