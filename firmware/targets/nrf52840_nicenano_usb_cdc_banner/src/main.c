@@ -1,20 +1,22 @@
 /*
  * AEL Stage 0 — nRF52840 nice!nano USB CDC banner
  *
- * Prints "AEL_READY nRF52840" over USB CDC every 500 ms indefinitely.
- * observe_uart catches the pattern at any time after boot.
- *
- * Board: nrf52840dk/nrf52840 + app.overlay (USB CDC console, code@0x1000)
+ * Prints "AEL_READY nRF52840 count=N" over USB CDC every 500 ms.
+ * Supports 1200-baud bootloader re-entry via ael_usb.h.
  */
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include "../../nrf52840_nicenano_common/ael_usb.h"
 
 int main(void)
 {
-    uint32_t count = 0;
+    ael_usb_init();
+    k_msleep(1500);
 
+    uint32_t count = 0;
     while (1) {
+        if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
         printk("AEL_READY nRF52840 count=%u\n", count++);
         k_msleep(500);
     }
