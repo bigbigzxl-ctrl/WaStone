@@ -8,67 +8,66 @@
 - **Debug / Flash**: SWD via WCHLink (fw 2.18, PID 8010); OpenOCD + GDB (`riscv-none-embed-gdb`)
 - **Pack**: [`packs/ch32v203xxx_golden.json`](../../packs/ch32v203xxx_golden.json)
 
-## Final Result: 22/22 PASS (automated)
+## Final Result: 23/23 PASS (automated)
 
 Verified: 2026-04-12.
 
 | # | Test | Stage | Peripheral | Wiring | Result |
 |---|------|-------|-----------|--------|--------|
-| 1 | `ch32v203_systick` | 0 | SysTick 1 kHz | WCHLink only | ✅ PASS |
-| 2 | `ch32v203_iwdg` | 0 | IWDG watchdog reset | WCHLink only | ✅ PASS |
-| 3 | `ch32v203_rtc_self` | 0 | RTC LSI 32 kHz | WCHLink only | ✅ PASS |
-| 4 | `ch32v203_flash_rw` | 0 | Flash erase/write/verify | WCHLink only | ✅ PASS |
-| 5 | `ch32v203_crc` | 0 | CRC32 hardware unit | WCHLink only | ✅ PASS |
-| 6 | `ch32v203_adc_vref` | 0 | ADC Vref channel | WCHLink only | ✅ PASS |
-| 7 | `ch32v203_adc_temp` | 0 | ADC internal temp sensor | WCHLink only | ✅ PASS |
-| 8 | `ch32v203_dma_mem2mem` | 0 | DMA memory-to-memory | WCHLink only | ✅ PASS |
-| 9 | `ch32v203_can_loopback` | 0 | CAN1 loopback mode | WCHLink only | ✅ PASS |
-| 10 | `ch32v203_pwr_pvd` | 0 | PVD power voltage detect | WCHLink only | ✅ PASS |
-| 11 | `ch32v203_adc_dma` | 0 | ADC + DMA multi-channel | WCHLink only | ✅ PASS |
-| 12 | `ch32v203_tim_onepulse` | 0 | TIM2 one-pulse mode | WCHLink only | ✅ PASS |
-| 13 | `ch32v203_bkp` | 0 | BKP backup registers | WCHLink only | ✅ PASS |
-| 14 | `ch32v203_gpio_loopback` | 1 | GPIO output→input | PA2↔PA3 | ✅ PASS |
-| 15 | `ch32v203_exti_loopback` | 1 | EXTI edge interrupt | PA2↔PA3 | ✅ PASS |
-| 16 | `ch32v203_uart_loopback` | 1 | USART1 TX→RX | PA9↔PA10 | ✅ PASS |
-| 17 | `ch32v203_dma_uart` | 1 | USART1 DMA TX→RX | PA9↔PA10 | ✅ PASS |
-| 18 | `ch32v203_spi_loopback` | 1 | SPI1 MOSI→MISO | PA7↔PA6 | ✅ PASS |
-| 19 | `ch32v203_i2c_loopback` | 1 | I2C1 master/slave | PB6+PB7+4.7kΩ | ✅ PASS |
-| 20 | `ch32v203_tim_pwm_capture` | 1 | TIM1 PWM → TIM2 capture | PA8→PA0 | ✅ PASS |
-| 21 | `ch32v203_spi_dma` | 1 | SPI1 + DMA loopback | PA7↔PA6 | ✅ PASS |
-| 22 | `ch32v203_tim_encoder` | 2 | TIM2+TIM3 quadrature encoder | PA0→PA6, PA1→PA7 | ✅ PASS |
+| 1 | `ch32v203_blinky_visual` | 0 | GPIO PA15 LED (visual, no mailbox) | WCHLink only | ✅ PASS |
+| 2 | `ch32v203_blinky_mailbox` | 0 | GPIO PA15 LED + AEL mailbox | WCHLink only | ✅ PASS |
+| 3 | `ch32v203_systick` | 1 | SysTick 1 kHz | WCHLink only | ✅ PASS |
+| 4 | `ch32v203_iwdg` | 1 | IWDG watchdog reset | WCHLink only | ✅ PASS |
+| 5 | `ch32v203_rtc_self` | 1 | RTC LSI 32 kHz | WCHLink only | ✅ PASS |
+| 6 | `ch32v203_flash_rw` | 1 | Flash erase/write/verify | WCHLink only | ✅ PASS |
+| 7 | `ch32v203_crc` | 1 | CRC32 hardware unit | WCHLink only | ✅ PASS |
+| 8 | `ch32v203_adc_vref` | 1 | ADC Vref channel | WCHLink only | ✅ PASS |
+| 9 | `ch32v203_adc_temp` | 1 | ADC internal temp sensor | WCHLink only | ✅ PASS |
+| 10 | `ch32v203_dma_mem2mem` | 1 | DMA memory-to-memory | WCHLink only | ✅ PASS |
+| 11 | `ch32v203_can_loopback` | 1 | CAN1 loopback mode | WCHLink only | ✅ PASS |
+| 12 | `ch32v203_pwr_pvd` | 1 | PVD power voltage detect | WCHLink only | ✅ PASS |
+| 13 | `ch32v203_adc_dma` | 1 | ADC + DMA multi-channel | WCHLink only | ✅ PASS |
+| 14 | `ch32v203_tim_onepulse` | 1 | TIM2 one-pulse mode | WCHLink only | ✅ PASS |
+| 15 | `ch32v203_bkp` | 1 | BKP backup registers | WCHLink only | ✅ PASS |
+| 16 | `ch32v203_gpio_loopback` | 2 | GPIO output→input | PA2↔PA3 | ✅ PASS |
+| 17 | `ch32v203_exti_loopback` | 2 | EXTI edge interrupt | PA2↔PA3 | ✅ PASS |
+| 18 | `ch32v203_uart_loopback` | 2 | USART1 TX→RX | PA9↔PA10 | ✅ PASS |
+| 19 | `ch32v203_dma_uart` | 2 | USART1 DMA TX→RX | PA9↔PA10 | ✅ PASS |
+| 20 | `ch32v203_spi_loopback` | 2 | SPI1 MOSI→MISO | PA7↔PA6 | ✅ PASS |
+| 21 | `ch32v203_i2c_loopback` | 2 | I2C1 master/slave | PB6+PB7+4.7kΩ | ✅ PASS |
+| 22 | `ch32v203_tim_pwm_capture` | 2 | TIM1 PWM → TIM2 capture | PA8→PA0 | ✅ PASS |
+| 23 | `ch32v203_spi_dma` | 2 | SPI1 + DMA loopback | PA7↔PA6 | ✅ PASS |
 
-**Excluded from pack (manual test)**:
-- `ch32v203_usb_cdc_banner` — 需要 flash 后手动拔插 USB-C（board 电源仅来自 USB-C；WCHLink reset 后 xHCI 进入 invalid context state，需物理 VBUS 断电重连），代码与测试计划保留于 `tests/plans/ch32v203_usb_cdc_banner.json`
-
-**Excluded from pack (bench wiring)**:
-- `ch32v203_usart_halfduplex` — HDSEL 半双工需要两路 USART TX 共享单线（PA2↔PB10），bench 仅有 PA2↔PA3，不满足条件
+**Excluded from pack**:
+- `ch32v203_tim_encoder` — 需要另设接线（PA0→PA6, PA1→PA7，与 Stage-2 SPI/PWM 跳线冲突）；测试计划保留于 `tests/plans/ch32v203_tim_encoder.json`
+- `ch32v203_usart_halfduplex` — HDSEL 半双工需要 PA2↔PB10（USART2↔USART3），bench 不满足
+- `ch32v203_usb_cdc_banner` — 需要 flash 后手动拔插 USB-C，不可自动化；测试计划保留于 `tests/plans/ch32v203_usb_cdc_banner.json`
 
 ---
 
 ## Bench Wiring
 
-### Stage 0 (no wires)
+### Stage 0 (no wires — LED visual + mailbox baseline)
 ```
 WCHLink SWDIO  → CH32V203 PA13
 WCHLink SWDCLK → CH32V203 PA14
 WCHLink GND    → CH32V203 GND
-WCHLink 3V3    → CH32V203 3V3   (可选；nanoCH32V203 由 USB-C 自供电)
 USB-C 供电      → board USB-C port
+LED D1 (Blue) on PA15 — PA15 LOW = ON, no external wiring needed
 ```
 
-### Stage 1 (cumulative with Stage 0)
+### Stage 1 (no wires — internal peripherals)
+```
+同 Stage 0，无额外接线
+```
+
+### Stage 2 (adds GPIO jumpers)
 ```
 PA2  ↔  PA3              GPIO loopback / EXTI
 PA9(TX1) ↔ PA10(RX1)     USART1 loopback + DMA_UART
 PA7(MOSI1) ↔ PA6(MISO1)  SPI1 loopback + SPI DMA
 PB6(SCL1) + PB7(SDA1) + 4.7 kΩ to 3V3   I2C1
 PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)        PWM capture
-```
-
-### Stage 2 (replaces PA7↔PA6 and PA8→PA0 of Stage 1)
-```
-PA0(TIM2_CH1) → PA6(TIM3_CH1)   encoder quadrature A
-PA1(TIM2_CH2) → PA7(TIM3_CH2)   encoder quadrature B
 ```
 
 ---
@@ -97,17 +96,17 @@ PA1(TIM2_CH2) → PA7(TIM3_CH2)   encoder quadrature B
 
 **症状**: HDSEL 模式下 TX 期间 RX 自动禁用，单根 PA2 无法自发送自接收。
 
-**根因**: CH32V203 USART HDSEL（半双工）要求两个不同 USART 的 TX 引脚共用同一物理线；bench 只有 PA2↔PA3（Stage 1 GPIO 跳线），没有 PA2↔PB10（USART2↔USART3）连接。GPIO wire check 固件实测确认（`wire_fail=0b0101`：双向均开路）。
+**根因**: CH32V203 USART HDSEL（半双工）要求两个不同 USART 的 TX 引脚共用同一物理线；bench 只有 PA2↔PA3（Stage 2 GPIO 跳线），没有 PA2↔PB10（USART2↔USART3）连接。GPIO wire check 固件实测确认（`wire_fail=0b0101`：双向均开路）。
 
 **解决**: 从 golden pack 中移除，归档原因。
 
 ---
 
-### Bug 4 — TIM Encoder：Stage 2 接线替换 Stage 1
+### Bug 4 — TIM Encoder：接线与 Stage-2 冲突，排除出包
 
-**症状**: Stage 2 encoder 测试需要 PA0→PA6、PA1→PA7，与 Stage 1 的 PA7↔PA6（SPI loopback）和 PA8→PA0（PWM capture）冲突。
+**症状**: Stage-2 encoder 测试需要 PA0→PA6、PA1→PA7，与 Stage-2 的 PA7↔PA6（SPI loopback）和 PA8→PA0（PWM capture）物理冲突，无法同场景共存。
 
-**解决**: Stage 2 接线独立，替换 Stage 1 中的 PA7↔PA6 和 PA8→PA0，pack 中 Stage 0/1/2 分阶段串行执行。
+**解决**: 从 golden pack 中移除，单独归档。如需运行须单独布线。
 
 ---
 
@@ -131,6 +130,8 @@ PA1(TIM2_CH2) → PA7(TIM3_CH2)   encoder quadrature B
 
 ## Key Design Notes
 
+- **Stage 0 = board health baseline**: blinky_visual（无 mailbox，肉眼确认 LED）→ blinky_mailbox（有 mailbox，确认 AEL 管道通）。两项均只需 WCHLink，无需任何跳线。
+- **LED D1**: PA15 LOW=ON，板载 10kΩ 限流电阻，无需外部接线。
 - **AEL Mailbox 地址**: `0x20000600`（SRAM 偏移 0x600），magic=`0xAE100001`，status=2 为 PASS，detail0 在 PASS 后自增（increment 模式）。
 - **96 MHz 时钟**: `system_ch32v20x.c` patch 为 96 MHz；USB 时钟 = PLL/2 = 48 MHz（`RCC_USBCLKSource_PLLCLK_Div2`）。USBD_ENDPx_DataUp 需要精确 48 MHz，96 MHz patch 不可省略。
 - **WCHLink 版本要求**: fw **2.18（PID 8010）** 必须。fw 2.01 和 PID 8012 与本 OpenOCD 不兼容，flash 失败。
@@ -143,5 +144,5 @@ PA1(TIM2_CH2) → PA7(TIM3_CH2)   encoder quadrature B
 
 - **DUT**: CH32V203C8T6 nanoCH32V203 (RISC-V4B @ 96 MHz, WCHLink fw 2.18)
 - **Pack**: [`packs/ch32v203xxx_golden.json`](../../packs/ch32v203xxx_golden.json)
-- **Status**: `golden` — 22/22 PASS (automated), 2026-04-12
-- **Manual test archived**: `tests/plans/ch32v203_usb_cdc_banner.json` (requires physical USB-C power cycle after flash)
+- **Status**: `golden` — 23/23 PASS (automated), 2026-04-12
+- **Manual tests archived**: `tests/plans/ch32v203_usb_cdc_banner.json`, `tests/plans/ch32v203_tim_encoder.json`

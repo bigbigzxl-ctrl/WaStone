@@ -1,10 +1,14 @@
 {
   "schema_version": "1.0",
   "name": "ch32v203xxx_golden",
-  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA (USART-HD skipped: needs PA2↔PB10 wire not in bench; USB-CDC excluded: requires manual power cycle, see tests/plans/ch32v203_usb_cdc_banner.json)",
+  "description": "CH32V203C8T6 golden test suite — Blinky, SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA (USART-HD excluded: needs PA2↔PB10 wire; TIM-encoder excluded: needs Stage-2 rewire; USB-CDC excluded: requires manual power cycle)",
   "board": "ch32v203xxx",
   "stages": {
     "0": [
+      "tests/plans/ch32v203_blinky_visual.json",
+      "tests/plans/ch32v203_blinky_mailbox.json"
+    ],
+    "1": [
       "tests/plans/ch32v203_systick.json",
       "tests/plans/ch32v203_iwdg.json",
       "tests/plans/ch32v203_rtc_self.json",
@@ -19,7 +23,7 @@
       "tests/plans/ch32v203_tim_onepulse.json",
       "tests/plans/ch32v203_bkp.json"
     ],
-    "1": [
+    "2": [
       "tests/plans/ch32v203_gpio_loopback.json",
       "tests/plans/ch32v203_exti_loopback.json",
       "tests/plans/ch32v203_uart_loopback.json",
@@ -28,27 +32,23 @@
       "tests/plans/ch32v203_i2c_loopback.json",
       "tests/plans/ch32v203_tim_pwm_capture.json",
       "tests/plans/ch32v203_spi_dma.json"
-    ],
-    "2": [
-      "tests/plans/ch32v203_tim_encoder.json"
-    ],
-    "3": []
+    ]
   },
   "wiring_guide": {
-    "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND, 3V3) + USB-C power. No GPIO jumpers.",
-    "stage1": [
-      "PA2  ↔  PA3   (GPIO loopback A / EXTI)",
-      "PA9(TX1) ↔ PA10(RX1)  (UART loopback + DMA_UART)",
-      "PA7(MOSI1) ↔ PA6(MISO1)  (SPI loopback + SPI DMA)",
-      "PB6(SCL1) + PB7(SDA1) + 4.7kΩ to 3V3  (I2C — optional, skip if no pull-ups)",
-      "PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)  (PWM capture)"
-    ],
+    "stage0": "WCHLink only (SWDIO→PA13, SWDCLK→PA14, GND) + USB-C power. No GPIO jumpers. LED D1 on PA15.",
+    "stage1": "WCHLink only (same as Stage 0). No GPIO jumpers.",
     "stage2": [
-      "PA0(TIM2_CH1) → PA6(TIM3_CH1)  (encoder quadrature A)",
-      "PA1(TIM2_CH2) → PA7(TIM3_CH2)  (encoder quadrature B)",
-      "Note: stage2 replaces stage1 PA7↔PA6 and PA8→PA0 wires"
-    ],
-    "stage3": "(empty — USB-CDC excluded from automated golden suite; manual test: see tests/plans/ch32v203_usb_cdc_banner.json)"
+      "PA2  ↔  PA3              (GPIO loopback / EXTI)",
+      "PA9(TX1) ↔ PA10(RX1)    (UART loopback + DMA_UART)",
+      "PA7(MOSI1) ↔ PA6(MISO1) (SPI loopback + SPI DMA)",
+      "PB6(SCL1) + PB7(SDA1) + 4.7kΩ to 3V3  (I2C)",
+      "PA8(TIM1_CH1) → PA0(TIM2_CH1_ETR)  (PWM capture)"
+    ]
+  },
+  "excluded": {
+    "ch32v203_tim_encoder": "needs Stage-2 rewire (PA0→PA6, PA1→PA7, conflicts with Stage-2 SPI/PWM wires); see tests/plans/ch32v203_tim_encoder.json",
+    "ch32v203_usart_halfduplex": "needs PA2↔PB10 wire (USART2↔USART3 HD shared line); not in bench setup",
+    "ch32v203_usb_cdc_banner": "requires manual power cycle after flash (board USB-C powered only); see tests/plans/ch32v203_usb_cdc_banner.json"
   },
   "notes": "WCHLink fw 2.18 (PID 8010) required. fw 2.01 and PID 8012 do NOT work with this OpenOCD."
 }

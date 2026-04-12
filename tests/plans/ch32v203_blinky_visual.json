@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "program_only",
+  "name": "ch32v203_blinky_visual",
+  "board": "ch32v203xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "labels": ["minimal", "visual", "blinky", "stage0", "no_mailbox"],
+  "covers": ["gpio", "board_health", "led"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v203_blinky",
+    "artifact_stem": "ch32v203_blinky"
+  },
+  "flash": {
+    "method": "wch_openocd",
+    "post_load_settle_s": 1.0
+  },
+  "bench_setup": {
+    "notes": "Stage 0 visual baseline (no mailbox). Flash via WCHLink. LED D1 (Blue) on PA15 blinks at 1 Hz (LOW=ON). Success = operator sees blinking. No instrumentation needed.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
+      { "from": "USB-C power",    "to": "CH32V203 USB-C port" }
+    ],
+    "ground_required": true
+  }
+}
