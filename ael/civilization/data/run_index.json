@@ -8,7 +8,7 @@
     "known_failures": {}
   },
   "vexriscv_fpga_artix7|test_freertos_deadlock_tc60_tc74": {
-    "exp_id": "Experience(id='c50655ba-e39e-4181-991d-971d90e85960', schema_version='v1', domain='engineering', type='', intent=None, raw='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix7. AEL v0.5 bitstream (815KB, If/Elif FIFO fix). Key fixes: (1) Migen COMB push_cond must use If/Elif chain not multiple independent If stmts — last-wins semantics causes push_cond always 0. (2) event_data lower 16 bits = ev_id (RTL stores Signal(32,reset=EV_X) as-is in lower bits). TC-71 EV_DEADLOCK=0x1003 confirmed in FIFO.', summary='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix...', context={}, tags=['fix'], entities=[], actions=[], outcome='success', confidence=0.5, related_experience=[], derived_from=[], timestamp=1775780430.5750928, source=None, feedback=None, scope='task', last_used=None, decay_score=1.0, avoid=False)",
+    "exp_id": "Experience(id='c50655ba-e39e-4181-991d-971d90e85960', schema_version='v1', domain='engineering', type='', intent=None, raw='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix7. AEL v0.5 bitstream (815KB, If/Elif FIFO fix). Key fixes: (1) Migen COMB push_cond must use If/Elif chain not multiple independent If stmts \u2014 last-wins semantics causes push_cond always 0. (2) event_data lower 16 bits = ev_id (RTL stores Signal(32,reset=EV_X) as-is in lower bits). TC-71 EV_DEADLOCK=0x1003 confirmed in FIFO.', summary='[SUCCESS] FreeRTOS deadlock demo 15/15 PASS on VexRiscv/LiteX Artix-7. Board: vexriscv_fpga_artix...', context={}, tags=['fix'], entities=[], actions=[], outcome='success', confidence=0.5, related_experience=[], derived_from=[], timestamp=1775780430.5750928, source=None, feedback=None, scope='task', last_used=None, decay_score=1.0, avoid=False)",
     "success_count": 1,
     "failure_count": 0,
     "last_seen": 1775780430.6076438,
@@ -201,7 +201,7 @@
       "preflight": {
         "exp_id": "6ba4fc09-1a01-4dac-8395-9db7faf65dc0",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_saadc: failed — stages: build, load, run, check — failure: preflight — preflight failed"
+        "last_raw": "[nrf52840_nicenano] nicenano_saadc: failed \u2014 stages: build, load, run, check \u2014 failure: preflight \u2014 preflight failed"
       }
     }
   },
@@ -223,7 +223,7 @@
       "check_uart": {
         "exp_id": "09ea136f-704c-4102-8a3f-8dfd71c5c686",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_spi_flash: failed — stages: preflight, build, load, run — failure: check_uart — uart transport unavailable"
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_flash: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_uart \u2014 uart transport unavailable"
       }
     }
   },
@@ -245,7 +245,7 @@
       "build": {
         "exp_id": "852faad3-df1e-4eeb-adfc-80211ae61c1b",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_spi_loopback: failed — stages: preflight, load, run, check — failure: build — adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'build', '-p', 'always', '-b', 'nrf52840dk/nrf52840', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_nicenano_spi_loopback', '/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback', '--', '-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay']' returned non-zero exit status 120."
+        "last_raw": "[nrf52840_nicenano] nicenano_spi_loopback: failed \u2014 stages: preflight, load, run, check \u2014 failure: build \u2014 adapter execute failed: Command '['/home/aes/zephyr-venv/bin/west', 'build', '-p', 'always', '-b', 'nrf52840dk/nrf52840', '--build-dir', '/nvme1t/work/codex/ai-embedded-lab/artifacts/build_nicenano_spi_loopback', '/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback', '--', '-DDTC_OVERLAY_FILE=/nvme1t/work/codex/ai-embedded-lab/firmware/targets/nrf52840_nicenano_spi_loopback/app.overlay']' returned non-zero exit status 120."
       }
     }
   },
@@ -275,7 +275,7 @@
       "check_uart": {
         "exp_id": "8efceb5a-8aa5-41b4-a2eb-8ba1eff9f5ce",
         "count": 1,
-        "last_raw": "[nrf52840_nicenano] nicenano_internal_temp: failed — stages: preflight, build, load, run — failure: check_uart — expected UART readiness patterns missing"
+        "last_raw": "[nrf52840_nicenano] nicenano_internal_temp: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_uart \u2014 expected UART readiness patterns missing"
       }
     }
   },
@@ -353,7 +353,7 @@
       "check_mailbox": {
         "exp_id": "5a2fafd7-ad79-418d-834d-50e55e8a9a91",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_rtc_self: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_rtc_self: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -367,7 +367,7 @@
       "check_mailbox": {
         "exp_id": "5e8086af-b66f-481c-8f74-f2756c8baf80",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_flash_rw: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_flash_rw: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -381,7 +381,7 @@
       "check_mailbox": {
         "exp_id": "766fbff0-e8b6-498d-aa7e-87dd6b25fd41",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_crc: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_crc: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -395,7 +395,7 @@
       "check_mailbox": {
         "exp_id": "b1b39025-063d-4ae6-85bf-e90614df70ac",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_adc_vref: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=RUNNING (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_adc_vref: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=RUNNING (expected PASS)"
       }
     }
   },
@@ -481,21 +481,21 @@
       "check_mailbox": {
         "exp_id": "4edb927d-07bc-4f43-99b0-4e305020beaf",
         "count": 3,
-        "last_raw": "[ch32v203xxx] ch32v203_dma_uart: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_dma_uart: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
   "ch32v203xxx|ch32v203_tim_encoder": {
-    "exp_id": null,
-    "success_count": 0,
+    "exp_id": "8255be9e-8da7-48e9-a0a4-095680dd87c8",
+    "success_count": 1,
     "failure_count": 1,
-    "last_seen": 1776013330.6944807,
+    "last_seen": 1776021748.2656202,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "8660d61d-422e-4734-8aa7-aff7015441f7",
         "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_tim_encoder: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "last_raw": "[ch32v203xxx] ch32v203_tim_encoder: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -542,14 +542,14 @@
   "ch32v203xxx|ch32v203_usart_halfduplex": {
     "exp_id": null,
     "success_count": 0,
-    "failure_count": 1,
-    "last_seen": 1776015380.063325,
+    "failure_count": 6,
+    "last_seen": 1776022398.7269347,
     "confidence": 0.5,
     "known_failures": {
       "check_mailbox": {
         "exp_id": "5968ae87-f09e-424d-b35b-c2771bba2e51",
-        "count": 1,
-        "last_raw": "[ch32v203xxx] ch32v203_usart_halfduplex: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+        "count": 6,
+        "last_raw": "[ch32v203xxx] ch32v203_usart_halfduplex: failed \u2014 stages: preflight, build, load, run \u2014 failure: check_mailbox \u2014 mailbox verify failed: status=FAIL (expected PASS)"
       }
     }
   },
@@ -591,6 +591,14 @@
     "failure_count": 0,
     "last_seen": 1776015450.3893054,
     "confidence": 0.5,
+    "known_failures": {}
+  },
+    "ch32v203xxx|ch32v203_usb_cdc_banner": {
+    "exp_id": "60587e26-8f2c-4909-a529-f7d26a7bd87a",
+    "success_count": 1,
+    "failure_count": 18,
+    "last_seen": 1776024917.0,
+    "confidence": 0.7,
     "known_failures": {}
   }
 }

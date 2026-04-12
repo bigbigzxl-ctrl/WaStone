@@ -1,0 +1,8 @@
+{
+  "board_id": "riscv_semantic_dbg",
+  "description": "AEL entry for riscv-semantic-dbg FPGA prototype",
+  "project_root": "/nvme1t/work/codex/riscv-semantic-dbg",
+  "ael_integration": "/nvme1t/work/codex/riscv-semantic-dbg/ael_integration",
+  "tests_dir": "/nvme1t/work/codex/riscv-semantic-dbg/ael_integration/tests",
+  "board_config": "/nvme1t/work/codex/riscv-semantic-dbg/ael_integration/board.json"
+}

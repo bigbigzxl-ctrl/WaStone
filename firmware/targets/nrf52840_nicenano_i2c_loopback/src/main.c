@@ -16,6 +16,9 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/i2c.h>
 #include <string.h>
+#include "../../../nrf52840_nicenano_common/ael_bootloader.h"
+
+AEL_BOOTLOADER_THREAD_DEFINE();
 
 #define I2C_MASTER_NODE  DT_NODELABEL(i2c0)
 #define I2C_SLAVE_NODE   DT_NODELABEL(i2c1)

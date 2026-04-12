@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "name": "ch32v203xxx_golden",
-  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA, USART-HD, USB-CDC",
+  "description": "CH32V203C8T6 golden test suite — SysTick, IWDG, RTC, Flash, CRC, ADC, DMA, GPIO, UART, SPI, I2C, TIM, EXTI, CAN, PVD, BKP, OPM, SPI-DMA, USB-CDC (USART-HD skipped: needs PA2↔PB10 wire not in bench)",
   "board": "ch32v203xxx",
   "stages": {
     "0": [
@@ -33,7 +33,6 @@
       "tests/plans/ch32v203_tim_encoder.json"
     ],
     "3": [
-      "tests/plans/ch32v203_usart_halfduplex.json",
       "tests/plans/ch32v203_usb_cdc_banner.json"
     ]
   },
@@ -52,7 +51,7 @@
       "Note: stage2 replaces stage1 PA7↔PA6 and PA8→PA0 wires"
     ],
     "stage3": [
-      "PA2(USART2_HD) ↔ PB10(USART3_HD) + 4.7kΩ pull-up to 3V3  (half-duplex — PA2 also connected to PA3 from stage1 is OK, just adds floating load)",
+      "PA2↔PA3 Stage-1 jumper stays in place (PA3 acts as IPU pull-up for USART2 half-duplex self-loopback on PA2)  — no new wire needed",
       "USB-C cable from board secondary USB port (PA11=D-/PA12=D+) to host  (USB CDC banner — needs 96MHz PLL)"
     ]
   },

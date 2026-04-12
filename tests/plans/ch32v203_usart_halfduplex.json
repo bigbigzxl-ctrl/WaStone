@@ -28,14 +28,13 @@
     "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
   },
   "bench_setup": {
-    "notes": "USART2(PA2 AF_OD) + USART3(PB10 AF_OD) half-duplex. Wire PA2↔PB10 + 4.7kΩ pull-up to 3V3 on that line.",
+    "notes": "USART2 half-duplex self-loopback on PA2 (AF_OD). PA3 configured as GPIO IPU provides pull-up via Stage-1 PA2↔PA3 jumper. No extra wires needed beyond Stage-1.",
     "bench_connections": [
       { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
       { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
       { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
       { "from": "WCHLink 3V3",    "to": "CH32V203 3V3"  },
-      { "from": "CH32V203 PA2",   "to": "CH32V203 PB10" },
-      { "from": "CH32V203 PA2",   "to": "4.7kΩ to 3V3"  }
+      { "from": "CH32V203 PA2",   "to": "CH32V203 PA3 (Stage-1 jumper, already in place)" }
     ],
     "ground_required": true
   }

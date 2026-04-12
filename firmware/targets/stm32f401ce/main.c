@@ -43,7 +43,7 @@ int main(void) {
             sig_ms = 0u;
             AEL_SIG_PORT->ODR ^= (1u << AEL_SIG_PIN);
         }
-        if (++led_ms >= 1000u) {
+        if (++led_ms >= 250u) {
             led_ms = 0u;
             AEL_LED_PORT->ODR ^= (1u << AEL_LED_PIN);
         }

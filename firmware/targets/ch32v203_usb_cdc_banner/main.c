@@ -3,17 +3,19 @@
  * System clock: 96MHz (system_ch32v20x.c patched to 96MHz).
  * USB clock: 96MHz / 2 = 48MHz via RCC_USBCLKSource_PLLCLK_Div2.
  *
- * Init sequence: Set_USBConfig() → USB_Init() → USB_Interrupts_Config()
- * Wait for bDeviceState == CONFIGURED (USB enumeration by host), timeout 5s.
- * On enumeration: send ASCII banner "AEL_CH32V203_USB_CDC\r\n" via EP3.
- * Write mailbox PASS immediately after enumeration check.
+ * Procedure:
+ *   1. AEL flashes this firmware via WCHLink (SWD).
+ *   2. After flash, if USB-C was already plugged in: unplug then replug.
+ *      If USB-C was not plugged in: plug it in.
+ *   3. Host enumerates the device (< 2s after plug).
+ *   4. Firmware sends banner "AEL_CH32V203_USB_CDC\r\n" via EP3, writes PASS.
  *
- * Requires: USB-C cable from board second USB port (PA11=D-, PA12=D+) to host.
- * detail0 on PASS: 0xCDC (encoded as 0x00000CDC).
+ * Timeout: ~60s from firmware start. detail0=0xCDC on PASS.
  */
 #define AEL_MAILBOX_ADDR 0x20000600u
 #include "ael_mailbox.h"
 #include "ch32v20x.h"
+#include "debug.h"
 #include "usb_lib.h"
 #include "usb_pwr.h"
 #include "hw_config.h"
@@ -27,18 +29,23 @@ int main(void)
 {
     ael_mailbox_init();
 
-    /* USB stack init (hw_config.c: Set_USBConfig calls RCC_USBCLKConfig) */
+    /* Required by USB stack internals (Delay_Ms inside USBD_init) */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
+    Delay_Init();
+
+    /* Standard USB stack init */
     Set_USBConfig();
     USB_Init();
     USB_Interrupts_Config();
 
-    /* Wait for USB enumeration (bDeviceState == CONFIGURED = 4) */
-    /* Timeout ~5 seconds at 96MHz: 96M * 5 / 6 iterations ≈ 80M */
-    uint32_t t = 80000000u;
+    /* Wait up to ~60s for host enumeration.
+     * If device does not enumerate: unplug USB-C cable and replug.
+     * Host enumerates in < 2s after plug. */
+    uint32_t t = 1920000000u;   /* ~60s at 96MHz, 3-4 cycles per iteration */
     while (bDeviceState != CONFIGURED && --t);
 
     if (!t) {
-        /* Not enumerated — host not connected or bus issue */
         ael_mailbox_fail(1, bDeviceState);
         while (1) {
             AEL_MAILBOX->detail0 = bDeviceState;
@@ -52,10 +59,8 @@ int main(void)
     /* Send banner via EP3 IN */
     uint32_t send_t = 1000000;
     while (USBD_Endp3_Busy && --send_t);
-    if (send_t) {
-        USBD_ENDPx_DataUp(ENDP3, (uint8_t *)banner,
-                          sizeof(banner) - 1);  /* -1: no null terminator */
-    }
+    if (send_t)
+        USBD_ENDPx_DataUp(ENDP3, (uint8_t *)banner, sizeof(banner) - 1);
 
     ael_mailbox_pass();
     AEL_MAILBOX->detail0 = 0xCDC;
