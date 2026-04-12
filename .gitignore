@@ -32,3 +32,10 @@ firmware/third_party/
 # Workflow archive — runtime-generated event data (daily JSONL files + migration backup)
 workflow_archive/*.jsonl
 workflow_archive/*.jsonl.bak
+
+# Vivado/Webtalk generated logs and journals (FPGA tool artifacts)
+vivado*.jou
+vivado*.log
+webtalk*.jou
+webtalk*.log
+stream.cfg
