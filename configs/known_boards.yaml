@@ -156,3 +156,22 @@ boards:
       - esp32s3 devkit
     notes: >
       Official Espressif ESP32-S3 DevKit. Xtensa LX7 dual-core, USB-OTG.
+
+  # ── WCH CH32V ──────────────────────────────────────────────────────────────
+  - dut_id: ch32v203xxx
+    board_name: nanoCH32V203 v1.1 (CH32V203C8T6)
+    mcu: ch32v203c8t6
+    aliases:
+      - ch32v203
+      - ch32v203c8t6
+      - nanoch32v203
+      - nano ch32v203
+      - ch32v203xxx
+      - wch ch32v203
+    notes: >
+      nanoCH32V203 v1.1 board. WCH CH32V203C8T6 RISC-V RV32IMAC, 64KB flash,
+      20KB SRAM, 72MHz PLL, dual USB-C (USB FS + CDC), CAN1 (PB8/PB9 remap).
+      Instrument: WCHLink (fw 2.18, PID 8010) via SDI transport.
+      Flash via wch_openocd. Mailbox at 0x20000600. Linker origin 0x00000000.
+      GPIO loopback: PA2↔PA3, PA9↔PA10, PA7↔PA6, PA8↔PA0 (Stage 1).
+      Encoder (Stage 2): PA0↔PA6, PA1↔PA7.

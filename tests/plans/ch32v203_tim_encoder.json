@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "test_kind": "baremetal_mailbox",
+  "name": "ch32v203_tim_encoder",
+  "board": "ch32v203xxx",
+  "supported_instruments": ["wchlink"],
+  "applies_to": ["board"],
+  "requires_dut_features": ["programmable_via_sdi"],
+  "requires": { "mailbox": true, "datacapture": false },
+  "labels": ["mailbox", "ch32v203", "timer", "encoder", "stage2"],
+  "covers": ["ch32v203_tim_encoder_mode"],
+  "preflight": { "enabled": false },
+  "build": {
+    "type": "arm_debug",
+    "project_dir": "firmware/targets/ch32v203_tim_encoder",
+    "artifact_stem": "ch32v203_tim_encoder"
+  },
+  "flash": { "method": "wch_openocd", "post_load_settle_s": 1.5 },
+  "mailbox_verify": {
+    "settle_s": 1.5,
+    "addr": "0x20000600",
+    "skip_attach": true,
+    "halt_before_read": true,
+    "check_mode": "detail0_increment",
+    "increment_wait_s": 3,
+    "detach_resume_target": "wch_riscv.cpu.0",
+    "post_resume_openocd_bin": "/nvme1t/wch-riscv-gcc/openocd/bin/openocd",
+    "post_resume_openocd_cfg": "/nvme1t/wch-riscv-gcc/openocd/bin/wch-riscv.cfg"
+  },
+  "bench_setup": {
+    "notes": "Stage 2 new wires required. TIM2 CH1/CH2 (PA0/PA1) generate quadrature signals → TIM3 CH1/CH2 (PA6/PA7) decode. detail0 = TIM3 CNT on PASS.",
+    "bench_connections": [
+      { "from": "WCHLink SWDIO",  "to": "CH32V203 PA13" },
+      { "from": "WCHLink SWDCLK", "to": "CH32V203 PA14" },
+      { "from": "WCHLink GND",    "to": "CH32V203 GND"  },
+      { "from": "WCHLink 3V3",    "to": "CH32V203 3V3"  },
+      { "from": "CH32V203 PA0",   "to": "CH32V203 PA6"  },
+      { "from": "CH32V203 PA1",   "to": "CH32V203 PA7"  }
+    ],
+    "ground_required": true
+  }
+}
