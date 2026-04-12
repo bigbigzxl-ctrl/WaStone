@@ -11,7 +11,7 @@
         zephyr,code-partition = &nicenano_app;
     };
 
-    zephyr_user {
+    zephyr,user {
         /* VBATT divider on P0.31 = AIN7 */
         io-channels = <&adc 7>;
     };

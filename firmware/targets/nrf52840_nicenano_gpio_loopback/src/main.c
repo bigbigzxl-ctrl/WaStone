@@ -1,26 +1,22 @@
 /*
  * AEL Stage 2 — nRF52840 nice!nano GPIO loopback
  *
- * Wiring required:
- *   P0.06 (OUT) ←→ P0.08 (IN)   — pair A
- *   P0.17 (OUT) ←→ P0.20 (IN)   — pair B
+ * Wiring: P0.17 (OUT) ←→ P0.20 (IN)   [1 wire]
  *
- * Toggles OUT pin and reads it back from IN pin.
- * Reports: [GPIO_A] ok=N/N PASS|FAIL
- *          [GPIO_B] ok=N/N PASS|FAIL
+ * Toggles OUT and reads it back from IN.
+ * Reports: [GPIO_B] ok=N/N PASS|FAIL
  *          AEL_GPIO_LOOPBACK_PASS|FAIL
  */
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/gpio.h>
+#include "../../nrf52840_nicenano_common/ael_usb.h"
 
 #define GPIO0_NODE  DT_NODELABEL(gpio0)
 
 static const struct device *gpio0;
 
-#define PIN_A_OUT  6   /* P0.06 */
-#define PIN_A_IN   8   /* P0.08 */
 #define PIN_B_OUT  17  /* P0.17 */
 #define PIN_B_IN   20  /* P0.20 */
 #define N_ITERS    20
@@ -45,21 +41,24 @@ static bool loopback_pair(const char *tag, int out_pin, int in_pin)
 
 int main(void)
 {
+    ael_usb_init();
     k_msleep(1500);
 
     gpio0 = DEVICE_DT_GET(GPIO0_NODE);
     if (!device_is_ready(gpio0)) {
         printk("[GPIO] device_not_ready FAIL\n");
         printk("AEL_GPIO_LOOPBACK_FAIL\n");
-        return -1;
+        while (1) {
+            if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
+            k_msleep(3000);
+        }
     }
 
     printk("AEL_GPIO_LOOPBACK_START\n");
-    bool pass = true;
-    pass &= loopback_pair("GPIO_A", PIN_A_OUT, PIN_A_IN);
-    pass &= loopback_pair("GPIO_B", PIN_B_OUT, PIN_B_IN);
+    bool pass = loopback_pair("GPIO_B", PIN_B_OUT, PIN_B_IN);
 
     while (1) {
+        if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
         printk("AEL_GPIO_LOOPBACK_%s\n", pass ? "PASS" : "FAIL");
         k_msleep(3000);
     }

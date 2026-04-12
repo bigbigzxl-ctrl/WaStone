@@ -12,6 +12,10 @@
         zephyr,code-partition = &nicenano_app;
     };
 
+    aliases {
+        ael-pwm-out = &ael_pwm_out;
+    };
+
     pwmleds {
         compatible = "pwm-leds";
         ael_pwm_out: ael_pwm_out {

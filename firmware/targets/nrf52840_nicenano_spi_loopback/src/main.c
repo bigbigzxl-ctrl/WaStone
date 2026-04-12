@@ -12,6 +12,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/spi.h>
 #include <string.h>
+#include "../../nrf52840_nicenano_common/ael_usb.h"
 
 #define SPI_NODE DT_NODELABEL(spi1)
 #define BUF_LEN  32
@@ -28,19 +29,21 @@ static const struct spi_config spi_cfg = {
 
 int main(void)
 {
+    ael_usb_init();
     k_msleep(1500);
 
     const struct device *spi_dev = DEVICE_DT_GET(SPI_NODE);
     if (!device_is_ready(spi_dev)) {
         printk("[SPI] device_not_ready FAIL\n");
         printk("AEL_SPI_LOOPBACK_FAIL\n");
-        return -1;
+        while (1) {
+            if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
+            k_msleep(3000);
+        }
     }
 
     uint8_t tx_buf[BUF_LEN], rx_buf[BUF_LEN];
-    for (int i = 0; i < BUF_LEN; i++) {
-        tx_buf[i] = (uint8_t)(0x55 ^ i);
-    }
+    for (int i = 0; i < BUF_LEN; i++) tx_buf[i] = (uint8_t)(0x55 ^ i);
     memset(rx_buf, 0, sizeof(rx_buf));
 
     struct spi_buf tx = { .buf = tx_buf, .len = BUF_LEN };
@@ -64,6 +67,7 @@ int main(void)
     }
 
     while (1) {
+        if (atomic_get(&ael_bl_flag)) { k_msleep(50); ael_enter_bootloader(); }
         printk("AEL_SPI_LOOPBACK_%s\n", pass ? "PASS" : "FAIL");
         k_msleep(3000);
     }
