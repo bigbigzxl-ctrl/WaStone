@@ -406,5 +406,53 @@
     "last_seen": 1776010977.3484066,
     "confidence": 0.8,
     "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_wire_check": {
+    "exp_id": "249b201d-926a-410e-9bb1-6c704cc6ee8e",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3392267,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_gpio_loopback": {
+    "exp_id": "384638c5-fad1-4c0a-b5c9-95d9006acd13",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3509696,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_exti_loopback": {
+    "exp_id": "920e4089-241d-4950-8a1e-0103737e834a",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3593216,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_uart_loopback": {
+    "exp_id": "b6385899-38a9-4f4e-8999-4b4ad85eb0e8",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3704813,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_spi_loopback": {
+    "exp_id": "f44566e3-a357-4fef-80d7-5f6a839bb43a",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3811233,
+    "confidence": 0.6,
+    "known_failures": {}
+  },
+  "ch32v203xxx|ch32v203_tim_pwm_capture": {
+    "exp_id": "4f63313a-8385-4156-bd19-4d445db51eda",
+    "success_count": 2,
+    "failure_count": 0,
+    "last_seen": 1776011398.3919573,
+    "confidence": 0.6,
+    "known_failures": {}
   }
 }
