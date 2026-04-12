@@ -93,10 +93,8 @@ static int usb_init(void)
     err = usbd_init(&ael_usbd);
     if (err) return err;
 
-    if (!usbd_can_detect_vbus(&ael_usbd)) {
-        return usbd_enable(&ael_usbd);
-    }
-    return 0;
+    /* Always enable — see ael_usb.c for rationale. */
+    return usbd_enable(&ael_usbd);
 }
 
 /* ── LED ──────────────────────────────────────────────────────────────────── */

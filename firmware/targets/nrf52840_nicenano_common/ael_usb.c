@@ -78,9 +78,17 @@ int ael_usb_init(void)
     err = usbd_init(&ael_usbd);
     if (err) return err;
 
-    /* Enable immediately if VBUS detection is not available */
-    if (!usbd_can_detect_vbus(&ael_usbd)) {
-        return usbd_enable(&ael_usbd);
-    }
-    return 0;
+    /* Always enable unconditionally.
+     *
+     * On nRF52840, usbd_can_detect_vbus() returns true and the normal
+     * pattern is to enable only on USBD_MSG_VBUS_READY.  However, after a
+     * software reset (NVIC_SystemReset from UF2 bootloader), the host does
+     * not re-assert VBUS — it was never removed — so the VBUS_READY event
+     * never fires and USB stays down until a physical replug.
+     *
+     * Calling usbd_enable() here unconditionally avoids that stall.
+     * The VBUS_REMOVED callback will still call usbd_disable() if VBUS is
+     * truly lost, so battery-powered scenarios are handled correctly.
+     */
+    return usbd_enable(&ael_usbd);
 }
