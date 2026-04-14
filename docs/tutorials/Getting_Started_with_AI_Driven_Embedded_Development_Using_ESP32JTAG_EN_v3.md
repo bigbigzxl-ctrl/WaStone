@@ -518,7 +518,7 @@ Even if my phone disconnects, i.e. when you leave the WIFI zone and start to use
 
 With a workflow like this, I can check on the AI and continue interacting with it even while walking, exercising, or relaxing on the beach. It is a very interesting way to work.
 
-[using_phone_to_drive_AI](images/using_phone_to_drive_AI.png)
+![using_phone_to_drive_AI](images/using_phone_to_drive_AI.png)
 
 ---
 
