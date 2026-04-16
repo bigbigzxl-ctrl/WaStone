@@ -645,17 +645,17 @@
   },
   "ch32v305xxx|ch32v305_blinky_visual": {
     "exp_id": "2cb8217a-5b93-49fa-a7f5-ec339338390c",
-    "success_count": 8,
+    "success_count": 9,
     "failure_count": 0,
-    "last_seen": 1776033370.2833366,
+    "last_seen": 1776033672.8566542,
     "confidence": 1.0,
     "known_failures": {}
   },
   "ch32v305xxx|ch32v305_blinky_mailbox": {
     "exp_id": "37acc09e-80cc-4323-af2a-add18420302f",
-    "success_count": 8,
+    "success_count": 9,
     "failure_count": 0,
-    "last_seen": 1776033370.2849486,
+    "last_seen": 1776033679.899757,
     "confidence": 1.0,
     "known_failures": {}
   },
@@ -886,6 +886,20 @@
         "exp_id": "5178246e-dfaa-4400-b416-c696bc08b00e",
         "count": 5,
         "last_raw": "[ch32v305xxx] ch32v305_usart_halfduplex: failed — stages: preflight, build, load, run — failure: check_mailbox — mailbox verify failed: status=FAIL (expected PASS)"
+      }
+    }
+  },
+  "stm32f401ce_blackpill_daplink|stm32f401ce_blackpill_daplink_led_blink": {
+    "exp_id": null,
+    "success_count": 0,
+    "failure_count": 1,
+    "last_seen": 1776285373.4031863,
+    "confidence": 0.5,
+    "known_failures": {
+      "load": {
+        "exp_id": "7bf2aca4-f3a2-4f81-8e07-3f294b224eb4",
+        "count": 1,
+        "last_raw": "[stm32f401ce_blackpill_daplink] stm32f401ce_blackpill_daplink_led_blink: failed — stages: preflight, build, run, check — failure: load — Flash: local DAPLink/OpenOCD GDB server exited during startup with code 1"
       }
     }
   }
