@@ -1,3 +1,5 @@
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/a3d9cdc0-9aee-4d2c-a173-7c7ee0b41d83" />
+
 # AEL — AI-Driven Embedded Engineering
 
 AEL (AI Embedded Lab) is a new way of doing embedded engineering.
