@@ -4,6 +4,7 @@
   <img width="45%" alt="image1" src="https://github.com/user-attachments/assets/d9cdfa61-ca6b-4f2e-b367-0971c97a845f" />
   <img width="45%" alt="image2" src="https://github.com/user-attachments/assets/8ea76e89-d73f-4170-9469-019460fbb71d" />
 </div>
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/c00d229f-a4cb-4623-be08-18cdf324367d" />
 
 # schedule：
 ## 1. only uart wire verision for agent structure design and debug.
