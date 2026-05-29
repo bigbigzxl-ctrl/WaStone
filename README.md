@@ -1,9 +1,10 @@
 <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/a3d9cdc0-9aee-4d2c-a173-7c7ee0b41d83" />
 
-<div style="display: flex; gap: 10px;">
-  <img width="469" height="567" alt="image" width="45% src="https://github.com/user-attachments/assets/d9cdfa61-ca6b-4f2e-b367-0971c97a845f" />
-  <img width="589" height="621" alt="image" width="45% src="https://github.com/user-attachments/assets/8ea76e89-d73f-4170-9469-019460fbb71d" />
+<div align="center">
+  <img width="45%" alt="image1" src="https://github.com/user-attachments/assets/d9cdfa61-ca6b-4f2e-b367-0971c97a845f" />
+  <img width="45%" alt="image2" src="https://github.com/user-attachments/assets/8ea76e89-d73f-4170-9469-019460fbb71d" />
 </div>
+
 # schedule：
 ## 1. only uart wire verision for agent structure design and debug.
 - 1.1 audio FPGA project test case.
