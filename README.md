@@ -7,6 +7,9 @@
 <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/c00d229f-a4cb-4623-be08-18cdf324367d" />
 
 # schedule：
+
+[娲石介绍文档](https://docs.google.com/document/d/126ceDcdRahR22ykr595SQH-28MgJhu0QrfvUimQ3FZw/edit?usp=sharing)
+
 ## 1. only uart wire verision for agent structure design and debug.
 - 1.1 audio FPGA project test case.
 - 1.2 ascend 310 test case.
