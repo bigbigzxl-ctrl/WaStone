@@ -232,9 +232,6 @@ WaStone不仅限于代码生成，它还允许人工智能与工程师协作：�
 
 ---
 
-### Brownfield Embedded Project — WaStone Drives a Real Firmware Project to Open-Source Release (2026-03-27)
-
-WaStone was applied to [`esp32jtag_firmware`](https://github.com/EZ32Inc/esp32jtag_firmware), an existing embedded firmware project for the ESP32JTAG instrument, as a concrete real-world test of WaStone's engineering capabilities beyond greenfield prototyping.
 WaStone 被应用于 [`WaStoneBody`](https://github.com/bigbigzxl-ctrl/WaStoneBody)，这是一个现有的调试仪器的嵌入式固件项目，作为对WaStone工程能力在全新原型设计之外的具体实际测试。跟参考的原版esp32jtag_firmware是有所区别的，主要在FPGA部分的芯片类型、功能以及性能，总之，功能更丰富、性能更强，成本更低；
 这并非演示或玩具项目。该固件依赖于实际的硬件，基于现有架构，并且还有大量待完成的工作：修复漏洞、完善功能、解决问题以及准备发布。WaStone被用来接手并推进这些剩余工作 --> nice;
 
